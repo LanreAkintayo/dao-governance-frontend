@@ -4,6 +4,7 @@ import Image from "next/image";
 import ParticleBackground from "react-particle-backgrounds";
 import Link from "next/link";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 const Home: NextPage = () => {
   const settings2 = {
@@ -14,9 +15,9 @@ const Home: NextPage = () => {
     },
     velocity: {
       directionAngle: 180,
-      directionAngleVariance: 60,
-      minSpeed: 0.1,
-      maxSpeed: 0.3,
+      directionAngleVariance: 90,
+      minSpeed: 1,
+      maxSpeed: 2,
     },
     opacity: {
       minOpacity: 0,
@@ -36,12 +37,33 @@ const Home: NextPage = () => {
             Decentralized Autonomous Organization
           </h1>
           <p className="w-8/12 text-center font-light my-6 text-2xl">
-            The aim of this platform is to showcase my understanding on what
+            The aim of this project is to showcase my understanding on what
             DAO, Decentralized Autonomous Organization is all about.
           </p>
-          <button className="p-2 bg-gray-300 px-4 text-black text-3xl rounded-md">Start Voting</button>
+          <div>
+            <button className="p-2 bg-gradient-to-tr to-pink-500  from-gray-800 px-4 text-white text-3xl rounded-md">
+              Start Voting
+            </button>
+            <button className="ml-4 p-2 bg-gradient-to-tr from-pink-500  to-gray-800 px-4 text-white text-3xl rounded-md">
+              Learn more
+            </button>
+          </div>
         </div>
       </section>
+      <section className="my-4 p-5 flex flex-col text-center  items-center justify-center">
+        <h1 className="text-4xl">How It Works</h1>
+        <p className="w-9/12 text-gray-800 py-2">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime
+          mollitia, molestiae quas vel sint commodi repudiandae consequuntur
+          voluptatum laborum numquam blanditiis harum quisquam eius sed odit
+          fugiat iusto fuga praesentium optio, eaque rerum! Provident similique
+          accusantium nemo autem. Veritatis obcaecati tenetur iure eius earum ut
+          molestias architecto voluptate aliquam nihil, eveniet aliquid culpa
+          officia aut! Impedit sit sunt quaerat, odit, tenetur error, harum
+          nesciunt ipsum debitis quas aliquid.
+        </p>
+      </section>
+      <Footer />
     </div>
   );
 };
