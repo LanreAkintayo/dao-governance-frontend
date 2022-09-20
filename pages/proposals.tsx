@@ -4,7 +4,7 @@ import Header from "../components/Header";
 
 const Proposals: NextPage = () => {
   return (
-    <div className="flex flex-col justify-between bg-gray-200">
+    <div className="flex flex-col justify-between bg-gray-100">
       <div>
         <Header />
         <section className="px-5 mt-24 flex flex-col items-center ">
@@ -21,7 +21,7 @@ const Proposals: NextPage = () => {
 
           <div className="mt-11 w-8/12">
             <h1 className="text-xl text-gray-700 py-4 ">Proposals</h1>
-            <div className="rounded-md shadow bg-gray-100 w-full p-3 px-11">
+            <div className="rounded-md shadow bg-white w-full p-3 px-11">
               <div className="flex w-full justify-between items-center">
                 <p>Account: </p>
                 <p className="rounded-md text-red-700 p-1 bg-red-200">Closed</p>
@@ -70,7 +70,7 @@ const Proposals: NextPage = () => {
                 </div>
               </div>
             </div>
-            <div className="rounded-md shadow mt-6 bg-gray-100 w-full p-3 px-11">
+            <div className="rounded-md shadow mt-6 bg-white w-full p-3 px-11">
               <div className="flex w-full justify-between items-center">
                 <p>Account: </p>
                 <p className="rounded-md text-red-700 p-1 bg-red-200">Closed</p>
