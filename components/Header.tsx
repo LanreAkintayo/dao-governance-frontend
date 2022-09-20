@@ -84,29 +84,29 @@ export default function Header() {
         </div>
       )}
 
-      <nav className="flex items-center flex-col ss:flex-row w-full justify-between px-2 py-2 sm:px-4 sm:py-4 h-full text-white ">
+      <nav className="flex items-center flex-col ss:flex-row w-full justify-between px-2 py-2 sm:px-4 sm:py-4 h-full text-black ">
         <p className="font-logo text-xl sm:text-3xl self-start ss:self-auto">
           <span className="text-orange-700">{"<"}L</span>arry
           <span className="text-orange-700">C</span>odes
           <span className="text-orange-700">{"/>"}</span>
         </p>
-        <div className="flex items-center justify-end self-end ss:self-auto">
-          <div className="flex justify-between items-center text-lg ">
+        <div className="flex  items-center text-black ss:self-auto">
+          <div className="flex items-center text-lg w-full">
             {!isBreakpoint && (
               <>
                 <Link href="/">
-                  <a className="text-white font-semibold hover:text-green-500 sm:text-xl text-lg">
-                    Home
+                  <a className="w-full text-black font-semibold hover:text-green-500 sm:text-xl text-lg">
+                    <p className="w-full whitespace-nowrap">Get LAR</p>
                   </a>
                 </Link>
                 <Link href="/projects">
-                  <a className="sm:ml-8 ml-6 text-white font-semibold hover:text-green-500">
-                    Projects
+                  <a className="sm:ml-8 ml-6 text-black font-semibold hover:text-green-500">
+                    Proposals
                   </a>
                 </Link>
 
                 <Link href="/launch">
-                  <a className="sm:mx-4 mx-2 w-full text-white font-semibold hover:text-green-500 ">
+                  <a className="sm:mx-4 mx-2 w-full text-black font-semibold hover:text-green-500 ">
                     Proposals
                   </a>
                 </Link>
@@ -130,7 +130,7 @@ export default function Header() {
                 </button>
               )}
             </div>
-            {isBreakpoint && (
+            {/* {isBreakpoint && (
               <div
                 className="w-8 h-8 text-white hover:text-green-500 cursor-pointer"
                 onClick={handleSidebar}
@@ -141,7 +141,7 @@ export default function Header() {
                   className="object-cover w-full h-full cursor-pointer hover:text-green-500"
                 />
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </nav>
