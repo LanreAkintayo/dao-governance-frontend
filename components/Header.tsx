@@ -10,7 +10,7 @@ import { useMoralis, useWeb3Contract, useChain } from "react-moralis";
 const useMediaQuery = (width: number) => {
   const [targetReached, setTargetReached] = useState(false);
 
-  const updateTarget = useCallback((e: ) => {
+  const updateTarget = useCallback((e) => {
     if (e.matches) {
       setTargetReached(true);
     } else {
@@ -50,12 +50,12 @@ export default function Header() {
   };
 
   return (
-    <div className={`ss:${chainId != 97 ? "h-30" : "h-20"} h-30 w-screen `}>
+    <div className={` absolute left-0 top-0 ss:${chainId != 97 ? "h-30" : "h-20"} h-30 w-screen `}>
       {/* Navbar */}
 
       {!collapsed && isBreakpoint && (
         <div className={`z-50 h-screen ${!collapsed && "fixed inset-0"}`}>
-          <ProSidebar
+          {/* <ProSidebar
             breakPoint="xxl"
             open={false}
             collapsedWidth="0px"
@@ -80,11 +80,11 @@ export default function Header() {
                 <Link href="/launch"><p className="text-2xl">Get Funded</p></Link>
               </MenuItem>
             </Menu>
-          </ProSidebar>
+          </ProSidebar> */}
         </div>
       )}
 
-      <nav className="flex items-center flex-col ss:flex-row w-full justify-between px-2 py-2 sm:px-4 sm:py-4 h-full text-white bg-zinc-800 ">
+      <nav className="flex items-center flex-col ss:flex-row w-full justify-between px-2 py-2 sm:px-4 sm:py-4 h-full text-white ">
         <p className="font-logo text-xl sm:text-3xl self-start ss:self-auto">
           <span className="text-orange-700">{"<"}L</span>arry
           <span className="text-orange-700">C</span>odes
@@ -107,7 +107,7 @@ export default function Header() {
 
                 <Link href="/launch">
                   <a className="sm:mx-4 mx-2 w-full text-white font-semibold hover:text-green-500 ">
-                    Get Funded
+                    Proposals
                   </a>
                 </Link>
               </>
@@ -117,9 +117,9 @@ export default function Header() {
               {/* <Button type="button" text="Connect Wallet" /> */}
               <div className="px-0">
                 {" "}
-                <ConnectButton text="This is a button" />
+                {/* <ConnectButton text="This is a button" /> */}
               </div>
-              {chainId != "97" && isWeb3Enabled && (
+              {chainId != 97 && isWeb3Enabled && (
                 <button
                   className=" ml-4 text-red-700 text-sm my-2 cursor-pointer bg-red-100 rounded-lg p-1 px-2"
                   onClick={() => {

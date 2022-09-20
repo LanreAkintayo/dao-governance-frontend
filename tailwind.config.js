@@ -17,10 +17,14 @@ module.exports = {
       cursor: ["disabled"],
     },
     fontFamily: {
-      sans: ["Kanit", "sans-serif"],
+      sans: ["Montserrat", "sans-serif"],
       // // logo: ['Rampart One', "cursive"]
-      // logo: ['Germania One', 'cursive']
+      logo: ['Germania One', 'cursive']
     },
+    colors: {
+      peach: "#EEA47FFF",
+      royalBlue: "#00539CFF"
+    }
   },
   plugins: [
     require('tailwind-scrollbar-hide')
