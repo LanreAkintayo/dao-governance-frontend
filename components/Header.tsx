@@ -50,7 +50,7 @@ export default function Header() {
   };
 
   return (
-    <div className={` absolute left-0 top-0 ss:${chainId != 97 ? "h-30" : "h-20"} h-30 w-screen `}>
+    <div className={`fixed  bg-white ss:${chainId != 97 ? "h-30" : "h-20"} h-30 w-screen `}>
       {/* Navbar */}
 
       {!collapsed && isBreakpoint && (

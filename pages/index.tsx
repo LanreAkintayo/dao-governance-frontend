@@ -9,15 +9,15 @@ import Footer from "../components/Footer";
 const Home: NextPage = () => {
   const settings2 = {
     particle: {
-      particleCount: 500,
+      particleCount: 300,
       color: "#000d1a",
       maxSize: 2,
     },
     velocity: {
       directionAngle: 180,
       directionAngleVariance: 90,
-      minSpeed: 1,
-      maxSpeed: 2,
+      minSpeed: 0.1,
+      maxSpeed: 0.4,
     },
     opacity: {
       minOpacity: 0,

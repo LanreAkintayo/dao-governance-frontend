@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function Footer() {
   return (
-    <footer className="bg-zinc-800 mt-7 text-gray-400 flex justify-between items-center flex-col">
+    <footer className="bg-zinc-800 mt-12 text-gray-400 flex justify-between items-center flex-col">
       <h1 className="text-xl pb-2 pt-1 ">
         <u>Get in Touch</u>
       </h1>
