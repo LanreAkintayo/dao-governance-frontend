@@ -34,13 +34,26 @@ const Proposal: NextPage = () => {
               </p>
             </div>
 
+            <div className="shadow bg-white p-3 pb-5 mt-4 w-10/12">
+              <h1 className="my-3 pb-3 text-gray-800 border-l-0 border-r-0 border-b border-gray-300 ">
+                Cast your Vote
+              </h1>
+              <div>
+                <div className="w-full h-full text-center items-center">
+                  <p className="rounded-md p-2 bg-blue-100 text-blue-900 text-xl">No</p>
+                  <p className="mt-2 rounded-md p-2  bg-blue-100 text-blue-900 text-xl">Yes</p>
+                  <p className="mt-2 rounded-md p-2 bg-blue-900 text-white text-xl">Vote</p>
+                </div>
+              </div>
+            </div>
+
             <table className="mt-10 w-10/12 self-center table-fixed rounded-lg shadow text-sm text-left ">
-              <thead className="text-gray-700 rounded-lg bg-gray-50">
-                <tr className="text-gray-800 bg-gray-200">
+              <thead className=" rounded-lg bg-gray-50">
+                <tr className="text-white bg-blue-900">
                   <th
                     scope="col"
                     colSpan={3}
-                    className="py-3 pl-3 text-gray-900"
+                    className="py-3 pl-3"
                   >
                     List of Voters
                   </th>
@@ -68,7 +81,6 @@ const Proposal: NextPage = () => {
                   <td className="pl-3">Yes</td>
                   <td className="pl-3 ">43,432 LAR</td>
                 </tr>
-            
               </tbody>
             </table>
           </div>
