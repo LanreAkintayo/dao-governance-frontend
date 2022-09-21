@@ -6,6 +6,7 @@ import Link from "next/link";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
+
 const Home: NextPage = () => {
   const settings2 = {
     particle: {

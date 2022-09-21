@@ -1,15 +1,40 @@
 import { NextPage } from "next";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import VotingSystemDropdown from "../components/VotingSystemDropdown";
+import DatePicker from "react-datepicker";
+import { useState } from "react";
+import moment from "moment";
+
+import "react-datepicker/dist/react-datepicker.css";
+
+const options = [
+  { value: "Single Choice Voting", label: "Single Choice Voting" },
+  { value: "Quadratic Voting", label: "Quadratic Voting" },
+  { value: "Weighted Voting", label: "Weighted Voting" },
+];
+
+const formatTime = (value: number): string => {
+  return moment(value).format("MMMM Do YYYY, h:mm:ss a");
+};
 
 const Create: NextPage = () => {
+  // const a = moment()
+  const formattedTime = formatTime(new Date().getTime());
+  console.log(formattedTime);
+
+  // console.log("Current Time: ", formatTime(new Date().getTime()))
+
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+
   return (
     <div className="flex flex-col justify-between bg-gray-50 h-full">
       <div>
         <Header />
-        <div className="flex mt-24 mx-4">
+        <div className="flex mt-20 mx-4">
           <div className="w-8/12 p-2 pl-4 pr-11 ">
-            <div className="mt-4 w-10/12">
+            <div className="w-10/12">
               <p className="text-gray-700">
                 <small>Title: Ask a question</small>
               </p>
@@ -95,62 +120,107 @@ const Create: NextPage = () => {
                 </button>
               </div>
             </div>
-
           </div>
           <div className="w-4/12 rounded-md  text-sm">
-            <div className="shadow bg-white p-3 w-10/12">
+            <div className="shadow mt-2 bg-white p-3 w-10/12">
               <h1 className="my-3 pb-3 text-gray-800 border-l-0 border-r-0 border-b border-gray-300 ">
-                Information
+                Actions
               </h1>
-              <div className="flex items-center justify-between">
-                <p className="text-gray-700">Voting System</p>
-                <p>Single Choice Voting</p>
-              </div>
-              <div className="flex items-center justify-between">
-                <p className="text-gray-700">Start Date</p>
-                <p>April 29, 2022, 7:50 PM</p>
-              </div>
-              <div className="flex items-center justify-between">
-                <p className="text-gray-700">End Date</p>
-                <p>April 29, 2022, 7:50 PM</p>
-              </div>
-            </div>
+              <VotingSystemDropdown />
+              <div className="mt-4">
+                <p className="text-sm">Set Start Date</p>
 
-            <div className="shadow bg-white p-3 pb-5 mt-4 w-10/12">
-              <h1 className="my-3 pb-3 text-gray-800 border-l-0 border-r-0 border-b border-gray-300 ">
-                Results
-              </h1>
-              <div>
-                <div className="w-full h-full flex justify-between items-center">
-                  <p>
-                    <small>No</small>
-                  </p>
-                  <p>
-                    <small>100 LAR 11.2%</small>
-                  </p>
-                </div>
-                <div className="bg-gray-200 rounded-lg h-3 shadow dark:bg-gray-700 relative">
-                  <div
-                    className={`h-3 absolute rounded-lg  top-0 bg-blue-400`}
-                    style={{ width: `${10}%` }}
-                  ></div>
+                <div className="flex bg-gray-50 border px-2 rounded-md border-gray-300 items-center ">
+                  <svg
+                    aria-hidden="true"
+                    className="w-5 h-5 text-gray-500 dark:text-gray-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+
+                  {/* <DatePicker /> */}
+
+                  <DatePicker
+                    id="launchDate"
+                    className=" text-gray-900 md:w-60 w-40 bg-gray-50 p-2 sm:text-sm outline-none "
+                    selected={startDate}
+                    onChange={(date: Date) => {
+                      const dateInMilliseconds = date.getTime();
+                      const currentDateInMilliseconds = new Date().getTime();
+
+                      //   setIsValidLaunchDate(
+                      //     dateInMilliseconds > currentDateInMilliseconds
+                      //       ? true
+                      //       : false
+                      //   );
+
+                      //   setProjectInfo((prevProjectInfo) => {
+                      //     return {
+                      //       ...prevProjectInfo,
+                      //       launchDate: date,
+                      //     };
+                      //   });
+                      setStartDate(date);
+                    }}
+                  />
                 </div>
               </div>
-              <div>
-                <div className="w-full h-full flex mt-2 justify-between items-center">
-                  <p>
-                    <small>Yes</small>
-                  </p>
-                  <p>
-                    <small>100 LAR 11.2%</small>
-                  </p>
+              <div className="mt-4">
+                <p className="text-sm">Set End Date</p>
+
+                <div className="flex bg-gray-50 border px-2 rounded-md border-gray-300 items-center ">
+                  <svg
+                    aria-hidden="true"
+                    className="w-5 h-5 text-gray-500 dark:text-gray-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+
+                  {/* <DatePicker /> */}
+
+                  <DatePicker
+                    id="launchDate"
+                    className=" text-gray-900 md:w-60 w-40 bg-gray-50 p-2 sm:text-sm outline-none "
+                    selected={startDate}
+                    onChange={(date: Date) => {
+                      const dateInMilliseconds = date.getTime();
+                      const currentDateInMilliseconds = new Date().getTime();
+
+                      //   setIsValidLaunchDate(
+                      //     dateInMilliseconds > currentDateInMilliseconds
+                      //       ? true
+                      //       : false
+                      //   );
+
+                      //   setProjectInfo((prevProjectInfo) => {
+                      //     return {
+                      //       ...prevProjectInfo,
+                      //       launchDate: date,
+                      //     };
+                      //   });
+                      setEndDate(date);
+                    }}
+                  />
                 </div>
-                <div className="bg-gray-200 rounded-lg h-3 shadow dark:bg-gray-700 relative">
-                  <div
-                    className={`h-3 absolute rounded-lg  top-0 bg-blue-400`}
-                    style={{ width: `${10}%` }}
-                  ></div>
-                </div>
+              </div>
+              <div className="w-full my-2 mt-4 flex justify-center">
+                <button className="bg-gray-200 rounded-md p-2 px-5 self-center">
+                  Publish
+                </button>
               </div>
             </div>
           </div>
