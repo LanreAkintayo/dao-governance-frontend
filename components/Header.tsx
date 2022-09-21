@@ -10,7 +10,7 @@ import { useMoralis, useWeb3Contract, useChain } from "react-moralis";
 const useMediaQuery = (width: number) => {
   const [targetReached, setTargetReached] = useState(false);
 
-  const updateTarget = useCallback((e) => {
+  const updateTarget = useCallback((e: { matches: any; }) => {
     if (e.matches) {
       setTargetReached(true);
     } else {
@@ -95,19 +95,19 @@ export default function Header() {
             {!isBreakpoint && (
               <>
                 <Link href="/">
-                  <a className="w-full text-black font-semibold hover:text-green-500 sm:text-xl text-lg">
-                    <p className="w-full whitespace-nowrap">Get LAR</p>
+                  <a className="w-full text-black font-semibold hover:text-green-500 ">
+                    <p className="w-full whitespace-nowrap">Get LAR Token</p>
                   </a>
                 </Link>
                 <Link href="/projects">
-                  <a className="sm:ml-8 ml-6 text-black font-semibold hover:text-green-500">
-                    Proposals
+                  <a className="sm:ml-8 ml-6 text-black font-semibold whitespace-nowrap hover:text-green-500">
+                    Create Proposoal
                   </a>
                 </Link>
 
                 <Link href="/launch">
-                  <a className="sm:mx-4 mx-2 w-full text-black font-semibold hover:text-green-500 ">
-                    Proposals
+                  <a className="sm:mx-6 mx-2 w-full text-black font-semibold hover:text-green-500 ">
+                    Vote
                   </a>
                 </Link>
               </>

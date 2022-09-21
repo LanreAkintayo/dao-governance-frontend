@@ -4,7 +4,7 @@ import Header from "../components/Header";
 
 const Proposals: NextPage = () => {
   return (
-    <div className="flex flex-col justify-between bg-gray-100">
+    <div className="flex flex-col justify-between bg-gray-50">
       <div>
         <Header />
         <section className="px-5 mt-24 flex flex-col items-center ">

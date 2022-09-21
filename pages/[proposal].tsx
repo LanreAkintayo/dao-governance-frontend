@@ -4,7 +4,7 @@ import Header from "../components/Header";
 
 const Proposal: NextPage = () => {
   return (
-    <div className="flex flex-col justify-between bg-gray-100 h-full">
+    <div className="flex flex-col justify-between bg-gray-50 h-full">
       <div>
         <Header />
         <div className="flex mt-24 mx-4">
@@ -42,14 +42,14 @@ const Proposal: NextPage = () => {
                 <div className="w-full h-full text-center items-center">
                   <p className="rounded-md p-2 bg-blue-100 text-blue-900 text-xl">No</p>
                   <p className="mt-2 rounded-md p-2  bg-blue-100 text-blue-900 text-xl">Yes</p>
-                  <p className="mt-2 rounded-md p-2 bg-blue-900 text-white text-xl">Vote</p>
+                  <p className="mt-2 rounded-md p-2 bg-blue-400 text-white text-xl">Vote</p>
                 </div>
               </div>
             </div>
 
             <table className="mt-10 w-10/12 self-center table-fixed rounded-lg shadow text-sm text-left ">
               <thead className=" rounded-lg bg-gray-50">
-                <tr className="text-white bg-blue-900">
+                <tr className="text-white bg-blue-400">
                   <th
                     scope="col"
                     colSpan={3}
