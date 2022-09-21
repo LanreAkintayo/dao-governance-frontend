@@ -43,21 +43,22 @@ export default function Header() {
   const chainId = parseInt(chainIdHex!);
 
   useEffect(() => {
-    console.log(collapsed);
+    console.log("Collapsing: ", collapsed);
   }, [collapsed]);
+
+
   const handleSidebar = () => {
+    console.log("We are here")
     setCollapsed((prevCollapsed) => !prevCollapsed);
   };
 
   return (
-    <div className={`fixed z-50 bg-white ss:${chainId != 97 ? "h-30" : "h-20"} h-30 w-screen `}>
+    <div className={`fixed z-20 bg-gray-100 ss:${chainId != 97 ? "h-30" : "h-20"} h-30 w-screen `}>
       {/* Navbar */}
 
       {!collapsed && isBreakpoint && (
         <div className={`z-50 h-screen ${!collapsed && "fixed inset-0"}`}>
-          {/* <ProSidebar
-            breakPoint="xxl"
-            open={false}
+          <ProSidebar
             collapsedWidth="0px"
             collapsed={collapsed}
           >
@@ -68,19 +69,19 @@ export default function Header() {
               X
             </div>
             <Menu iconShape="square">
-              <div className="text-xl text-white hover:text-green-700">
+              <div className="text-xl text-white hover:text-orange-700">
                 <MenuItem>
-                  <Link href="/"><p className="text-2xl">Home</p></Link>
+                  <Link href="/"><p className="text-2xl">Get LAR Token</p></Link>
                 </MenuItem>
               </div>
               <MenuItem>
-                <Link href="/projects"><p className="text-2xl">Projects</p></Link>
+                <Link href="/create"><p className="text-2xl">Create Proposal</p></Link>
               </MenuItem>
               <MenuItem>
-                <Link href="/launch"><p className="text-2xl">Get Funded</p></Link>
+                <Link href="/proposals"><p className="text-2xl">Vote</p></Link>
               </MenuItem>
             </Menu>
-          </ProSidebar> */}
+          </ProSidebar>
         </div>
       )}
 
@@ -95,18 +96,18 @@ export default function Header() {
             {!isBreakpoint && (
               <>
                 <Link href="/">
-                  <a className="w-full text-black font-semibold hover:text-green-500 ">
+                  <a className="w-full text-black font-semibold hover:text-orange-600 ">
                     <p className="w-full whitespace-nowrap">Get LAR Token</p>
                   </a>
                 </Link>
-                <Link href="/projects">
-                  <a className="sm:ml-8 ml-6 text-black font-semibold whitespace-nowrap hover:text-green-500">
-                    Create Proposoal
+                <Link href="/create">
+                  <a className="sm:ml-8 ml-6 text-black font-semibold whitespace-nowrap hover:text-orange-600">
+                    Create Proposal
                   </a>
                 </Link>
 
-                <Link href="/launch">
-                  <a className="sm:mx-6 mx-2 w-full text-black font-semibold hover:text-green-500 ">
+                <Link href="/proposals">
+                  <a className="sm:mx-6 mx-2 w-full text-black font-semibold hover:text-orange-600 ">
                     Vote
                   </a>
                 </Link>
@@ -116,8 +117,7 @@ export default function Header() {
             <div className="text-white flex flex-col w-full sc:py-10 items-start">
               {/* <Button type="button" text="Connect Wallet" /> */}
               <div className="px-0">
-                {" "}
-                {/* <ConnectButton text="This is a button" /> */}
+                <ConnectButton  />
               </div>
               {chainId != 97 && isWeb3Enabled && (
                 <button
@@ -130,18 +130,18 @@ export default function Header() {
                 </button>
               )}
             </div>
-            {/* {isBreakpoint && (
+            { isBreakpoint && (
               <div
-                className="w-8 h-8 text-white hover:text-green-500 cursor-pointer"
+                className="w-8 h-8 mr-11 text-black hover:text-orange-500 cursor-pointer"
                 onClick={handleSidebar}
               >
                 <img
                   alt="..."
-                  src="./menubar.svg"
-                  className="object-cover w-full h-full cursor-pointer hover:text-green-500"
+                  src="./menubar.png"
+                  className="object-cover w-full h-full cursor-pointer hover:text-orange-500"
                 />
               </div>
-            )} */}
+            )}
           </div>
         </div>
       </nav>
