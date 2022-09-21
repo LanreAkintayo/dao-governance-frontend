@@ -1,8 +1,34 @@
 import type { NextPage } from "next";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import { Tooltip, Blockie } from "web3uikit";
+import { useMoralis } from "react-moralis";
+import useSWR from "swr";
 
 const Proposals: NextPage = () => {
+  const { Moralis, isInitialized, isWeb3Enabled } = useMoralis();
+
+  console.log(isWeb3Enabled);
+
+  const {
+    data: allProposals,
+    error,
+    mutate,
+  } = useSWR(
+    () => (isWeb3Enabled ? "web3/proposals" : null),
+    async () => {
+      console.log("Is Initialized? ", isInitialized);
+      console.log("Fetching Proposals......");
+
+      const Proposals = Moralis.Object.extend("Proposals");
+      const query = new Moralis.Query(Proposals);
+      query.descending("uid_decimal");
+      const results = await query.find();
+
+      console.log("These are the proposals: ", results);
+    }
+  );
+
   return (
     <div className="flex flex-col justify-between bg-gray-50">
       <div>
@@ -72,7 +98,12 @@ const Proposals: NextPage = () => {
             </div>
             <div className="rounded-md shadow mt-6 bg-white w-full p-3 px-11">
               <div className="flex w-full justify-between items-center">
-                <p>Account: </p>
+                <div className="flex items-center">
+                  <p className="mr-2">Account: </p>
+                  <Tooltip content="0xDD4c43c13e6F1b2374Ed9AAabBA7D56Bb4a68A03">
+                    <Blockie seed="0xDD4c43c13e6F1b2374Ed9AAabBA7D56Bb4a68A03" />
+                  </Tooltip>
+                </div>
                 <p className="rounded-md text-red-700 p-1 bg-red-200">Closed</p>
               </div>
               <h1 className="text-xl mt-2 text-gray-900">

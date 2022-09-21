@@ -4,7 +4,11 @@ import type { AppProps } from "next/app";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <MoralisProvider initializeOnMount={false}>
+    <MoralisProvider
+      initializeOnMount={false}
+      appId={process.env.NEXT_PUBLIC_APP_ID}
+      serverUrl={process.env.NEXT_PUBLIC_SERVER_URL}
+    >
       <Component {...pageProps} />
     </MoralisProvider>
   );
