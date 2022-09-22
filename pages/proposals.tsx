@@ -10,6 +10,18 @@ const Proposals: NextPage = () => {
 
   console.log(isWeb3Enabled);
 
+  const getLatestOptions = async () => {
+    
+    const AllVotes:string = Moralis.Object.extend("Votes");
+    const votesQuery = new Moralis.Query(AllVotes);
+    
+    const allVotes = await votesQuery.find();
+
+    debugger
+
+    
+  }
+
   const {
     data: allProposals,
     error,
@@ -21,11 +33,20 @@ const Proposals: NextPage = () => {
       console.log("Fetching Proposals......");
 
       const Proposals = Moralis.Object.extend("Proposals");
-      const query = new Moralis.Query(Proposals);
-      query.descending("uid_decimal");
-      const results = await query.find();
+      const proposalsQuery = new Moralis.Query(Proposals);
+      proposalsQuery.descending("uid_decimal");
+      
+      const proposals = await proposalsQuery.find();
 
-      console.log("These are the proposals: ", results);
+      console.log("These are the proposals", proposals)
+
+
+      const sortedProposals = proposals.map(proposal => {
+      
+                
+       
+      })
+      
     }
   );
 
