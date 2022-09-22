@@ -1,8 +1,10 @@
 import { NextPage } from "next";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import {getProposalsId, getProposalsData} from "../lib/fetchProposals"
 
 const Proposal: NextPage = () => {
+  
   return (
     <div className="flex flex-col justify-between bg-gray-50 h-full">
       <div>
@@ -148,4 +150,21 @@ const Proposal: NextPage = () => {
   );
 };
 
+export async function getStaticPaths() {
+  const paths = await getProposalsId();
+  return {
+    paths,
+    fallback: false,
+  };
+}
+
+export async function getStaticProps({ params }) {
+  // Fetch necessary data for the blog post using params.id
+  const proposal = getProposalsData(params.id);
+  return {
+    props: {
+      proposal,
+    },
+  };
+}
 export default Proposal;
