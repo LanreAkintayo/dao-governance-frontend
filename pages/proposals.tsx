@@ -4,23 +4,54 @@ import Header from "../components/Header";
 import { Tooltip, Blockie } from "web3uikit";
 import { useMoralis } from "react-moralis";
 import useSWR from "swr";
+import { now, toMilliseconds } from "../utils/helper";
+import ProposalCard from "../components/ProposalCard";
+
+export interface Proposal {
+  id: string;
+  creator: string;
+  description: string;
+  duration: number;
+  proposalStatus: string;
+  proposalType: string;
+  latestOptions: string[][] | undefined;
+  startDate: number;
+  endDate: number;
+  status: string;
+  timeLeft: number;
+  title: string;
+  optionsArray: {
+    optionIndex: string,
+    optionText: string,
+    optionVote: string,
+    optionPercentage: string,
+  }[]
+}
+const getTotalVotes = (options: Array<Array<string>>): number => {
+  let totalVotes: number = 0;
+  options.forEach((option) => {
+    totalVotes += Number(option[2]);
+  });
+  return totalVotes;
+};
 
 const Proposals: NextPage = () => {
   const { Moralis, isInitialized, isWeb3Enabled } = useMoralis();
 
-  console.log(isWeb3Enabled);
+  // console.log(isWeb3Enabled);
 
-  const getLatestOptions = async () => {
-    
-    const AllVotes:string = Moralis.Object.extend("Votes");
+  const getLatestOptions = async (id: string): Promise<Array<string[]>> => {
+    const AllVotes: string = Moralis.Object.extend("Votes");
     const votesQuery = new Moralis.Query(AllVotes);
-    
-    const allVotes = await votesQuery.find();
 
-    debugger
+    votesQuery.descending("block_timestamp");
+    votesQuery.equalTo("uid", id);
 
-    
-  }
+    const lastVote = await votesQuery.first();
+
+    const latestOptions = lastVote?.attributes.proposalOptions;
+    return latestOptions;
+  };
 
   const {
     data: allProposals,
@@ -35,20 +66,81 @@ const Proposals: NextPage = () => {
       const Proposals = Moralis.Object.extend("Proposals");
       const proposalsQuery = new Moralis.Query(Proposals);
       proposalsQuery.descending("uid_decimal");
-      
+
       const proposals = await proposalsQuery.find();
 
-      console.log("These are the proposals", proposals)
+      const sortedProposals = proposals.map(async (proposal) => {
+        const proposalAttribute = proposal.attributes;
 
+        const latestOptions = await getLatestOptions(proposalAttribute.uid);
+        const validOptions: Array<Array<string>> =
+          latestOptions == undefined
+            ? proposalAttribute.options
+            : latestOptions;
 
-      const sortedProposals = proposals.map(proposal => {
-      
-                
-       
-      })
-      
+        const totalVotes = getTotalVotes(validOptions);
+
+        const optionsArray = validOptions.map((option) => {
+          console.log("Option 2: ", option[2]);
+          const percentage =
+            totalVotes != 0 ? (Number(option[2]) / totalVotes) * 100 : 0;
+
+          return {
+            optionIndex: option[0],
+            optionText: option[1],
+            optionVote: option[2],
+            optionPercentage: percentage.toString(),
+          };
+        });
+
+        const startDate: number = toMilliseconds(
+          Number(proposalAttribute.startDate)
+        );
+        const duration: number = toMilliseconds(
+          Number(proposalAttribute.duration)
+        );
+        const endDate: number = startDate + duration;
+
+        const timeLeft: number =
+          startDate + duration - now() < 0 ? 0 : startDate + duration - now();
+        let status: string;
+
+        if (now() > endDate) {
+          status = "Closed";
+        } else if (now() > startDate) {
+          status = "Active";
+        } else {
+          status = "Pending";
+        }
+
+        const finalProposal:Proposal = {
+          id: proposalAttribute.uid,
+          creator: proposalAttribute.creator,
+          description: proposalAttribute.description,
+          duration: proposalAttribute.duration,
+          proposalStatus: proposalAttribute.proposalStatus,
+          proposalType: proposalAttribute.proposalType,
+          latestOptions,
+          startDate,
+          endDate,
+          status,
+          timeLeft,
+          title: proposalAttribute.title,
+          optionsArray
+        };
+
+        return finalProposal
+      });
+
+      const resolved = await Promise.all(sortedProposals);
+
+      console.log(resolved);
+
+      return resolved;
     }
   );
+
+  console.log("All Proposals length: ", allProposals?.length);
 
   return (
     <div className="flex flex-col justify-between bg-gray-50">
@@ -68,159 +160,11 @@ const Proposals: NextPage = () => {
 
           <div className=" w-8/12">
             <h1 className="text-xl text-gray-700 py-4 ">Proposals</h1>
-            <div className="rounded-md shadow bg-white w-full p-3 px-11">
-              <div className="flex w-full justify-between items-center">
-                <p>Account: </p>
-                <p className="rounded-md text-red-700 p-1 bg-red-200">Closed</p>
-              </div>
-              <h1 className="text-xl mt-2 text-gray-900">
-                This is the title of the Proposal
-              </h1>
-              <p className="text-sm mt-2 text-gray-500">
-                This is the description of the project with some additional
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime
-                mollitia, molestiae quas vel sint commodi repudiandae
-                consequuntur voluptatum laborum numquam blanditiis harum
-                quisquam eius sed odit fugiat iusto fuga praesentium optio,
-                eaque rerum!
-              </p>
-              <div className="my-4">
-                <div className="bg-gray-200 h-9 shadow dark:bg-gray-700 relative">
-                  <div
-                    className={`h-9 absolute top-0 bg-gray-400`}
-                    style={{ width: `${10}%` }}
-                  ></div>
-                  <div className="absolute px-4 w-full h-full flex justify-between items-center">
-                    <p>Yes 400 LAR</p>
-                    <p>72.34%</p>
-                  </div>
-                </div>
-                <div className="bg-gray-200 h-9 mt-2 shadow dark:bg-gray-700 relative">
-                  <div
-                    className={`h-9 absolute top-0 bg-gray-400`}
-                    style={{ width: `${10}%` }}
-                  ></div>
-                  <div className="absolute px-4 w-full h-full flex justify-between items-center">
-                    <p>No 100 LAR</p>
-                    <p>11.2%</p>
-                  </div>
-                </div>
-                <div className="bg-gray-200 h-9 mt-2 shadow dark:bg-gray-700 relative">
-                  <div
-                    className={`h-9 absolute top-0 bg-gray-400`}
-                    style={{ width: `${10}%` }}
-                  ></div>
-                  <div className="absolute px-4 w-full h-full flex justify-between items-center">
-                    <p>No 100 LAR</p>
-                    <p>11.2%</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="rounded-md shadow mt-6 bg-white w-full p-3 px-11">
-              <div className="flex w-full justify-between items-center">
-                <div className="flex items-center">
-                  <p className="mr-2">Account: </p>
-                  <Tooltip content="0xDD4c43c13e6F1b2374Ed9AAabBA7D56Bb4a68A03">
-                    <Blockie seed="0xDD4c43c13e6F1b2374Ed9AAabBA7D56Bb4a68A03" />
-                  </Tooltip>
-                </div>
-                <p className="rounded-md text-red-700 p-1 bg-red-200">Closed</p>
-              </div>
-              <h1 className="text-xl mt-2 text-gray-900">
-                This is the title of the Proposal
-              </h1>
-              <p className="text-sm mt-2 text-gray-500">
-                This is the description of the project with some additional
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime
-                mollitia, molestiae quas vel sint commodi repudiandae
-                consequuntur voluptatum laborum numquam blanditiis harum
-                quisquam eius sed odit fugiat iusto fuga praesentium optio,
-                eaque rerum!
-              </p>
-              <div className="my-4">
-                <div className="bg-gray-200 h-9 shadow dark:bg-gray-700 relative">
-                  <div
-                    className={`h-9 absolute top-0 bg-gray-400`}
-                    style={{ width: `${10}%` }}
-                  ></div>
-                  <div className="absolute px-4 w-full h-full flex justify-between items-center">
-                    <p>Yes 400 LAR</p>
-                    <p>72.34%</p>
-                  </div>
-                </div>
-                <div className="bg-gray-200 h-9 mt-2 shadow dark:bg-gray-700 relative">
-                  <div
-                    className={`h-9 absolute top-0 bg-gray-400`}
-                    style={{ width: `${10}%` }}
-                  ></div>
-                  <div className="absolute px-4 w-full h-full flex justify-between items-center">
-                    <p>No 100 LAR</p>
-                    <p>11.2%</p>
-                  </div>
-                </div>
-                <div className="bg-gray-200 h-9 mt-2 shadow dark:bg-gray-700 relative">
-                  <div
-                    className={`h-9 absolute top-0 bg-gray-400`}
-                    style={{ width: `${10}%` }}
-                  ></div>
-                  <div className="absolute px-4 w-full h-full flex justify-between items-center">
-                    <p>No 100 LAR</p>
-                    <p>11.2%</p>
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            <div className="rounded-md shadow mt-6 bg-gray-100 w-full p-3 px-11">
-              <div className="flex w-full justify-between items-center">
-                <p>Account: </p>
-                <p className="rounded-md text-red-700 p-1 bg-red-200">Closed</p>
-              </div>
-              <h1 className="text-xl mt-2 text-gray-900">
-                This is the title of the Proposal
-              </h1>
-              <p className="text-sm mt-2 text-gray-500">
-                This is the description of the project with some additional
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime
-                mollitia, molestiae quas vel sint commodi repudiandae
-                consequuntur voluptatum laborum numquam blanditiis harum
-                quisquam eius sed odit fugiat iusto fuga praesentium optio,
-                eaque rerum!
-              </p>
-              <div className="my-4">
-                <div className="bg-gray-200 h-9 shadow dark:bg-gray-700 relative">
-                  <div
-                    className={`h-9 absolute top-0 bg-gray-400`}
-                    style={{ width: `${10}%` }}
-                  ></div>
-                  <div className="absolute px-4 w-full h-full flex justify-between items-center">
-                    <p>Yes 400 LAR</p>
-                    <p>72.34%</p>
-                  </div>
-                </div>
-                <div className="bg-gray-200 h-9 mt-2 shadow dark:bg-gray-700 relative">
-                  <div
-                    className={`h-9 absolute top-0 bg-gray-400`}
-                    style={{ width: `${10}%` }}
-                  ></div>
-                  <div className="absolute px-4 w-full h-full flex justify-between items-center">
-                    <p>No 100 LAR</p>
-                    <p>11.2%</p>
-                  </div>
-                </div>
-                <div className="bg-gray-200 h-9 mt-2 shadow dark:bg-gray-700 relative">
-                  <div
-                    className={`h-9 absolute top-0 bg-gray-400`}
-                    style={{ width: `${10}%` }}
-                  ></div>
-                  <div className="absolute px-4 w-full h-full flex justify-between items-center">
-                    <p>No 100 LAR</p>
-                    <p>11.2%</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {allProposals?.map((proposal) => {
+
+              return <ProposalCard proposal={proposal} />;
+            })}
           </div>
         </section>
       </div>
