@@ -35,6 +35,8 @@ export interface Proposal {
 export async function getProposalsId() {
   await Moralis.start({ serverUrl, appId, masterKey });
 
+  console.log("Now here")
+
       const Proposals = Moralis.Object.extend("Proposals");
       const proposalsQuery = new Moralis.Query(Proposals);
       proposalsQuery.descending("uid_decimal");
@@ -49,7 +51,7 @@ export async function getProposalsId() {
           }
         }})
        
-        return proposalsId;
+        return await Promise.all(proposalsId);
 }
 const getLatestOptions = async (id: string): Promise<Array<string[]>> => {
   const AllVotes: string = Moralis.Object.extend("Votes");
@@ -131,7 +133,7 @@ export async function getProposalsData(id:string){
       duration: proposalAttribute?.duration,
       proposalStatus: proposalAttribute?.proposalStatus,
       proposalType: proposalAttribute?.proposalType,
-      latestOptions,
+      latestOptions: latestOptions || null,
       startDate,
       endDate,
       status,
@@ -139,6 +141,8 @@ export async function getProposalsData(id:string){
       title: proposalAttribute?.title,
       optionsArray
     };
+
+    // console.log("Final proposal: ", finalProposal)
 
     return finalProposal
 

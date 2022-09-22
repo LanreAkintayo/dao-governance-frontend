@@ -1,5 +1,6 @@
 import { BigNumber } from "ethers";
 import { ethers }  from "ethers";
+import moment from "moment";
 
 export const toWei =  (value: number):string => {
   return ethers.utils.parseEther(value.toString()).toString()
@@ -9,6 +10,9 @@ export const fromWei = (amount: BigNumber): string => {
   return ethers.utils.formatEther(amount)
 };
 
+export const formatTime = (value: number): string => {
+  return moment(value).format("MMMM Do YYYY, h:mm:ss a");
+};
 
 export const now =  () => {
   return new Date().getTime();
