@@ -5,63 +5,52 @@ interface VotingPower {
   [key: string]: number;
 }
 
-const getCurrentPercentage = (
-  votingPower,
-  index: string,
-  indexVotingPower: number
-) => {
+const getCurrentPercentage = (votingPower: VotingPower) => {
   const onlyValues = Object.values(votingPower);
 
-  console.log("These are the values: ", onlyValues);
+  const percentage = {};
+
   const totalSum = onlyValues.reduce((a, b) => {
     return a + b;
   }, 0);
 
-  const percentageArray = Object.values(votingPower).map((object) => {
-    return (object / totalSum) * 100;
+  Object.keys(votingPower).map((optionVote) => {
+    const vote = votingPower[optionVote];
+    const percent = (vote / totalSum) * 100;
+    percentage[optionVote] = percent;
+    // return {[optionVote]: percent}
   });
 
-  console.log(percentageArray);
-
-  return percentageArray;
+  return percentage;
 };
 
 export default function QuadraticVote({
-  votingIndex,
-  setVotingIndex,
-  //   setVotingPower,
+  votingPower,
+  setVotingPower,
   options,
 }) {
   const handleClick = {};
 
-  const [votingPower, setVotingPower] = useState({});
   const [percentages, setPercentages] = useState({});
 
   useEffect(() => {
-    console.log(votingPower);
-  }, [votingPower]);
+    const percentageArray = getCurrentPercentage(votingPower);
+        setPercentages(percentageArray);
+  }, [votingPower])
 
   const handleSubClick = (index: string) => {
     setVotingPower((prevVotingPower) => {
       const currentValue = prevVotingPower[index];
 
       if (isNaN(currentValue) || currentValue <= 0) {
-        const percentageArray = getCurrentPercentage(
-          prevVotingPower,
-          index,
-          prevVotingPower[index]
-        );
+        const percentageArray = getCurrentPercentage(prevVotingPower);
         setPercentages(percentageArray);
         return {
           ...prevVotingPower,
           [index]: 0,
         };
       } else {
-        const percentageArray = getCurrentPercentage(
-          prevVotingPower,
-          index,
-          prevVotingPower[index]
-        );
+        const percentageArray = getCurrentPercentage(prevVotingPower);
         setPercentages(percentageArray);
         return {
           ...prevVotingPower,
@@ -71,27 +60,20 @@ export default function QuadraticVote({
     });
   };
   const handleAddClick = (index) => {
+    console.log("Okayy")
     setVotingPower((prevVotingPower) => {
       const currentValue = prevVotingPower[index];
 
       if (isNaN(currentValue) || currentValue < 0) {
-        const percentageArray = getCurrentPercentage(
-          prevVotingPower,
-          index,
-          prevVotingPower[index]
-        );
-        setPercentages(percentageArray);
+        // const percentageArray = getCurrentPercentage(prevVotingPower);
+        // setPercentages(percentageArray);
         return {
           ...prevVotingPower,
-          [index]: 0,
+          [index]: 1,
         };
       } else {
-        const percentageArray = getCurrentPercentage(
-          prevVotingPower,
-          index,
-          prevVotingPower[index]
-        );
-        setPercentages(percentageArray);
+        // const percentageArray = getCurrentPercentage(prevVotingPower);
+        // setPercentages(percentageArray);
         return {
           ...prevVotingPower,
           [index]: prevVotingPower[index]++,
@@ -100,7 +82,18 @@ export default function QuadraticVote({
     });
   };
 
-  let index = 0;
+  const handleOnChange = (event, index) => {
+    setVotingPower((prevVotingPower) => {
+      const currentValue = Number(event.target.value);
+
+      const percentageArray = getCurrentPercentage(prevVotingPower);
+      setPercentages(percentageArray);
+      return {
+        ...prevVotingPower,
+        [index]: currentValue,
+      };
+    });
+  };
 
   return (
     <div className="shadow bg-white p-3 pb-5 mt-4 w-10/12">
@@ -110,14 +103,16 @@ export default function QuadraticVote({
       <div>
         <div className="w-full h-full text-center items-center">
           {options.map((option) => {
-            const percentage = percentages[index];
+            const percentage = percentages[option.optionIndex];
 
-            index++;
+            // index++;
 
             return (
               <div className="flex mt-4 w-full justify-between rounded-full border  border-gray-700 text-gray-700 items-center">
                 <div className="w-8/12">
-                  <p className="text-base text-start px-8">{option.optionText}</p>
+                  <p className="text-base text-start px-8">
+                    {option.optionText}
+                  </p>
                 </div>
                 <div className="flex w-4/12 text-xl items-center">
                   <button
@@ -128,20 +123,7 @@ export default function QuadraticVote({
                   </button>
 
                   <input
-                    onChange={(event) => {
-                      setVotingPower((prev) => {
-                        const percentageArray = getCurrentPercentage(
-                          prev,
-                          option.optionIndex,
-                          prev[index]
-                        );
-                        setPercentages(percentageArray);
-                        return {
-                          ...prev,
-                          [option.optionIndex]: Number(event.target.value),
-                        };
-                      });
-                    }}
+                    onChange={(event) => handleOnChange(event, option.optionIndex)}
                     type="text"
                     name="text"
                     placeholder="0"
@@ -156,7 +138,10 @@ export default function QuadraticVote({
                     +
                   </button>
                   <p className="text-gray-800 px-2 text-base">
-                    {(percentage == 0 || isNaN(percentage) ? "0" : toDp(percentage || 0, 1)) || 0}%
+                    {(percentage == 0 || isNaN(percentage)
+                      ? "0"
+                      : toDp(percentage || 0, 1)) || 0}
+                    %
                   </p>
                 </div>
               </div>

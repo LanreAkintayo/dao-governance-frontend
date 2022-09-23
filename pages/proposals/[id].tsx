@@ -4,7 +4,7 @@ import Header from "../../components/Header";
 import ResultSection from "../../components/ResultSection";
 import { getProposalsId, getProposalsData } from "../../lib/fetchProposals";
 import { formatTime } from "../../utils/helper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { abi, contractAddresses } from "../../constants";
 import { useChain, useMoralis, useWeb3Contract } from "react-moralis";
 import useSWR from "swr";
@@ -76,6 +76,10 @@ const Proposal: NextPage = ({ proposal }) => {
       return allVoters;
     }
   );
+
+  // useEffect(() => {
+  //   console.log("Voting Power inside id:", votingPower);
+  // }, [votingPower]);
 
   // console.log("options in id.tsx", proposalData.validOptions)
   return (
