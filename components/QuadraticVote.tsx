@@ -1,39 +1,30 @@
 import { useEffect, useState } from "react";
+import { toDp } from "../utils/helper";
 
 interface VotingPower {
   [key: string]: number;
 }
 
-const getCurrentPercentage = (votingPower, index:string, indexVotingPower:number) => {
+const getCurrentPercentage = (
+  votingPower,
+  index: string,
+  indexVotingPower: number
+) => {
+  const onlyValues = Object.values(votingPower);
 
-    console.log("We are here")
-    console.log("Voting power: ", votingPower)
-    console.log("Index: ", index)
-    console.log("Index Voting power: ", indexVotingPower)
-    
-    let totalValue = 0;
-    const votingPowerArray = Object.values(votingPower)
-    console.log("Voting Power array: ", votingPowerArray)
-    for (let i = 0; i < votingPowerArray.length; i++){
-        const present = votingPowerArray[i]
+  console.log("These are the values: ", onlyValues);
+  const totalSum = onlyValues.reduce((a, b) => {
+    return a + b;
+  }, 0);
 
-        const currentValue = present.value
-        console.log("Current value: ", currentValue) 
-        totalValue += currentValue
-    }
-    // for (let i in votingPower){
-    //     const value = votingPower
-    //     const currentValue = votingPower.i
-    //     console.log("ggggggggggggValue: ", currentValue)
+  const percentageArray = Object.values(votingPower).map((object) => {
+    return (object / totalSum) * 100;
+  });
 
-    //     if (i != index){
-    //         totalValue += value
-    //     } 
-    // }
+  console.log(percentageArray);
 
-
-    return (indexVotingPower / (totalValue + indexVotingPower)) * 100
-}
+  return percentageArray;
+};
 
 export default function QuadraticVote({
   votingIndex,
@@ -44,54 +35,72 @@ export default function QuadraticVote({
   const handleClick = {};
 
   const [votingPower, setVotingPower] = useState({});
+  const [percentages, setPercentages] = useState({});
 
   useEffect(() => {
     console.log(votingPower);
   }, [votingPower]);
 
-  const handleSubClick = (index:string) => {
+  const handleSubClick = (index: string) => {
     setVotingPower((prevVotingPower) => {
-        const currentValue = prevVotingPower[index]?.value
-        const currentPercentage = prevVotingPower[index]?.percent
-      if (isNaN(currentValue) && isNaN(currentPercentage) || currentValue <= 0 )  {
+      const currentValue = prevVotingPower[index];
+
+      if (isNaN(currentValue) || currentValue <= 0) {
+        const percentageArray = getCurrentPercentage(
+          prevVotingPower,
+          index,
+          prevVotingPower[index]
+        );
+        setPercentages(percentageArray);
         return {
           ...prevVotingPower,
-          [index]: {value: 0, percent: 0},
+          [index]: 0,
         };
       } else {
+        const percentageArray = getCurrentPercentage(
+          prevVotingPower,
+          index,
+          prevVotingPower[index]
+        );
+        setPercentages(percentageArray);
         return {
           ...prevVotingPower,
-          [index]: {
-            value: prevVotingPower[index].value--,
-            percent:getCurrentPercentage(prevVotingPower, index,  prevVotingPower[index].value )
-          }
+          [index]: prevVotingPower[index]--,
         };
       }
     });
   };
   const handleAddClick = (index) => {
     setVotingPower((prevVotingPower) => {
-    //   console.log("index: ", index);
-      const currentValue = prevVotingPower[index]?.value
-      const currentPercentage = prevVotingPower[index]?.percent
-      console.log("Current percentage: ", currentPercentage)
-      if (isNaN(currentValue) && isNaN(currentPercentage) || currentValue < 0 ) {
+      const currentValue = prevVotingPower[index];
+
+      if (isNaN(currentValue) || currentValue < 0) {
+        const percentageArray = getCurrentPercentage(
+          prevVotingPower,
+          index,
+          prevVotingPower[index]
+        );
+        setPercentages(percentageArray);
         return {
           ...prevVotingPower,
-          [index]: {value:0, percent:0},
+          [index]: 0,
         };
       } else {
-        const newValue = prevVotingPower[index].value
+        const percentageArray = getCurrentPercentage(
+          prevVotingPower,
+          index,
+          prevVotingPower[index]
+        );
+        setPercentages(percentageArray);
         return {
           ...prevVotingPower,
-          [index]: {
-            value: prevVotingPower[index].value++,
-            percent:getCurrentPercentage(prevVotingPower, index,prevVotingPower[index].value )
-          }
+          [index]: prevVotingPower[index]++,
         };
       }
     });
   };
+
+  let index = 0;
 
   return (
     <div className="shadow bg-white p-3 pb-5 mt-4 w-10/12">
@@ -101,41 +110,54 @@ export default function QuadraticVote({
       <div>
         <div className="w-full h-full text-center items-center">
           {options.map((option) => {
+            const percentage = percentages[index];
+
+            index++;
+
             return (
-              <div className="flex mt-4 justify-between rounded-full border shadow border-gray-700 text-gray-700 items-center">
-                <div>
-                  <p className="text-lg px-4">{option.optionText}</p>
+              <div className="flex mt-4 w-full justify-between rounded-full border  border-gray-700 text-gray-700 items-center">
+                <div className="w-8/12">
+                  <p className="text-base text-start px-8">{option.optionText}</p>
                 </div>
-                <div className="flex text-xl items-center">
+                <div className="flex w-4/12 text-xl items-center">
                   <button
-                    className="text-2xl border-l py-2 px-3 border-r border-gray-400"
+                    className="text-lg w-10 border-l py-2 px-3 border-r border-gray-300"
                     onClick={() => handleSubClick(option.optionIndex)}
                   >
-                    -
+                    <p className="w-full">-</p>
                   </button>
 
                   <input
                     onChange={(event) => {
                       setVotingPower((prev) => {
+                        const percentageArray = getCurrentPercentage(
+                          prev,
+                          option.optionIndex,
+                          prev[index]
+                        );
+                        setPercentages(percentageArray);
                         return {
                           ...prev,
-                          [option.optionIndex]: event.target.value,
+                          [option.optionIndex]: Number(event.target.value),
                         };
                       });
                     }}
                     type="text"
                     name="text"
-                    value={votingPower[option.optionIndex]?.value || 0}
-                    className="px-2 text-gray-800 text-lg w-14 outline-none text-center"
+                    placeholder="0"
+                    value={votingPower[option.optionIndex]}
+                    className="px-2 text-gray-800 text-base w-14 outline-none text-center"
                   />
 
                   <button
-                    className="text-2xl border-l px-3 border-r py-2 border-gray-400"
+                    className="text-lg z-50 border-l px-3 border-r py-2 border-gray-300"
                     onClick={() => handleAddClick(option.optionIndex)}
                   >
                     +
                   </button>
-                  <p className="px-3 text-gray-800 text-lg">{votingPower[option.optionIndex]?.percent || 0}%</p>
+                  <p className="text-gray-800 px-2 text-base">
+                    {(percentage == 0 || isNaN(percentage) ? "0" : toDp(percentage || 0, 1)) || 0}%
+                  </p>
                 </div>
               </div>
             );

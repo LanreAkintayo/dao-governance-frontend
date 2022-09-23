@@ -24,6 +24,10 @@ export const now =  () => {
   return new Date().getTime();
 }
 
+export const toDp = (value:number, dec:number) => {
+  return value.toFixed(dec)
+}
+
 export const toSeconds = (time:number):number => {
   return Math.floor(time / 1000)
 }
