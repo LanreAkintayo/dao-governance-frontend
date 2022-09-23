@@ -2,18 +2,24 @@ import { BigNumber } from "ethers";
 import { ethers }  from "ethers";
 import moment from "moment";
 
-export const toWei =  (value: number):string => {
+export const toWei =  (value: number | string):string => {
   return ethers.utils.parseEther(value.toString()).toString()
 };
 
-export const fromWei = (amount: BigNumber): string => {
-  return ethers.utils.formatEther(amount)
+export const fromWei = (amount: BigNumber | number | string): string => {
+  return ethers.utils.formatEther(amount.toString())
 };
 
 export const formatTime = (value: number): string => {
   return moment(value).format("MMMM Do YYYY, h:mm:ss a");
 };
 
+export const inDollarFormat = (value:number) => {
+  const dollarUSLocale = Intl.NumberFormat("en-US");
+
+  return dollarUSLocale.format(value)
+   
+}
 export const now =  () => {
   return new Date().getTime();
 }

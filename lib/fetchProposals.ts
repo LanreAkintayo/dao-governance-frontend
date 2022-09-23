@@ -28,7 +28,8 @@ export interface Proposal {
     optionText: string,
     optionVote: string,
     optionPercentage: string,
-  }[]
+  }[],
+  validOptions: string[][]
 }
 
 
@@ -139,7 +140,8 @@ export async function getProposalsData(id:string){
       status,
       timeLeft,
       title: proposalAttribute?.title,
-      optionsArray
+      optionsArray,
+      validOptions
     };
 
     // console.log("Final proposal: ", finalProposal)

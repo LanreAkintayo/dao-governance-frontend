@@ -41,6 +41,7 @@ export default function Header() {
 
   // console.log(chainIdHex)
   const chainId = parseInt(chainIdHex!);
+  // console.log(chainId)
 
   useEffect(() => {
     console.log("Collapsing: ", collapsed);
@@ -53,7 +54,7 @@ export default function Header() {
   };
 
   return (
-    <div className={`fixed z-20 bg-gray-100 ss:${chainId != 97 ? "h-30" : "h-20"} h-30 w-screen `}>
+    <div className={`fixed z-20 bg-gray-100 ss:${chainId != 80001 ? "h-30" : "h-20"} h-30 w-screen `}>
       {/* Navbar */}
 
       {!collapsed && isBreakpoint && (
@@ -119,14 +120,14 @@ export default function Header() {
               <div className="px-0">
                 <ConnectButton  />
               </div>
-              {chainId != 97 && isWeb3Enabled && (
+              {chainId != 80001 && isWeb3Enabled && (
                 <button
                   className=" ml-4 text-red-700 text-sm my-2 cursor-pointer bg-red-100 rounded-lg p-1 px-2"
                   onClick={() => {
-                    switchNetwork("0x61");
+                    switchNetwork("0x13881");
                   }}
                 >
-                  Switch to BSC Testnet
+                  Switch to Mumbai Testnet
                 </button>
               )}
             </div>

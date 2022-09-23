@@ -17,7 +17,7 @@ export default function ProposalCard({ proposal }) {
           <p className="text-sm mt-2 text-gray-500">{proposal.description}</p>
           <div className="my-4">
             {proposal?.optionsArray?.map((option) => {
-              console.log("Options: ", proposal.optionsArray);
+              // console.log("Options: ", proposal.optionsArray);
               return <Option option={option} />;
             })}
           </div>

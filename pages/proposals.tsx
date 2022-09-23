@@ -25,7 +25,8 @@ export interface Proposal {
     optionText: string,
     optionVote: string,
     optionPercentage: string,
-  }[]
+  }[],
+  validOptions:string[][]
 }
 const getTotalVotes = (options: Array<Array<string>>): number => {
   let totalVotes: number = 0;
@@ -73,7 +74,7 @@ const Proposals: NextPage = () => {
         const proposalAttribute = proposal.attributes;
 
         const latestOptions = await getLatestOptions(proposalAttribute.uid);
-        const validOptions: Array<Array<string>> =
+        const validOptions: string[][] =
           latestOptions == undefined
             ? proposalAttribute.options
             : latestOptions;
@@ -126,7 +127,8 @@ const Proposals: NextPage = () => {
           status,
           timeLeft,
           title: proposalAttribute.title,
-          optionsArray
+          optionsArray,
+          validOptions
         };
 
         return finalProposal
@@ -134,7 +136,7 @@ const Proposals: NextPage = () => {
 
       const resolved = await Promise.all(sortedProposals);
 
-      console.log(resolved);
+      // console.log(resolved);
 
       return resolved;
     }
