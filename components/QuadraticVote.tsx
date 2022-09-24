@@ -18,16 +18,21 @@ const getCurrentPercentage = (votingPower: VotingPower) => {
     const vote = votingPower[optionVote];
     const percent = (vote / totalSum) * 100;
     percentage[optionVote] = percent;
-    // return {[optionVote]: percent}
   });
 
   return percentage;
 };
 
+const sum = (votingPower:VotingPower) => {
+  const totalSum = Object.values(votingPower).reduce((a, b) => {return a + b}, 0)
+  return totalSum
+}
+
 export default function QuadraticVote({
   votingPower,
   setVotingPower,
   options,
+  handleVoteModal
 }) {
   const handleClick = {};
 
@@ -43,23 +48,21 @@ export default function QuadraticVote({
       const currentValue = prevVotingPower[index];
 
       if (isNaN(currentValue) || currentValue <= 0) {
-        const percentageArray = getCurrentPercentage(prevVotingPower);
-        setPercentages(percentageArray);
+        
         return {
           ...prevVotingPower,
           [index]: 0,
         };
       } else {
-        const percentageArray = getCurrentPercentage(prevVotingPower);
-        setPercentages(percentageArray);
+        const newVotingPower = prevVotingPower[index] - 1
         return {
           ...prevVotingPower,
-          [index]: prevVotingPower[index]--,
+          [index]: newVotingPower,
         };
       }
     });
   };
-  const handleAddClick = (index) => {
+  const handleAddClick = (index:string) => {
     console.log("Okayy")
     setVotingPower((prevVotingPower) => {
       const currentValue = prevVotingPower[index];
@@ -74,15 +77,16 @@ export default function QuadraticVote({
       } else {
         // const percentageArray = getCurrentPercentage(prevVotingPower);
         // setPercentages(percentageArray);
+        const newVotingPower = prevVotingPower[index] + 1
         return {
           ...prevVotingPower,
-          [index]: prevVotingPower[index]++,
+          [index]: newVotingPower,
         };
       }
     });
   };
 
-  const handleOnChange = (event, index) => {
+  const handleOnChange = (event, index:string) => {
     setVotingPower((prevVotingPower) => {
       const currentValue = Number(event.target.value);
 
@@ -108,7 +112,7 @@ export default function QuadraticVote({
             // index++;
 
             return (
-              <div className="flex mt-4 w-full justify-between rounded-full border  border-gray-700 text-gray-700 items-center">
+              <div className="flex mt-4 w-full justify-between rounded-full border hover:border-gray-900 border-gray-500 text-gray-700 items-center">
                 <div className="w-8/12">
                   <p className="text-base text-start px-8">
                     {option.optionText}
@@ -116,7 +120,7 @@ export default function QuadraticVote({
                 </div>
                 <div className="flex w-4/12 text-xl items-center">
                   <button
-                    className="text-lg w-10 border-l py-2 px-3 border-r border-gray-300"
+                    className="text-lg w-10 outline-none border-l py-2 px-3 border-r border-gray-300"
                     onClick={() => handleSubClick(option.optionIndex)}
                   >
                     <p className="w-full">-</p>
@@ -132,7 +136,7 @@ export default function QuadraticVote({
                   />
 
                   <button
-                    className="text-lg z-50 border-l px-3 border-r py-2 border-gray-300"
+                    className="text-lg z-50 border-l outline-none px-3 border-r py-2 border-gray-300"
                     onClick={() => handleAddClick(option.optionIndex)}
                   >
                     +
@@ -148,9 +152,11 @@ export default function QuadraticVote({
             );
           })}
 
-          <p className="mt-2 rounded-md p-2 bg-blue-800 text-white text-xl">
+          <button  disabled={sum(votingPower) <= 0} className="mt-2 rounded-full p-2  w-full disabled:opacity-50 disabled:cursor-not-allowed bg-blue-800 text-white text-xl">
             Vote
-          </p>
+          </button>
+
+          <p className="text-red-800 text-xs text-start mt-2">5,400 LAR voting power is needed to cast this vote.</p>
         </div>
       </div>
     </div>

@@ -13,6 +13,7 @@ import Link from "next/link";
 import QuadraticVote from "../../components/QuadraticVote";
 import SingleChoiceVote from "../../components/SingleChoiceVote";
 import WeightedVote from "../../components/WeightedVote";
+import VoteModal from "../../components/VoteModal";
 
 const Proposal: NextPage = ({ proposal }) => {
   // console.log("Proposal: ", proposal)
@@ -44,8 +45,9 @@ const Proposal: NextPage = ({ proposal }) => {
       ? contractAddresses[chainId][length - 1]
       : null;
 
-  const [votingIndex, setVotingIndex] = useState([])
-  const [votingPower, setVotingPower] = useState([])
+  const [votingIndex, setVotingIndex] = useState([]);
+  const [votingPower, setVotingPower] = useState([]);
+  const [voteModalOpen, setVoteModalOpen] = useState(false);
 
   const {
     runContractFunction: getVoters,
@@ -59,6 +61,14 @@ const Proposal: NextPage = ({ proposal }) => {
       id: proposalData.id,
     },
   });
+
+  const handleVote = () => {
+    console.log("About to handle vote: ", votingPower);
+  };
+
+  const handleVoteModal = () => {
+    setVoteModalOpen(prev => !prev)
+  }
 
   const {
     data: allVoters,
@@ -76,10 +86,6 @@ const Proposal: NextPage = ({ proposal }) => {
       return allVoters;
     }
   );
-
-  // useEffect(() => {
-  //   console.log("Voting Power inside id:", votingPower);
-  // }, [votingPower]);
 
   // console.log("options in id.tsx", proposalData.validOptions)
   return (
@@ -99,11 +105,20 @@ const Proposal: NextPage = ({ proposal }) => {
               <h1 className="text-lg text-gray-700">Description</h1>
               <p className="text-gray-700">{proposalData.description}</p>
             </div>
-            
+
             {proposalData.proposalType == "0" && <SingleChoiceVote />}
             {proposalData.proposalType == "1" && <WeightedVote />}
-            {proposalData.proposalType == "2" && <QuadraticVote setVotingIndex={setVotingIndex} votingIndex={votingIndex} votingPower={votingPower} setVotingPower={setVotingPower} options={proposalData.optionsArray}/>}
-            
+            {proposalData.proposalType == "2" && (
+              <QuadraticVote
+                setVotingIndex={setVotingIndex}
+                votingIndex={votingIndex}
+                votingPower={votingPower}
+                setVotingPower={setVotingPower}
+                options={proposalData.optionsArray}
+                handleVoteModal={handleVoteModal}
+              />
+            )}
+
             {allVoters && (
               <VotersTable
                 allVoters={allVoters}
@@ -133,6 +148,10 @@ const Proposal: NextPage = ({ proposal }) => {
             <ResultSection options={proposalData.optionsArray} />
           </div>
         </div>
+      </div>
+
+      <div className="flex justify-center text-center sm:block sm:p-0 mt-2 scrollbar-hide">
+        {voteModalOpen && <VoteModal handleVoteModal={handleVoteModal}/>}
       </div>
       <Footer />
     </div>
