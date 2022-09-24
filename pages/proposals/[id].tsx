@@ -20,7 +20,7 @@ import { ethers } from "ethers";
 import VotingPower from "../../components/VotingPower";
 
 const Proposal: NextPage = ({ proposal }) => {
-  // console.log("Proposal: ", proposal)
+  console.log("All voters: ", proposal.allVoters)
   interface VotingSystem {
     [key: string]: string;
   }
@@ -44,12 +44,14 @@ const Proposal: NextPage = ({ proposal }) => {
   const { isWeb3Enabled, chainId: chainIdHex, enableWeb3 } = useMoralis();
   const { switchNetwork, chain, account } = useChain();
 
+  // console.log("Chain: ", chain)
+
   const chainId: number = parseInt(chainIdHex?.toString());
 
   const length = contractAddresses[chainId]?.length;
 
-  console.log("Contract Addresses: ", contractAddresses);
-  console.log("chainId: ", chainId);
+  // console.log("Contract Addresses: ", contractAddresses);
+  // console.log("chainId: ", chainId);
   const daoAddress =
     chainId in contractAddresses
       ? contractAddresses[chainId][length - 1]
@@ -59,7 +61,7 @@ const Proposal: NextPage = ({ proposal }) => {
   const [votingPower, setVotingPower] = useState([]);
   const [voteModalOpen, setVoteModalOpen] = useState(false);
 
-  console.log("Dao address: ", daoAddress);
+  // console.log("Dao address: ", daoAddress);
   const {
     runContractFunction: getVoters,
     isFetching: isFetchingVoters,
@@ -73,6 +75,8 @@ const Proposal: NextPage = ({ proposal }) => {
     },
   });
 
+  console.log("proposalData.allVoters", proposalData.allVoters)
+
   const {
     runContractFunction: voteProposalByQuadratic,
     isFetching: isFetchingQ,
@@ -84,8 +88,7 @@ const Proposal: NextPage = ({ proposal }) => {
 
     const provider = await enableWeb3();
 
-    // const daoContract = new ethers.Contract(daoAddress, abi, provider);
-
+    console.log("Can it be this? ");
     const lar = new ethers.Contract(larAddress, erc20Abi, provider);
 
     const signer = provider?.getSigner(account);
@@ -108,46 +111,64 @@ const Proposal: NextPage = ({ proposal }) => {
     );
     await trackPromise(approveTx.wait(1));
 
-    voteProposalByQuadratic({
-      params: {
-        abi: abi,
-        contractAddress: daoAddress,
-        functionName: "voteProposalByQuadratic",
+    if (proposalData.proposalType == "1") {
+      voteProposalByQuadratic({
         params: {
-          id,
-          indexes,
-          votingPower: votingPowers,
+          abi: abi,
+          contractAddress: daoAddress,
+          functionName: "voteProposalByWeighing",
+          params: {
+            id,
+            indexes,
+            votingPower: votingPowers,
+          },
         },
-      },
-      onSuccess: handleSuccess,
-      onError: (error) => {
-        handleFailure(error);
-      },
-    });
+        onSuccess: handleSuccess,
+        onError: (error) => {
+          handleFailure(error);
+        },
+      });
+    } else if (proposalData.proposalType == "2") {
+      voteProposalByQuadratic({
+        params: {
+          abi: abi,
+          contractAddress: daoAddress,
+          functionName: "voteProposalByQuadratic",
+          params: {
+            id,
+            indexes,
+            votingPower: votingPowers,
+          },
+        },
+        onSuccess: handleSuccess,
+        onError: (error) => {
+          handleFailure(error);
+        },
+      });
+    }
   };
 
   const handleVoteModal = () => {
     setVoteModalOpen((prev) => !prev);
   };
 
-  const {
-    data: allVoters,
-    error,
-    mutate,
-  } = useSWR(
-    () => (isWeb3Enabled ? "web3/allVoters" : null),
-    async () => {
-      if (daoAddress) {
-        const allVoters = await getVoters({
-          onSuccess: (tx) => console.log("all Project", tx),
-          onError: (error) => console.log(error),
-        });
-        // console.log("All voters: ", allVoters);
+  // const {
+  //   data: allVoters,
+  //   error,
+  //   mutate,
+  // } = useSWR(
+  //   () => (isWeb3Enabled ? "web3/allVoters" : null),
+  //   async () => {
+  //     const provider = await enableWeb3();
 
-        return allVoters;
-      }
-    }
-  );
+  //     if (provider && daoAddress) {
+  //       const daoContract = new ethers.Contract(daoAddress, abi, provider);
+  //       const allVoters: string = await daoContract.getVoters(proposalData.id);
+
+  //       return allVoters;
+  //     }
+  //   }
+  // );
 
   const handleSuccess = async (tx) => {
     console.log("Success transaction: ", tx);
@@ -170,6 +191,8 @@ const Proposal: NextPage = ({ proposal }) => {
       position: "topR",
     });
   };
+
+  // console.log("Voters: :", allVoters)
 
   // console.log("options in id.tsx", proposalData.validOptions)
   return (
@@ -194,23 +217,34 @@ const Proposal: NextPage = ({ proposal }) => {
             </div>
 
             {proposalData.proposalType == "0" && <SingleChoiceVote />}
-            {proposalData.proposalType == "1" && <WeightedVote />}
-            {proposalData.proposalType == "2" && (
-              <QuadraticVote
-                setVotingIndex={setVotingIndex}
-                votingIndex={votingIndex}
-                votingPower={votingPower}
-                setVotingPower={setVotingPower}
-                options={proposalData.optionsArray}
-                handleVote={handleVote}
-                isFetching={isFetchingQ}
-                isLoading={isLoadingQ}
-              />
-            )}
+            {proposalData.proposalType == "2"  && (
+                <QuadraticVote
+                  setVotingIndex={setVotingIndex}
+                  votingIndex={votingIndex}
+                  votingPower={votingPower}
+                  setVotingPower={setVotingPower}
+                  options={proposalData.optionsArray}
+                  handleVote={handleVote}
+                  isFetching={isFetchingQ}
+                  isLoading={isLoadingQ}
+                />
+              )}
+            {proposalData.proposalType == "1"  && (
+                <QuadraticVote
+                  setVotingIndex={setVotingIndex}
+                  votingIndex={votingIndex}
+                  votingPower={votingPower}
+                  setVotingPower={setVotingPower}
+                  options={proposalData.optionsArray}
+                  handleVote={handleVote}
+                  isFetching={isFetchingQ}
+                  isLoading={isLoadingQ}
+                />
+              )}
 
-            {allVoters && (
+            {proposalData.allVoters && (
               <VotersTable
-                allVoters={allVoters}
+                allVoters={proposalData.allVoters}
                 options={proposalData.validOptions}
               />
             )}

@@ -82,7 +82,7 @@ const Proposals: NextPage = () => {
         const totalVotes = getTotalVotes(validOptions);
 
         const optionsArray = validOptions.map((option) => {
-          console.log("Option 2: ", option[2]);
+          // console.log("Option 2: ", option[2]);
           const percentage =
             totalVotes != 0 ? ((Number(option[2]) / totalVotes) * 100).toFixed(1) : 0;
 

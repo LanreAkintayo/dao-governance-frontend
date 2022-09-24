@@ -1,5 +1,5 @@
 import Moralis from "moralis/node"
-import { contractAddresses } from "../constants";
+import { abi, contractAddresses } from "../constants";
 import { now, toMilliseconds } from "../utils/helper";
 
 
@@ -29,7 +29,8 @@ export interface Proposal {
     optionVote: string,
     optionPercentage: string,
   }[],
-  validOptions: string[][]
+  validOptions: string[][],
+  allVoters:any[][]
 }
 
 
@@ -91,6 +92,19 @@ export async function getProposalsData(id:string){
       latestOptions == undefined
         ? proposalAttribute?.options
         : latestOptions;
+    
+     
+
+      const options = {
+        chain: '0x13881',
+        address: contractAddress,
+        function_name: "getVoters",
+        abi: abi,
+        params: { id },
+      };
+      const allVoters = await Moralis.Web3API.native.runContractFunction(options);
+
+      console.log("These are all voters: ", allVoters)
 
     const totalVotes = getTotalVotes(validOptions);
 
@@ -141,7 +155,8 @@ export async function getProposalsData(id:string){
       timeLeft,
       title: proposalAttribute?.title,
       optionsArray,
-      validOptions
+      validOptions,
+      allVoters
     };
 
     // console.log("Final proposal: ", finalProposal)

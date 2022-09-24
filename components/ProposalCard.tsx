@@ -6,7 +6,7 @@ export default function ProposalCard({ proposal }) {
   return (
     <Link href={`/proposals/${proposal.id}`}>
       <a>
-        <div className="rounded-md shadow bg-white w-full mt-5 p-3 px-11">
+        <div className="rounded-md shadow bg-white hover:border hover:border-gray-400 focus:bg-blue-700 w-full mt-5 p-3 px-11">
           <div className="flex w-full justify-between items-center">
             <p>Account: </p>
             <p className="rounded-md text-red-700 p-1 bg-red-200">

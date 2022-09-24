@@ -136,9 +136,10 @@ export default function Header() {
                 className="w-8 h-8 mr-11 text-black hover:text-orange-500 cursor-pointer"
                 onClick={handleSidebar}
               >
+                
                 <img
                   alt="..."
-                  src="./menubar.png"
+                  src="/menubar.svg"
                   className="object-cover w-full h-full cursor-pointer hover:text-orange-500"
                 />
               </div>

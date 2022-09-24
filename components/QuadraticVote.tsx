@@ -5,10 +5,17 @@ import { ClipLoader } from "react-spinners";
 import { useMoralis } from "react-moralis";
 import { erc20Abi, larAddress } from "../constants";
 import { ethers } from "ethers";
-import BigNumber from "bignumber.js"
+import BigNumber from "bignumber.js";
 
 interface VotingPower {
   [key: string]: number;
+}
+
+interface Option {
+  optionIndex: string[];
+  optionText: string[];
+  optionVote: string;
+  optionPercentage: string;
 }
 
 const getCurrentPercentage = (votingPower: VotingPower) => {
@@ -52,28 +59,23 @@ export default function QuadraticVote({
   const [isValidVotingPower, setIsValidVotingPower] = useState(true);
 
   const checkValidity = async (votingPower: VotingPower) => {
-    console.log("Testing big numbers: ", BigNumber(4398437843894839743).plus(434384389748937489374897))
     const provider = await enableWeb3();
 
-    console.log("larAddress: ", larAddress);
-    const lar = new ethers.Contract(larAddress, erc20Abi, provider);
+    if (provider) {
+      const lar = new ethers.Contract(larAddress, erc20Abi, provider);
+      if (votingPower) {
+        const summation = toWei(
+          Object.values(votingPower).reduce((a, b) => {
+            return a + b;
+          }, 0)
+        );
+        const votingPowerBalance: string = await lar.balanceOf(account);
 
-    if (votingPower) {
-      const summation = toWei(
-        Object.values(votingPower).reduce((a, b) => {
-          // const bigInteger = BigInt(parseInt(a.toString())) + BigInt(parseInt(b.toString()))
-          // console.log("bigInteger: ", bigInteger)
-          return a + b;
-        }, 0)
-      );
-      const votingPowerBalance: string = await lar.balanceOf(account);
-
-      console.log("LAR Balance: ", fromWei(votingPowerBalance));
-
-      if (Number(summation) > Number(votingPowerBalance)) {
-        setIsValidVotingPower(false);
-      } else {
-        setIsValidVotingPower(true);
+        if (Number(summation) > Number(votingPowerBalance)) {
+          setIsValidVotingPower(false);
+        } else {
+          setIsValidVotingPower(true);
+        }
       }
     }
   };
@@ -88,7 +90,7 @@ export default function QuadraticVote({
   }, [isValidVotingPower]);
 
   const handleSubClick = (index: string) => {
-    setVotingPower((prevVotingPower) => {
+    setVotingPower((prevVotingPower: VotingPower) => {
       const currentValue = prevVotingPower[index];
 
       if (isNaN(currentValue) || currentValue <= 0) {
@@ -106,19 +108,15 @@ export default function QuadraticVote({
     });
   };
   const handleAddClick = (index: string) => {
-    setVotingPower((prevVotingPower) => {
+    setVotingPower((prevVotingPower: VotingPower) => {
       const currentValue = prevVotingPower[index];
 
       if (isNaN(currentValue) || currentValue < 0) {
-        // const percentageArray = getCurrentPercentage(prevVotingPower);
-        // setPercentages(percentageArray);
         return {
           ...prevVotingPower,
           [index]: 1,
         };
       } else {
-        // const percentageArray = getCurrentPercentage(prevVotingPower);
-        // setPercentages(percentageArray);
         const newVotingPower = prevVotingPower[index] + 1;
         return {
           ...prevVotingPower,
@@ -128,9 +126,12 @@ export default function QuadraticVote({
     });
   };
 
-  const handleOnChange = (event, index: string) => {
-    setVotingPower((prevVotingPower) => {
-      const currentValue = Number(event.target.value);
+  const handleOnChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: string
+  ) => {
+    setVotingPower((prevVotingPower: VotingPower) => {
+      const currentValue = Number(event.currentTarget.value);
 
       const percentageArray = getCurrentPercentage(prevVotingPower);
       setPercentages(percentageArray);
@@ -149,6 +150,7 @@ export default function QuadraticVote({
       <div>
         <div className="w-full h-full text-center items-center">
           {options.map((option) => {
+            // console.log("Option: ", option)
             const percentage = percentages[option.optionIndex];
 
             // index++;
@@ -225,7 +227,7 @@ export default function QuadraticVote({
 
           {!isValidVotingPower && (
             <p className="text-red-800 text-xs text-start mt-2">
-              Insufficient Voting Power 
+              Insufficient Voting Power
             </p>
           )}
         </div>
