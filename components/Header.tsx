@@ -87,7 +87,7 @@ export default function Header() {
       )}
 
       <nav className="flex items-center flex-col ss:flex-row w-full justify-between px-2 py-2 sm:px-4 sm:py-4 h-full text-black ">
-        <p className="font-logo text-xl sm:text-3xl self-start ss:self-auto">
+        <p className="font-logo text-xl hidden sm:block sm:text-3xl self-start ss:self-auto">
           <span className="text-orange-700">{"<"}L</span>arry
           <span className="text-orange-700">C</span>odes
           <span className="text-orange-700">{"/>"}</span>
@@ -114,9 +114,9 @@ export default function Header() {
                 </Link>
               </>
             )}
-
+          
             <div className="text-white flex flex-col w-full sc:py-10 items-start">
-              {/* <Button type="button" text="Connect Wallet" /> */}
+             
               <div className="px-0">
                 <ConnectButton  />
               </div>

@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { toDp } from "../utils/helper";
+import { fromWei, toDp, toWei } from "../utils/helper";
+import { usePromiseTracker } from "react-promise-tracker";
+import { ClipLoader } from "react-spinners";
+import { useMoralis } from "react-moralis";
+import { erc20Abi, larAddress } from "../constants";
+import { ethers } from "ethers";
+import BigNumber from "bignumber.js"
 
 interface VotingPower {
   [key: string]: number;
@@ -23,38 +29,75 @@ const getCurrentPercentage = (votingPower: VotingPower) => {
   return percentage;
 };
 
-const sum = (votingPower:VotingPower) => {
-  const totalSum = Object.values(votingPower).reduce((a, b) => {return a + b}, 0)
-  return totalSum
-}
+const sum = (votingPower: VotingPower) => {
+  const totalSum = Object.values(votingPower).reduce((a, b) => {
+    return a + b;
+  }, 0);
+  return totalSum;
+};
 
 export default function QuadraticVote({
   votingPower,
   setVotingPower,
   options,
-  handleVoteModal
+  handleVote,
+  isFetching,
+  isLoading,
 }) {
-  const handleClick = {};
+  const { account, enableWeb3 } = useMoralis();
+
+  const { promiseInProgress } = usePromiseTracker();
 
   const [percentages, setPercentages] = useState({});
+  const [isValidVotingPower, setIsValidVotingPower] = useState(true);
 
+  const checkValidity = async (votingPower: VotingPower) => {
+    console.log("Testing big numbers: ", BigNumber(4398437843894839743).plus(434384389748937489374897))
+    const provider = await enableWeb3();
+
+    console.log("larAddress: ", larAddress);
+    const lar = new ethers.Contract(larAddress, erc20Abi, provider);
+
+    if (votingPower) {
+      const summation = toWei(
+        Object.values(votingPower).reduce((a, b) => {
+          // const bigInteger = BigInt(parseInt(a.toString())) + BigInt(parseInt(b.toString()))
+          // console.log("bigInteger: ", bigInteger)
+          return a + b;
+        }, 0)
+      );
+      const votingPowerBalance: string = await lar.balanceOf(account);
+
+      console.log("LAR Balance: ", fromWei(votingPowerBalance));
+
+      if (Number(summation) > Number(votingPowerBalance)) {
+        setIsValidVotingPower(false);
+      } else {
+        setIsValidVotingPower(true);
+      }
+    }
+  };
   useEffect(() => {
     const percentageArray = getCurrentPercentage(votingPower);
-        setPercentages(percentageArray);
-  }, [votingPower])
+    setPercentages(percentageArray);
+    checkValidity(votingPower);
+  }, [votingPower]);
+
+  useEffect(() => {
+    console.log("Valid? ", isValidVotingPower);
+  }, [isValidVotingPower]);
 
   const handleSubClick = (index: string) => {
     setVotingPower((prevVotingPower) => {
       const currentValue = prevVotingPower[index];
 
       if (isNaN(currentValue) || currentValue <= 0) {
-        
         return {
           ...prevVotingPower,
           [index]: 0,
         };
       } else {
-        const newVotingPower = prevVotingPower[index] - 1
+        const newVotingPower = prevVotingPower[index] - 1;
         return {
           ...prevVotingPower,
           [index]: newVotingPower,
@@ -62,8 +105,7 @@ export default function QuadraticVote({
       }
     });
   };
-  const handleAddClick = (index:string) => {
-    console.log("Okayy")
+  const handleAddClick = (index: string) => {
     setVotingPower((prevVotingPower) => {
       const currentValue = prevVotingPower[index];
 
@@ -77,7 +119,7 @@ export default function QuadraticVote({
       } else {
         // const percentageArray = getCurrentPercentage(prevVotingPower);
         // setPercentages(percentageArray);
-        const newVotingPower = prevVotingPower[index] + 1
+        const newVotingPower = prevVotingPower[index] + 1;
         return {
           ...prevVotingPower,
           [index]: newVotingPower,
@@ -86,7 +128,7 @@ export default function QuadraticVote({
     });
   };
 
-  const handleOnChange = (event, index:string) => {
+  const handleOnChange = (event, index: string) => {
     setVotingPower((prevVotingPower) => {
       const currentValue = Number(event.target.value);
 
@@ -127,7 +169,9 @@ export default function QuadraticVote({
                   </button>
 
                   <input
-                    onChange={(event) => handleOnChange(event, option.optionIndex)}
+                    onChange={(event) =>
+                      handleOnChange(event, option.optionIndex)
+                    }
                     type="text"
                     name="text"
                     placeholder="0"
@@ -152,11 +196,38 @@ export default function QuadraticVote({
             );
           })}
 
-          <button  disabled={sum(votingPower) <= 0} className="mt-2 rounded-full p-2  w-full disabled:opacity-50 disabled:cursor-not-allowed bg-blue-800 text-white text-xl">
-            Vote
+          <button
+            onClick={handleVote}
+            disabled={
+              sum(votingPower) <= 0 ||
+              isFetching ||
+              isLoading ||
+              !isValidVotingPower ||
+              promiseInProgress
+            }
+            className="mt-2 p-2  w-full disabled:opacity-50 disabled:cursor-not-allowed text-white text-xl"
+          >
+            {isFetching || isLoading || promiseInProgress ? (
+              <div className="flex flex-col w-full justify-between bg-blue-800 rounded-full px-3 py-3 items-center">
+                <div className="flex">
+                  <ClipLoader color="#fff" loading={true} size={30} />
+                  <p className="ml-2">
+                    {promiseInProgress ? "Wait a few Seconds" : "Voting"}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="flex w-full bg-blue-800 rounded-full items-center px-3 py-3">
+                <p className="w-full">Vote</p>
+              </div>
+            )}
           </button>
 
-          <p className="text-red-800 text-xs text-start mt-2">5,400 LAR voting power is needed to cast this vote.</p>
+          {!isValidVotingPower && (
+            <p className="text-red-800 text-xs text-start mt-2">
+              Insufficient Voting Power 
+            </p>
+          )}
         </div>
       </div>
     </div>

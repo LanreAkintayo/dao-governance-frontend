@@ -2,6 +2,14 @@ import { BigNumber } from "ethers";
 import { ethers }  from "ethers";
 import moment from "moment";
 
+export const getContract = async (contractAddress:string, abi, provider) => {
+  const contract = new ethers.Contract(
+    contractAddress,
+    abi,
+    provider
+  );
+  return contract
+}
 export const toWei =  (value: number | string):string => {
   return ethers.utils.parseEther(value.toString()).toString()
 };

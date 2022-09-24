@@ -3,9 +3,9 @@ import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import ResultSection from "../../components/ResultSection";
 import { getProposalsId, getProposalsData } from "../../lib/fetchProposals";
-import { formatTime } from "../../utils/helper";
+import { formatTime, toWei } from "../../utils/helper";
 import { useEffect, useState } from "react";
-import { abi, contractAddresses } from "../../constants";
+import { abi, contractAddresses, erc20Abi, larAddress } from "../../constants";
 import { useChain, useMoralis, useWeb3Contract } from "react-moralis";
 import useSWR from "swr";
 import VotersTable from "../../components/VotersTable";
@@ -14,6 +14,10 @@ import QuadraticVote from "../../components/QuadraticVote";
 import SingleChoiceVote from "../../components/SingleChoiceVote";
 import WeightedVote from "../../components/WeightedVote";
 import VoteModal from "../../components/VoteModal";
+import { trackPromise, usePromiseTracker } from "react-promise-tracker";
+import { useNotification } from "web3uikit";
+import { ethers } from "ethers";
+import VotingPower from "../../components/VotingPower";
 
 const Proposal: NextPage = ({ proposal }) => {
   // console.log("Proposal: ", proposal)
@@ -25,6 +29,9 @@ const Proposal: NextPage = ({ proposal }) => {
     1: "Weighted Voting",
     2: "Quadratic Voting",
   };
+
+  const { promiseInProgress } = usePromiseTracker();
+  const dispatch = useNotification();
 
   const proposalsType: string = proposal.proposalType;
   const proposalVotingSystem: string = votingSystem[proposalsType];
@@ -40,6 +47,9 @@ const Proposal: NextPage = ({ proposal }) => {
   const chainId: number = parseInt(chainIdHex?.toString());
 
   const length = contractAddresses[chainId]?.length;
+
+  console.log("Contract Addresses: ", contractAddresses);
+  console.log("chainId: ", chainId);
   const daoAddress =
     chainId in contractAddresses
       ? contractAddresses[chainId][length - 1]
@@ -49,6 +59,7 @@ const Proposal: NextPage = ({ proposal }) => {
   const [votingPower, setVotingPower] = useState([]);
   const [voteModalOpen, setVoteModalOpen] = useState(false);
 
+  console.log("Dao address: ", daoAddress);
   const {
     runContractFunction: getVoters,
     isFetching: isFetchingVoters,
@@ -62,13 +73,62 @@ const Proposal: NextPage = ({ proposal }) => {
     },
   });
 
-  const handleVote = () => {
+  const {
+    runContractFunction: voteProposalByQuadratic,
+    isFetching: isFetchingQ,
+    isLoading: isLoadingQ,
+  } = useWeb3Contract();
+
+  const handleVote = async () => {
     console.log("About to handle vote: ", votingPower);
+
+    const provider = await enableWeb3();
+
+    // const daoContract = new ethers.Contract(daoAddress, abi, provider);
+
+    const lar = new ethers.Contract(larAddress, erc20Abi, provider);
+
+    const signer = provider?.getSigner(account);
+
+    const id = proposalData.id;
+    const indexes = Object.keys(votingPower).filter(
+      (key) => votingPower[key] > 0
+    );
+    const votingPowers = Object.values(votingPower)
+      .map((votingPower) => toWei(votingPower))
+      .filter((votingPower) => Number(votingPower) > 0);
+    const votingPowerSum: string = votingPowers
+      .reduce((a, b) => {
+        return BigInt(a) + BigInt(b);
+      }, 0)
+      .toString();
+
+    const approveTx = await trackPromise(
+      lar.connect(signer).approve(daoAddress, votingPowerSum)
+    );
+    await trackPromise(approveTx.wait(1));
+
+    voteProposalByQuadratic({
+      params: {
+        abi: abi,
+        contractAddress: daoAddress,
+        functionName: "voteProposalByQuadratic",
+        params: {
+          id,
+          indexes,
+          votingPower: votingPowers,
+        },
+      },
+      onSuccess: handleSuccess,
+      onError: (error) => {
+        handleFailure(error);
+      },
+    });
   };
 
   const handleVoteModal = () => {
-    setVoteModalOpen(prev => !prev)
-  }
+    setVoteModalOpen((prev) => !prev);
+  };
 
   const {
     data: allVoters,
@@ -77,32 +137,59 @@ const Proposal: NextPage = ({ proposal }) => {
   } = useSWR(
     () => (isWeb3Enabled ? "web3/allVoters" : null),
     async () => {
-      const allVoters = await getVoters({
-        onSuccess: (tx) => console.log("all Project", tx),
-        onError: (error) => console.log(error),
-      });
-      // console.log("All voters: ", allVoters);
+      if (daoAddress) {
+        const allVoters = await getVoters({
+          onSuccess: (tx) => console.log("all Project", tx),
+          onError: (error) => console.log(error),
+        });
+        // console.log("All voters: ", allVoters);
 
-      return allVoters;
+        return allVoters;
+      }
     }
   );
+
+  const handleSuccess = async (tx) => {
+    console.log("Success transaction: ", tx);
+    await trackPromise(tx.wait(1));
+    // updateUIValues()
+    dispatch({
+      type: "success",
+      message: "Transaction Completed!",
+      title: "Transaction Notification",
+      position: "topR",
+    });
+  };
+
+  const handleFailure = async (error) => {
+    console.log("Error: ", error);
+    dispatch({
+      type: "error",
+      message: "Transation Failed",
+      title: "Transaction Notification",
+      position: "topR",
+    });
+  };
 
   // console.log("options in id.tsx", proposalData.validOptions)
   return (
     <div className="flex flex-col justify-between bg-gray-50 h-full">
       <div>
         <Header />
-        <Link href="/proposals">
-          <button className="hover:text-gray-800 mt-24 mx-8 mb-6 text-gray-400">
-            ← Back
-          </button>
-        </Link>
+        <div className="flex justify-between items-center px-4">
+          <Link href="/proposals">
+            <button className="hover:text-gray-800 mt-24 mx-8 mb-6 text-gray-400">
+              ← Back
+            </button>
+          </Link>
+          <VotingPower className="mt-24 mx-8 mb-4 border px-4" />
+        </div>
 
         <div className="flex mx-4">
           <div className="w-8/12 p-2 pl-4 pr-11 ">
             <h1 className="text-2xl">{proposalData.title}</h1>
             <div className="mt-4 ">
-              <h1 className="text-lg text-gray-700">Description</h1>
+              <h1 className="text-lg py-2 text-gray-700">Description</h1>
               <p className="text-gray-700">{proposalData.description}</p>
             </div>
 
@@ -115,7 +202,9 @@ const Proposal: NextPage = ({ proposal }) => {
                 votingPower={votingPower}
                 setVotingPower={setVotingPower}
                 options={proposalData.optionsArray}
-                handleVoteModal={handleVoteModal}
+                handleVote={handleVote}
+                isFetching={isFetchingQ}
+                isLoading={isLoadingQ}
               />
             )}
 
@@ -151,7 +240,7 @@ const Proposal: NextPage = ({ proposal }) => {
       </div>
 
       <div className="flex justify-center text-center sm:block sm:p-0 mt-2 scrollbar-hide">
-        {voteModalOpen && <VoteModal handleVoteModal={handleVoteModal}/>}
+        {voteModalOpen && <VoteModal handleVoteModal={handleVoteModal} />}
       </div>
       <Footer />
     </div>
