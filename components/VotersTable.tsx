@@ -1,7 +1,7 @@
 import { fromWei, inDollarFormat } from "../utils/helper";
 
 export default function VotersTable({ allVoters, options }) {
-    console.log("inside voters table: ", allVoters.length)
+    // console.log("inside voters table: ", allVoters.length)
   
   return (
     <table className="mt-10 w-10/12 self-center table-fixed rounded-lg shadow text-sm text-left ">
@@ -16,7 +16,7 @@ export default function VotersTable({ allVoters, options }) {
       {allVoters.length > 0 ? (
         <tbody className="">
           {allVoters.map((voter) => {
-            console.log("A voter: ", voter)
+            // console.log("A voter: ", voter)
             const optionIndexes: number[] = voter[1];
             const optionVotes: number[] = voter[2];
             const voterAddress: string = voter[0];

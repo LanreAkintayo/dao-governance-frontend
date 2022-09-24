@@ -14,6 +14,23 @@ export const toWei =  (value: number | string):string => {
   return ethers.utils.parseEther(value.toString()).toString()
 };
 
+export const allValid = (data:{[key:string]: any}) => {
+  if (Object.keys(data).length == 0){
+    return false;
+  }
+  if ([null, undefined, {}].includes(data)) {
+    return false;
+  }
+
+  return Object.values(data).every((item) => {
+    if ([null, undefined, {}].includes(item)) {
+      return false;
+    } else {
+      return true;
+    }
+  });
+};
+
 export const fromWei = (amount: BigNumber | number | string): string => {
   return ethers.utils.formatEther(amount.toString())
 };

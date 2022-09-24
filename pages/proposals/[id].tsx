@@ -3,11 +3,11 @@ import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import ResultSection from "../../components/ResultSection";
 import { getProposalsId, getProposalsData } from "../../lib/fetchProposals";
-import { formatTime, toWei } from "../../utils/helper";
+import { formatTime, now, toMilliseconds, toWei } from "../../utils/helper";
 import { useEffect, useState } from "react";
 import { abi, contractAddresses, erc20Abi, larAddress } from "../../constants";
 import { useChain, useMoralis, useWeb3Contract } from "react-moralis";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import VotersTable from "../../components/VotersTable";
 import Link from "next/link";
 import QuadraticVote from "../../components/QuadraticVote";
@@ -18,9 +18,10 @@ import { trackPromise, usePromiseTracker } from "react-promise-tracker";
 import { useNotification } from "web3uikit";
 import { ethers } from "ethers";
 import VotingPower from "../../components/VotingPower";
+import { optionCSS } from "react-select/dist/declarations/src/components/Option";
 
 const Proposal: NextPage = ({ proposal }) => {
-  console.log("All voters: ", proposal.allVoters)
+  // console.log("All voters: ", proposal.allVoters);
   interface VotingSystem {
     [key: string]: string;
   }
@@ -32,6 +33,7 @@ const Proposal: NextPage = ({ proposal }) => {
 
   const { promiseInProgress } = usePromiseTracker();
   const dispatch = useNotification();
+  const {mutate}  = useSWRConfig()
 
   const proposalsType: string = proposal.proposalType;
   const proposalVotingSystem: string = votingSystem[proposalsType];
@@ -41,7 +43,12 @@ const Proposal: NextPage = ({ proposal }) => {
     ...proposal,
   });
 
-  const { isWeb3Enabled, chainId: chainIdHex, enableWeb3 } = useMoralis();
+  const {
+    isWeb3Enabled,
+    chainId: chainIdHex,
+    enableWeb3,
+    Moralis,
+  } = useMoralis();
   const { switchNetwork, chain, account } = useChain();
 
   // console.log("Chain: ", chain)
@@ -60,6 +67,7 @@ const Proposal: NextPage = ({ proposal }) => {
   const [votingIndex, setVotingIndex] = useState([]);
   const [votingPower, setVotingPower] = useState([]);
   const [voteModalOpen, setVoteModalOpen] = useState(false);
+  const [indexToVotingPower, setIndexToVotingPower] = useState({});
 
   // console.log("Dao address: ", daoAddress);
   const {
@@ -75,12 +83,18 @@ const Proposal: NextPage = ({ proposal }) => {
     },
   });
 
-  console.log("proposalData.allVoters", proposalData.allVoters)
+  // console.log("proposalData.allVoters", proposalData.allVoters);
 
   const {
     runContractFunction: voteProposalByQuadratic,
     isFetching: isFetchingQ,
     isLoading: isLoadingQ,
+  } = useWeb3Contract();
+
+  const {
+    runContractFunction: voteProposalBySingleChoice,
+    isFetching: isFetchingS,
+    isLoading: isLoadingS,
   } = useWeb3Contract();
 
   const handleVote = async () => {
@@ -148,6 +162,140 @@ const Proposal: NextPage = ({ proposal }) => {
     }
   };
 
+  const getTotalVotes = (options: Array<Array<string>>): number => {
+    let totalVotes: number = 0;
+    options.forEach((option) => {
+      totalVotes += Number(option[2]);
+    });
+    return totalVotes;
+  };
+
+  const getLatestOptions = async (id: string): Promise<Array<string[]>> => {
+    const AllVotes: string = Moralis.Object.extend("Votes");
+    const votesQuery = new Moralis.Query(AllVotes);
+
+    votesQuery.descending("block_timestamp");
+    votesQuery.equalTo("uid", id);
+
+    const lastVote = await votesQuery.first();
+
+    const latestOptions = lastVote?.attributes.proposalOptions;
+    return latestOptions;
+  };
+
+  const getLatestProposal = async () => {
+    try {
+      const Proposals = Moralis.Object.extend("Proposals");
+      const proposalsQuery = new Moralis.Query(Proposals);
+      proposalsQuery.equalTo("uid", proposalData.id);
+      const proposal = await proposalsQuery.first();
+
+      const proposalAttribute = proposal?.attributes;
+
+      const latestOptions = await getLatestOptions(proposalAttribute?.uid);
+      const validOptions: Array<Array<string>> =
+        latestOptions == undefined ? proposalAttribute?.options : latestOptions;
+
+      const provider = await enableWeb3();
+  
+      const daoContract = new ethers.Contract(daoAddress, abi, provider);
+      const allVoters = await daoContract.getVoters(proposalData.id);
+
+      const totalVotes = getTotalVotes(validOptions);
+
+      const optionsArray = validOptions.map((option) => {
+        console.log("Option 2: ", option[2]);
+        const percentage =
+          totalVotes != 0
+            ? ((Number(option[2]) / totalVotes) * 100).toFixed(1)
+            : 0;
+
+        return {
+          optionIndex: option[0],
+          optionText: option[1],
+          optionVote: option[2],
+          optionPercentage: percentage.toString(),
+        };
+      });
+
+      const startDate: number = toMilliseconds(
+        Number(proposalAttribute?.startDate)
+      );
+      const duration: number = toMilliseconds(
+        Number(proposalAttribute?.duration)
+      );
+      const endDate: number = startDate + duration;
+
+      const timeLeft: number =
+        startDate + duration - now() < 0 ? 0 : startDate + duration - now();
+      let status: string;
+
+      if (now() > endDate) {
+        status = "Closed";
+      } else if (now() > startDate) {
+        status = "Active";
+      } else {
+        status = "Pending";
+      }
+
+      const finalProposal = {
+        id: proposalAttribute?.uid,
+        creator: proposalAttribute?.creator,
+        description: proposalAttribute?.description,
+        duration: proposalAttribute?.duration,
+        proposalStatus: proposalAttribute?.proposalStatus,
+        proposalType: proposalAttribute?.proposalType,
+        latestOptions: latestOptions || null,
+        startDate,
+        endDate,
+        status,
+        timeLeft,
+        title: proposalAttribute?.title,
+        optionsArray,
+        validOptions,
+        allVoters,
+      };
+
+      console.log("This is the final proposal: ", finalProposal);
+
+      return finalProposal;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSingleVote = async () => {
+    const id = proposalData.id;
+    const index = Object.keys(indexToVotingPower)[0];
+    const votingPower = toWei(Object.values(indexToVotingPower)[0]);
+
+    const provider = await enableWeb3();
+    const lar = new ethers.Contract(larAddress, erc20Abi, provider);
+    const signer = provider?.getSigner(account);
+
+    const approveTx = await trackPromise(
+      lar.connect(signer).approve(daoAddress, votingPower)
+    );
+    await trackPromise(approveTx.wait(1));
+
+    voteProposalBySingleChoice({
+      params: {
+        abi: abi,
+        contractAddress: daoAddress,
+        functionName: "voteProposalBySingleChoice",
+        params: {
+          id,
+          index,
+          votingPower,
+        },
+      },
+      onSuccess: handleSuccess,
+      onError: (error) => {
+        handleFailure(error);
+      },
+    });
+  };
+
   const handleVoteModal = () => {
     setVoteModalOpen((prev) => !prev);
   };
@@ -180,6 +328,12 @@ const Proposal: NextPage = ({ proposal }) => {
       title: "Transaction Notification",
       position: "topR",
     });
+    const newProposal = await getLatestProposal();
+
+    console.log("New Proposal: ", newProposal);
+    setProposalData({ ...newProposal });
+    mutate("web3/votingPower")
+    setIndexToVotingPower({})
   };
 
   const handleFailure = async (error) => {
@@ -192,7 +346,7 @@ const Proposal: NextPage = ({ proposal }) => {
     });
   };
 
-  // console.log("Voters: :", allVoters)
+  // console.log("Index to voting power: ", indexToVotingPower);
 
   // console.log("options in id.tsx", proposalData.validOptions)
   return (
@@ -216,33 +370,42 @@ const Proposal: NextPage = ({ proposal }) => {
               <p className="text-gray-700">{proposalData.description}</p>
             </div>
 
-            {proposalData.proposalType == "0" && <SingleChoiceVote />}
-            {proposalData.proposalType == "2"  && (
-                <QuadraticVote
-                  setVotingIndex={setVotingIndex}
-                  votingIndex={votingIndex}
-                  votingPower={votingPower}
-                  setVotingPower={setVotingPower}
-                  options={proposalData.optionsArray}
-                  handleVote={handleVote}
-                  isFetching={isFetchingQ}
-                  isLoading={isLoadingQ}
-                />
-              )}
-            {proposalData.proposalType == "1"  && (
-                <QuadraticVote
-                  setVotingIndex={setVotingIndex}
-                  votingIndex={votingIndex}
-                  votingPower={votingPower}
-                  setVotingPower={setVotingPower}
-                  options={proposalData.optionsArray}
-                  handleVote={handleVote}
-                  isFetching={isFetchingQ}
-                  isLoading={isLoadingQ}
-                />
-              )}
+            {proposalData?.proposalType == "0" && (
+              <SingleChoiceVote
+                indexToVotingPower={indexToVotingPower}
+                setIndexToVotingPower={setIndexToVotingPower}
+                options={proposalData.optionsArray}
+                isFetching={isFetchingS}
+                isLoading={isLoadingS}
+                handleSingleVote={handleSingleVote}
+              />
+            )}
+            {proposalData?.proposalType == "2" && (
+              <QuadraticVote
+                setVotingIndex={setVotingIndex}
+                votingIndex={votingIndex}
+                votingPower={votingPower}
+                setVotingPower={setVotingPower}
+                options={proposalData.optionsArray}
+                handleVote={handleVote}
+                isFetching={isFetchingQ}
+                isLoading={isLoadingQ}
+              />
+            )}
+            {proposalData?.proposalType == "1" && (
+              <QuadraticVote
+                setVotingIndex={setVotingIndex}
+                votingIndex={votingIndex}
+                votingPower={votingPower}
+                setVotingPower={setVotingPower}
+                options={proposalData.optionsArray}
+                handleVote={handleVote}
+                isFetching={isFetchingQ}
+                isLoading={isLoadingQ}
+              />
+            )}
 
-            {proposalData.allVoters && (
+            {proposalData?.allVoters && (
               <VotersTable
                 allVoters={proposalData.allVoters}
                 options={proposalData.validOptions}
@@ -267,8 +430,9 @@ const Proposal: NextPage = ({ proposal }) => {
                 <p>{endDate}</p>
               </div>
             </div>
-
-            <ResultSection options={proposalData.optionsArray} />
+            {proposalData?.optionsArray && (
+              <ResultSection options={proposalData.optionsArray} />
+            )}
           </div>
         </div>
       </div>

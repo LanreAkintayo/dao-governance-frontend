@@ -35,25 +35,30 @@ export interface Proposal {
 
 
 export async function getProposalsId() {
-  await Moralis.start({ serverUrl, appId, masterKey });
+  try{
+    await Moralis.start({ serverUrl, appId, masterKey });
 
-  console.log("Now here")
-
-      const Proposals = Moralis.Object.extend("Proposals");
-      const proposalsQuery = new Moralis.Query(Proposals);
-      proposalsQuery.descending("uid_decimal");
-
-      const proposals = await proposalsQuery.find();
-
-      const proposalsId = proposals.map(async (proposal) => {
-        const proposalAttribute = proposal.attributes
-        return {
-          params: {
-            id: proposalAttribute.uid
-          }
-        }})
-       
-        return await Promise.all(proposalsId);
+    console.log("Now here")
+  
+        const Proposals = Moralis.Object.extend("Proposals");
+        const proposalsQuery = new Moralis.Query(Proposals);
+        proposalsQuery.descending("uid_decimal");
+  
+        const proposals = await proposalsQuery.find();
+  
+        const proposalsId = proposals.map(async (proposal) => {
+          const proposalAttribute = proposal.attributes
+          return {
+            params: {
+              id: proposalAttribute.uid
+            }
+          }})
+         
+          return await Promise.all(proposalsId);
+  } catch(err) {
+    console.log(err)
+  }
+ 
 }
 const getLatestOptions = async (id: string): Promise<Array<string[]>> => {
   const AllVotes: string = Moralis.Object.extend("Votes");
@@ -78,7 +83,8 @@ const getTotalVotes = (options: Array<Array<string>>): number => {
 
 
 export async function getProposalsData(id:string){
-  await Moralis.start({ serverUrl, appId, masterKey });
+  try {
+    await Moralis.start({ serverUrl, appId, masterKey });
 
   const Proposals = Moralis.Object.extend("Proposals");
   const proposalsQuery = new Moralis.Query(Proposals);
@@ -162,6 +168,10 @@ export async function getProposalsData(id:string){
     // console.log("Final proposal: ", finalProposal)
 
     return finalProposal
+  } catch (error) {
+    console.log(error)
+  }
+  
 
 }
 
