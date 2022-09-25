@@ -105,7 +105,7 @@ export default function OptionsSection({
               onChange={(event) => handleOnChange(event, index)}
               cols={100}
               wrap="soft"
-              className="text-gray-700 p-2 w-full h-10 outline-none"
+              className="text-gray-700 p-2 w-full text-sm h-10 outline-none"
             ></textarea>
           </div>
         );

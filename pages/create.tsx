@@ -14,7 +14,7 @@ import { useNotification } from "web3uikit";
 import { useSWRConfig } from "swr";
 import { abi, contractAddresses, erc20Abi, larAddress } from "../constants";
 import { ethers } from "ethers";
-import { sDuration, toSeconds, toWei } from "../utils/helper";
+import { now, sDuration, toSeconds, toWei } from "../utils/helper";
 import { ClipLoader } from "react-spinners";
 
 interface TypeDict {
@@ -61,7 +61,7 @@ const Create: NextPage = () => {
     description: "",
     proposalType: "",
     proposalStatus: "0",
-    startDate: 0,
+    startDate: now(),
     duration: 0,
   });
 
@@ -140,39 +140,39 @@ const Create: NextPage = () => {
     const duration = sDuration.minutes(proposalData.duration);
     const fee = toWei(5);
 
-    console.log(duration)
     // console.log(duration)
+    console.log("Duration : ", duration)
 
     const provider = await enableWeb3();
 
     const lar = new ethers.Contract(larAddress, erc20Abi, provider);
 
     const signer = provider?.getSigner(account);
-    // const approveTx = await trackPromise(
-    //   lar.connect(signer).approve(daoAddress, fee)
-    // );
-    // await trackPromise(approveTx.wait(1));
+    const approveTx = await trackPromise(
+      lar.connect(signer).approve(daoAddress, fee)
+    );
+    await trackPromise(approveTx.wait(1));
 
-    // createProposal({
-    //   params: {
-    //     abi: abi,
-    //     contractAddress: daoAddress,
-    //     functionName: "createProposal",
-    //     params: {
-    //       _title: title,
-    //       _description: description,
-    //       _proposalType: proposalType,
-    //       _proposalStatus: proposalStatus,
-    //       _startDate: startDate,
-    //       _duration: duration,
-    //       _options: options,
-    //     },
-    //   },
-    //   onSuccess: handleSuccess,
-    //   onError: (error) => {
-    //     handleFailure(error);
-    //   },
-    // });
+    createProposal({
+      params: {
+        abi: abi,
+        contractAddress: daoAddress,
+        functionName: "createProposal",
+        params: {
+          _title: title,
+          _description: description,
+          _proposalType: proposalType,
+          _proposalStatus: proposalStatus,
+          _startDate: startDate,
+          _duration: duration,
+          _options: options,
+        },
+      },
+      onSuccess: handleSuccess,
+      onError: (error) => {
+        handleFailure(error);
+      },
+    });
   };
 
   const handleSuccess = async (tx) => {
@@ -218,7 +218,7 @@ const Create: NextPage = () => {
                 id="title"
                 cols={100}
                 wrap="soft"
-                className="text-gray-700 p-2 w-full h-10 rounded-md  outline-none border border-gray-300"
+                className="text-gray-700 p-2 w-full h-10 rounded-md text-base outline-none border border-gray-300"
               ></textarea>
             </div>
             <div className="mt-3 w-10/12">
@@ -230,7 +230,7 @@ const Create: NextPage = () => {
                 id="description"
                 cols={100}
                 wrap="soft"
-                className="text-gray-700 w-full h-40 border outline-none p-2  text-sm rounded-md border-gray-300"
+                className="text-gray-700 w-full h-40 border outline-none p-2 text-sm rounded-md border-gray-300"
               ></textarea>
             </div>
             <OptionsSection

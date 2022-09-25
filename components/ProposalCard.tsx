@@ -1,15 +1,35 @@
 import Option from "./Option";
 import { Proposal } from "../pages/proposals";
 import Link from "next/link";
+import { Blockie, Tooltip } from "web3uikit";
 
 export default function ProposalCard({ proposal }) {
+  const status = proposal.status;
+
+  let color;
+  let bgColor;
+  if (status == "Active") {
+    color = "text-green-700";
+    bgColor = "bg-green-200";
+  } else if (status == "Pending") {
+    color = "text-blue-700";
+    bgColor = "bg-blue-200";
+  } else {
+    color = "text-red-700";
+    bgColor = "bg-red-200";
+  }
   return (
     <Link href={`/proposals/${proposal.id}`}>
       <a>
-        <div className="rounded-md shadow bg-white hover:border hover:border-gray-400 focus:bg-blue-700 w-full mt-5 p-3 px-11">
+        <div className="rounded-md border border-gray-400 bg-white hover:border hover:border-gray-400 focus:bg-blue-700 w-full mt-5 p-3 px-11">
           <div className="flex w-full justify-between items-center">
-            <p>Account: </p>
-            <p className="rounded-md text-red-700 p-1 bg-red-200">
+            <div className="flex items-center">
+            <p className="pr-2">Account: </p>
+            <Tooltip content={proposal.creator}>
+              <Blockie seed={proposal.creator} size={6} />
+            </Tooltip>
+            </div>
+            <p className={`rounded-md text-xs px-2 ${color} p-1 ${bgColor}`}>
               {proposal.status}
             </p>
           </div>
