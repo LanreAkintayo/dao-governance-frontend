@@ -48,7 +48,7 @@ export default function VotersTable({ allVoters, options }) {
               console.log("We are here....");
               return (
                 <tr className="bg-white border-t border-gray-300">
-                  <td className="py-4 pl-3">No Votes Yet</td>
+                  <td className="py-4 pl-3">No Votes </td>
                 </tr>
               );
             }

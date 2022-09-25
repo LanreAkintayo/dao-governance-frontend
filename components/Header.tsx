@@ -97,7 +97,7 @@ export default function Header() {
           <div className="flex items-center text-lg w-full">
             {!isBreakpoint && (
               <>
-                <Link href="/">
+                <Link href="/token  ">
                   <a className="w-full text-black font-semibold hover:text-orange-600 ">
                     <p className="w-full whitespace-nowrap">Get LAR Token</p>
                   </a>

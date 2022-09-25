@@ -16,6 +16,7 @@ import { abi, contractAddresses, erc20Abi, larAddress } from "../constants";
 import { ethers } from "ethers";
 import { now, sDuration, toSeconds, toWei } from "../utils/helper";
 import { ClipLoader } from "react-spinners";
+import VotingPower from "../components/VotingPower";
 
 interface TypeDict {
   [key: string]: string;
@@ -141,7 +142,7 @@ const Create: NextPage = () => {
     const fee = toWei(5);
 
     // console.log(duration)
-    console.log("Duration : ", duration)
+    console.log("Duration : ", duration);
 
     const provider = await enableWeb3();
 
@@ -207,7 +208,10 @@ const Create: NextPage = () => {
     <div className="flex flex-col justify-between bg-gray-50 h-full">
       <div>
         <Header />
-        <div className="flex mt-20 mx-4">
+        <div className="mt-20 flex justify-end mr-3 mb-4">
+          <VotingPower className="border border-gray-400" />
+        </div>
+        <div className="flex mx-4">
           <div className="w-8/12 p-2 pl-4 pr-11 ">
             <div className="w-10/12">
               <p className="text-gray-700">
@@ -328,7 +332,7 @@ const Create: NextPage = () => {
                     !allValid || isFetching || isLoading || promiseInProgress
                   }
                 >
-                  {(isFetching || isLoading || promiseInProgress )? (
+                  {isFetching || isLoading || promiseInProgress ? (
                     <div className="flex flex-col w-full justify-between bg-gray-200 rounded-md px-3 py-3 items-center">
                       <div className="flex items-center">
                         <ClipLoader color="#000" loading={true} size={30} />

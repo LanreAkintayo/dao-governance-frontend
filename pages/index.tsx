@@ -7,6 +7,13 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 
+/*
+The proposal page should be displayed properly when the contents are not yet ready
+If we haven't connect to metamask, we should not be able to create, or vote
+Responsiveness is still an issue
+handle all this typescript issue
+
+*/
 const Home: NextPage = () => {
   const settings2 = {
     particle: {

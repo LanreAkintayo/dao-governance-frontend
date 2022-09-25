@@ -15,7 +15,7 @@ import SingleChoiceVote from "../../components/SingleChoiceVote";
 import WeightedVote from "../../components/WeightedVote";
 import VoteModal from "../../components/VoteModal";
 import { trackPromise, usePromiseTracker } from "react-promise-tracker";
-import { useNotification } from "web3uikit";
+import { Blockie, Tooltip, useNotification } from "web3uikit";
 import { ethers } from "ethers";
 import VotingPower from "../../components/VotingPower";
 import { optionCSS } from "react-select/dist/declarations/src/components/Option";
@@ -26,14 +26,14 @@ const Proposal: NextPage = ({ proposal }) => {
     [key: string]: string;
   }
   const votingSystem = {
-    0: "Single Choice Voting",
-    1: "Weighted Voting",
-    2: "Quadratic Voting",
+    "0": "Single Choice Voting",
+    "1": "Weighted Voting",
+    "2": "Quadratic Voting",
   };
 
   const { promiseInProgress } = usePromiseTracker();
   const dispatch = useNotification();
-  const {mutate}  = useSWRConfig()
+  const { mutate } = useSWRConfig();
 
   const proposalsType: string = proposal.proposalType;
   const proposalVotingSystem: string = votingSystem[proposalsType];
@@ -55,7 +55,7 @@ const Proposal: NextPage = ({ proposal }) => {
 
   const chainId: number = parseInt(chainIdHex?.toString());
 
-  const length = contractAddresses[chainId]?.length;
+  const length = contractAddresses[chainId.toString()]?.length;
 
   // console.log("Contract Addresses: ", contractAddresses);
   // console.log("chainId: ", chainId);
@@ -89,13 +89,13 @@ const Proposal: NextPage = ({ proposal }) => {
     runContractFunction: voteProposalByQuadratic,
     isFetching: isFetchingQ,
     isLoading: isLoadingQ,
-  } = useWeb3Contract();
+  } = useWeb3Contract({});
 
   const {
     runContractFunction: voteProposalBySingleChoice,
     isFetching: isFetchingS,
     isLoading: isLoadingS,
-  } = useWeb3Contract();
+  } = useWeb3Contract({});
 
   const handleVote = async () => {
     console.log("About to handle vote: ", votingPower);
@@ -197,7 +197,7 @@ const Proposal: NextPage = ({ proposal }) => {
         latestOptions == undefined ? proposalAttribute?.options : latestOptions;
 
       const provider = await enableWeb3();
-  
+
       const daoContract = new ethers.Contract(daoAddress, abi, provider);
       const allVoters = await daoContract.getVoters(proposalData.id);
 
@@ -332,8 +332,8 @@ const Proposal: NextPage = ({ proposal }) => {
 
     console.log("New Proposal: ", newProposal);
     setProposalData({ ...newProposal });
-    mutate("web3/votingPower")
-    setIndexToVotingPower({})
+    mutate("web3/votingPower");
+    setIndexToVotingPower({});
   };
 
   const handleFailure = async (error) => {
@@ -346,9 +346,26 @@ const Proposal: NextPage = ({ proposal }) => {
     });
   };
 
-  // console.log("Index to voting power: ", indexToVotingPower);
+  const creator = proposalData.creator;
+  const creatorLength = creator.length;
+  const status = proposalData.status;
 
-  // console.log("options in id.tsx", proposalData.validOptions)
+  let color;
+  let bgColor;
+  if (status == "Active") {
+    color = "text-green-700";
+    bgColor = "bg-green-200";
+  } else if (status == "Pending") {
+    color = "text-blue-700";
+    bgColor = "bg-blue-200";
+  } else {
+    color = "text-red-700";
+    bgColor = "bg-red-200";
+  }
+
+
+  console.log(proposalData.validOptions)
+
   return (
     <div className="flex flex-col justify-between bg-gray-50 h-full">
       <div>
@@ -365,45 +382,60 @@ const Proposal: NextPage = ({ proposal }) => {
         <div className="flex mx-4">
           <div className="w-8/12 p-2 pl-4 pr-11 ">
             <h1 className="text-2xl">{proposalData.title}</h1>
+            <div className="flex items-center my-3">
+              <p className={`rounded-full px-2 p-1 mr-3 ${color} ${bgColor} `}>
+                {proposalData.status}
+              </p>
+              <Tooltip content={creator}>
+                <Blockie seed={creator} size={6} />
+              </Tooltip>
+              <p className="px-2">
+                {creator.substring(0, 4)}...
+                {creator.substring(creatorLength - 4, creatorLength)}
+              </p>
+            </div>
             <div className="mt-4 ">
               <h1 className="text-lg py-2 text-gray-700">Description</h1>
               <p className="text-gray-700">{proposalData.description}</p>
             </div>
 
-            {proposalData?.proposalType == "0" && (
-              <SingleChoiceVote
-                indexToVotingPower={indexToVotingPower}
-                setIndexToVotingPower={setIndexToVotingPower}
-                options={proposalData.optionsArray}
-                isFetching={isFetchingS}
-                isLoading={isLoadingS}
-                handleSingleVote={handleSingleVote}
-              />
-            )}
-            {proposalData?.proposalType == "2" && (
-              <QuadraticVote
-                setVotingIndex={setVotingIndex}
-                votingIndex={votingIndex}
-                votingPower={votingPower}
-                setVotingPower={setVotingPower}
-                options={proposalData.optionsArray}
-                handleVote={handleVote}
-                isFetching={isFetchingQ}
-                isLoading={isLoadingQ}
-              />
-            )}
-            {proposalData?.proposalType == "1" && (
-              <QuadraticVote
-                setVotingIndex={setVotingIndex}
-                votingIndex={votingIndex}
-                votingPower={votingPower}
-                setVotingPower={setVotingPower}
-                options={proposalData.optionsArray}
-                handleVote={handleVote}
-                isFetching={isFetchingQ}
-                isLoading={isLoadingQ}
-              />
-            )}
+            {proposalData?.proposalType == "0" &&
+              proposalData?.status != "Closed" && (
+                <SingleChoiceVote
+                  indexToVotingPower={indexToVotingPower}
+                  setIndexToVotingPower={setIndexToVotingPower}
+                  options={proposalData.optionsArray}
+                  isFetching={isFetchingS}
+                  isLoading={isLoadingS}
+                  handleSingleVote={handleSingleVote}
+                />
+              )}
+            {proposalData?.proposalType == "2" &&
+              proposalData?.status != "Closed" && (
+                <QuadraticVote
+                  setVotingIndex={setVotingIndex}
+                  votingIndex={votingIndex}
+                  votingPower={votingPower}
+                  setVotingPower={setVotingPower}
+                  options={proposalData.optionsArray}
+                  handleVote={handleVote}
+                  isFetching={isFetchingQ}
+                  isLoading={isLoadingQ}
+                />
+              )}
+            {proposalData?.proposalType == "1" &&
+              proposalData?.status != "Closed" && (
+                <QuadraticVote
+                  setVotingIndex={setVotingIndex}
+                  votingIndex={votingIndex}
+                  votingPower={votingPower}
+                  setVotingPower={setVotingPower}
+                  options={proposalData.optionsArray}
+                  handleVote={handleVote}
+                  isFetching={isFetchingQ}
+                  isLoading={isLoadingQ}
+                />
+              )}
 
             {proposalData?.allVoters && (
               <VotersTable

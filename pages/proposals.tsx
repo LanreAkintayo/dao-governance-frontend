@@ -6,6 +6,7 @@ import { useMoralis } from "react-moralis";
 import useSWR from "swr";
 import { now, toMilliseconds } from "../utils/helper";
 import ProposalCard from "../components/ProposalCard";
+import { ScaleLoader } from "react-spinners";
 
 export interface Proposal {
   id: string;
@@ -21,12 +22,12 @@ export interface Proposal {
   timeLeft: number;
   title: string;
   optionsArray: {
-    optionIndex: string,
-    optionText: string,
-    optionVote: string,
-    optionPercentage: string,
-  }[],
-  validOptions:string[][]
+    optionIndex: string;
+    optionText: string;
+    optionVote: string;
+    optionPercentage: string;
+  }[];
+  validOptions: string[][];
 }
 const getTotalVotes = (options: Array<Array<string>>): number => {
   let totalVotes: number = 0;
@@ -74,6 +75,8 @@ const Proposals: NextPage = () => {
         const proposalAttribute = proposal.attributes;
 
         const latestOptions = await getLatestOptions(proposalAttribute.uid);
+
+        console.log("Latest option: ", latestOptions);
         const validOptions: string[][] =
           latestOptions == undefined
             ? proposalAttribute.options
@@ -84,7 +87,9 @@ const Proposals: NextPage = () => {
         const optionsArray = validOptions.map((option) => {
           // console.log("Option 2: ", option[2]);
           const percentage =
-            totalVotes != 0 ? ((Number(option[2]) / totalVotes) * 100).toFixed(1) : 0;
+            totalVotes != 0
+              ? ((Number(option[2]) / totalVotes) * 100).toFixed(1)
+              : 0;
 
           return {
             optionIndex: option[0],
@@ -114,7 +119,7 @@ const Proposals: NextPage = () => {
           status = "Pending";
         }
 
-        const finalProposal:Proposal = {
+        const finalProposal: Proposal = {
           id: proposalAttribute.uid,
           creator: proposalAttribute.creator,
           description: proposalAttribute.description,
@@ -128,10 +133,10 @@ const Proposals: NextPage = () => {
           timeLeft,
           title: proposalAttribute.title,
           optionsArray,
-          validOptions
+          validOptions,
         };
 
-        return finalProposal
+        return finalProposal;
       });
 
       const resolved = await Promise.all(sortedProposals);
@@ -145,11 +150,15 @@ const Proposals: NextPage = () => {
   console.log("All Proposals length: ", allProposals?.length);
 
   return (
-    <div className="flex flex-col justify-between bg-gray-50">
+    <div
+      className={`flex flex-col ${
+        (!allProposals || allProposals?.length == 0) && "h-screen"
+      } justify-between  bg-gray-50`}
+    >
       <div>
         <Header />
         <section className="px-5 mt-24 flex flex-col items-center ">
-          {/* <div className="flex justify-center">
+          {/* <div className="flex justify-center"> 
             <div className="p-2 w-80 rounded-md bg-white shadow">
               <p className="text-lg text-gray-700">Proposals Created</p>
               <p className="text-xl">100</p>
@@ -163,8 +172,23 @@ const Proposals: NextPage = () => {
           <div className=" w-8/12">
             <h1 className="text-xl text-gray-700 py-4 ">Proposals</h1>
 
-            {allProposals?.map((proposal) => {
+            {!allProposals && (
+              <div className="flex flex-col w-full my-4 items-center">
+                <div className="my-1">
+                  <ScaleLoader color="black" loading={true} size={20} />
+                </div>
 
+                <p className="text-gray-500">Please Wait a few seconds</p>
+              </div>
+            )}
+
+            {allProposals && allProposals.length == 0 && (
+              <div className="w-full text-center">
+                <p className="my-12">No Proposals at the moment</p>
+              </div>
+            )}
+
+            {allProposals?.map((proposal) => {
               return <ProposalCard proposal={proposal} />;
             })}
           </div>

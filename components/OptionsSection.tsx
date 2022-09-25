@@ -9,7 +9,6 @@ export default function OptionsSection({
   optionTexts,
   setOptionTexts,
 }) {
-  
   useEffect(() => {
     // console.log("Options Indexes: .................", optionsIndexes);
     setOptionTexts((prev) => {
@@ -32,11 +31,13 @@ export default function OptionsSection({
   };
 
   useEffect(() => {
+    console.log(optionsIndexes)
     const indexes = range(0, noOfOptions);
     setOptionsIndexes(indexes);
   }, [noOfOptions]);
 
   const handleMoreOptions = () => {
+    // console.log(optionsIndexes)
     setNoOfOptions((prev) => {
       const newNo = prev + 1;
       return newNo;
@@ -46,22 +47,31 @@ export default function OptionsSection({
     setOptionsIndexes(indexes);
   };
   const handleRemoveOption = () => {
-    const index = optionsIndexes.length - 1;
-    setOptionsIndexes((prevIndexes) => {
-      const indexes = prevIndexes;
-    //   console.log("Indexes initially: ", indexes);
-    //   console.log("Index to slice:", index);
-      indexes.splice(index, 1);
-
-    //   console.log("Indexes after splicing: ", indexes);
-
-      return indexes;
-    });
-
     setNoOfOptions((prev) => {
-      const newOne = prev - 1;
-      return newOne;
-    });
+        const newNo = prev - 1;
+        return newNo;
+      });
+  
+      const indexes = range(0, noOfOptions);
+      setOptionsIndexes(indexes);
+
+    // // console.log(optionsIndexes)
+    // const index = optionsIndexes.length - 1;
+    // setOptionsIndexes((prevIndexes) => {
+    //   const indexes = prevIndexes;
+    //   //   console.log("Indexes initially: ", indexes);
+    //   //   console.log("Index to slice:", index);
+    //   indexes.splice(index, 1);
+
+    //   //   console.log("Indexes after splicing: ", indexes);
+
+    //   return indexes;
+    // });
+
+    // setNoOfOptions((prev) => {
+    //   const newOne = prev - 1;
+    //   return newOne;
+    // });
   };
 
   return (
@@ -72,9 +82,10 @@ export default function OptionsSection({
         </p>
         <div className="flex items-center">
           <div
-            className="w-8 h-8 mr-2 bg-gray-200 rounded-md p-2 text-black hover:text-orange-500 cursor-pointer"
+            className="h-8 mr-2 flex items-center bg-gray-200 rounded-md p-2 hover:bg-gray-300 text-black  cursor-pointer"
             // onClick={handleSidebar}
           >
+            <p className="px-2 whitespace-nowrap text-sm ">Remove Option</p>
             <img
               alt="..."
               src="/minus.png"
@@ -83,9 +94,10 @@ export default function OptionsSection({
             />
           </div>
           <div
-            className="w-8 h-8 my-3 bg-gray-200 rounded-md p-2 text-black hover:text-orange-500 cursor-pointer"
+            className="flex items-center h-8 my-3 bg-gray-200 rounded-md p-2 text-black hover:bg-gray-300 cursor-pointer"
             onClick={handleMoreOptions}
           >
+            <p className="px-2 whitespace-nowrap text-sm">Add Option</p>
             <img
               alt="..."
               src="/plus.svg"

@@ -21,13 +21,19 @@ export default function ProposalCard({ proposal }) {
   return (
     <Link href={`/proposals/${proposal.id}`}>
       <a>
-        <div className="rounded-md border border-gray-400 bg-white hover:border hover:border-gray-400 focus:bg-blue-700 w-full mt-5 p-3 px-11">
+        <div className="rounded-md border border-gray-400 bg-white hover:border hover:border-gray-800 focus:bg-blue-700 w-full mt-5 p-3 px-11">
           <div className="flex w-full justify-between items-center">
             <div className="flex items-center">
-            <p className="pr-2">Account: </p>
-            <Tooltip content={proposal.creator}>
-              <Blockie seed={proposal.creator} size={6} />
-            </Tooltip>
+              <Tooltip content={proposal.creator}>
+                <Blockie seed={proposal.creator} size={6} />
+              </Tooltip>
+              <p className="px-3">
+                {proposal.creator.substring(0, 4)}...
+                {proposal.creator.substring(
+                  proposal.creator.length - 4,
+                  proposal.creator.length
+                )}
+              </p>
             </div>
             <p className={`rounded-md text-xs px-2 ${color} p-1 ${bgColor}`}>
               {proposal.status}
@@ -37,8 +43,10 @@ export default function ProposalCard({ proposal }) {
           <p className="text-sm mt-2 text-gray-500">{proposal.description}</p>
           <div className="my-4">
             {proposal?.optionsArray?.map((option) => {
+              const percentages = proposal.optionsArray.map(option => option.optionPercentage)
+              const maxPercentage = Math.max(...percentages)
               // console.log("Options: ", proposal.optionsArray);
-              return <Option option={option} />;
+              return <Option option={option} proposal={proposal} maxPercentage={maxPercentage} />;
             })}
           </div>
         </div>
