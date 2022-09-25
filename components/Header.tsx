@@ -41,7 +41,8 @@ export default function Header() {
 
   // console.log(chainIdHex)
   const chainId = parseInt(chainIdHex!);
-  // console.log(chainId)
+  console.log("Chain id", chainId)
+  console.log("Here am I:", chainId != 80001)
 
   useEffect(() => {
     console.log("Collapsing: ", collapsed);

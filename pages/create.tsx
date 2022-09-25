@@ -3,7 +3,7 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import VotingSystemDropdown from "../components/VotingSystemDropdown";
 import DatePicker from "react-datepicker";
-import { useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import moment from "moment";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -28,6 +28,54 @@ const Create: NextPage = () => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
 
+  const [proposalData, setProposalData] = useState({
+    title: "",
+    description: "",
+    proposalType: "",
+    proposalStatus: "0",
+    startDate: "",
+    duration: 0,
+    options: [],
+  });
+
+  const [isValidDuration, setIsValidDuration] = useState(false);
+
+  useEffect(() => {
+    console.log(proposalData);
+  }, [proposalData]);
+
+  const handleSelectedVotingSystem = (name:string) => {
+    setProposalData((prevProposal) => {
+      return {
+        ...prevProposal,
+        proposalType: name
+      };
+    });
+  }
+  const handleOnChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    // console.log(event.currentTarget.value)
+    const id = event.currentTarget.id;
+
+    if (id == "duration") {
+      const duration = event.target.value;
+      setIsValidDuration(() => {
+        if (
+          /[^0-9]/g.test(duration)
+        ) {
+          return false;
+        }
+        return true;
+      });
+    }
+
+    setProposalData((prevProposal) => {
+      return {
+        ...prevProposal,
+        [id]: id == "duration" ? Number(event.target.value) : event.target.value,
+      };
+    });
+  };
+
   return (
     <div className="flex flex-col justify-between bg-gray-50 h-full">
       <div>
@@ -39,9 +87,11 @@ const Create: NextPage = () => {
                 <small>Title: Ask a question</small>
               </p>
               <textarea
+                onChange={handleOnChange}
+                id="title"
                 cols={100}
                 wrap="soft"
-                className="text-gray-700 p-2 w-full h-10 rounded-md  outline-none border border-gray-200"
+                className="text-gray-700 p-2 w-full h-10 rounded-md  outline-none border border-gray-300"
               ></textarea>
             </div>
             <div className="mt-3 w-10/12">
@@ -49,9 +99,11 @@ const Create: NextPage = () => {
                 <small>Description: Tell more about your proposal</small>
               </p>
               <textarea
+                onChange={handleOnChange}
+                id="description"
                 cols={100}
                 wrap="soft"
-                className="text-gray-700 w-full h-40 border outline-none p-2  text-sm rounded-md border-gray-200"
+                className="text-gray-700 w-full h-40 border outline-none p-2  text-sm rounded-md border-gray-300"
               ></textarea>
             </div>
             <div className="mt-3 w-10/12 border border-gray-200 px-4 py-3">
@@ -126,9 +178,11 @@ const Create: NextPage = () => {
               <h1 className="my-3 pb-3 text-gray-800 border-l-0 border-r-0 border-b border-gray-300 ">
                 Actions
               </h1>
-              <VotingSystemDropdown />
+              <VotingSystemDropdown handleSelectedVotingSystem={handleSelectedVotingSystem} proposalData={proposalData}/>
               <div className="mt-4">
-                <p className="text-sm"><small>Set Start Date</small></p>
+                <p className="text-sm">
+                  <small>Set Start Date</small>
+                </p>
 
                 <div className="flex bg-gray-50 border px-2 rounded-md border-gray-300 items-center ">
                   <svg
@@ -150,7 +204,7 @@ const Create: NextPage = () => {
                   <DatePicker
                     id="launchDate"
                     className=" text-gray-900 md:w-60 w-40 bg-gray-50 p-2 sm:text-sm outline-none "
-                    selected={startDate}
+                    selected={proposalData.startDate}
                     onChange={(date: Date) => {
                       const dateInMilliseconds = date.getTime();
                       const currentDateInMilliseconds = new Date().getTime();
@@ -161,13 +215,13 @@ const Create: NextPage = () => {
                       //       : false
                       //   );
 
-                      //   setProjectInfo((prevProjectInfo) => {
-                      //     return {
-                      //       ...prevProjectInfo,
-                      //       launchDate: date,
-                      //     };
-                      //   });
-                      setStartDate(date);
+                        setProposalData((prevProposalData) => {
+                          return {
+                            ...prevProposalData,
+                            startDate: dateInMilliseconds,
+                          };
+                        });
+                      // setStartDate(date);
                     }}
                   />
                 </div>
@@ -179,7 +233,7 @@ const Create: NextPage = () => {
                   </p>
 
                   <input
-                    // onChange={handleOnChange}
+                    onChange={handleOnChange}
                     type="text"
                     name="text"
                     id="duration"
@@ -187,9 +241,11 @@ const Create: NextPage = () => {
                     className="w-full block p-2 md:text-sm text-xs mt-1 border border-gray-300 focus:outline-none rounded-md"
                   />
 
-                  <p className="text-red-700 md:text-sm text-xs">
-                    <small>Duration should be within 1 and 1000</small>
-                  </p>
+                  {!isValidDuration && (
+                    <p className="text-red-700 md:text-sm text-xs">
+                      <small>Duration is not valid</small>
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="w-full my-2 mt-4 flex justify-center">

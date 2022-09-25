@@ -17,9 +17,9 @@ const votingMechanisms = [
   },
 ];
 
-const VotingSystemDropdown: NextComponentType = () => {
+const VotingSystemDropdown: NextComponentType = ({handleSelectedVotingSystem, proposalData}) => {
   const [dropdownState, setDropdownState] = useState(true);
-  // const [selectedToken, setSelectedToken] = useState({});
+  const [selectedVotingSystem, setSelectedVotingSystem] = useState("");
 
   const onButtonClick = () => {
     setDropdownState((prev) => !prev);
@@ -35,7 +35,7 @@ const VotingSystemDropdown: NextComponentType = () => {
               className="mt-2 p-2 border border-gray-400 hover:bg-gray-200 mx-2 rounded-md"
               key={item["name"]}
               onClick={() => {
-                // handleSelectToken(item.name, item.src);
+                handleSelectedVotingSystem(item.name);
                 onButtonClick();
               }}
             >
@@ -60,19 +60,8 @@ const VotingSystemDropdown: NextComponentType = () => {
         type="button"
       >
         <div className="flex justify-between w-full items-center">
-          {!(0 === 0) ? (
-            <div className="hover:bg-gray-200">
-              <div className="flex items-center">
-                <div className="w-7 h-7">
-                  <img
-                    alt="..."
-                    //   src={selectedToken.src}
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-                <a className="block py-2 px-2">a</a>
-              </div>
-            </div>
+          {proposalData.proposalType ? (
+            <p className="">{proposalData.proposalType}</p>
           ) : (
             <p>Select Voting System</p>
           )}
