@@ -41,7 +41,7 @@ const Home: NextPage = () => {
       <section className="z-10 absolute top-0 left-0 ">
         <Header />
         <div className="flex flex-col w-screen h-screen items-center text-center justify-center text-black">
-          <h1 className="text-2xl px-1 mt-12 ss:mt-4 ssm:text-3xl sm:text-4xl lg:text-5xl xl:text-6xl w-12/12 sm:w-10/12 lg:w-8/12 font-extrabold">
+          <h1 className="text-2xl px-1 mt-16 ss:mt-8 ssm:text-3xl sm:text-4xl lg:text-5xl xl:text-6xl w-12/12 sm:w-10/12 lg:w-8/12 font-extrabold">
             Decentralized Autonomous Organization
           </h1>
           <p className="w-10/12 lg:w-8/12 text-center font-light my-6 text-lg sm:text-xl lg:text-2xl">

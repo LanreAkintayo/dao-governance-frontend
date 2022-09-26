@@ -75,9 +75,9 @@ export default function OptionsSection({
   };
 
   return (
-    <div className="mt-3 w-10/12 border border-gray-400 px-4 py-3">
+    <div className="mt-3 lg:w-10/12 border border-gray-400 px-4 py-3">
       <div className="flex items-center justify-between">
-        <p className="text-gray-700">
+        <p className="text-gray-700 ss:text-sm text-xs">
           <small>Choices</small>
         </p>
         <div className="flex items-center">
@@ -85,7 +85,7 @@ export default function OptionsSection({
             className="h-8 mr-2 flex items-center bg-gray-200 rounded-md p-2 hover:bg-gray-300 text-black  cursor-pointer"
             // onClick={handleSidebar}
           >
-            <p className="px-2 whitespace-nowrap text-sm ">Remove Option</p>
+            <p className="px-2 whitespace-nowrap text-xs ssm:block hidden ssm:text-sm ">Remove Option</p>
             <img
               alt="..."
               src="/minus.png"
@@ -97,7 +97,7 @@ export default function OptionsSection({
             className="flex items-center h-8 my-3 bg-gray-200 rounded-md p-2 text-black hover:bg-gray-300 cursor-pointer"
             onClick={handleMoreOptions}
           >
-            <p className="px-2 whitespace-nowrap text-sm">Add Option</p>
+            <p className="px-2 whitespace-nowrap text-xs ssm:block hidden sm:text-sm">Add Option</p>
             <img
               alt="..."
               src="/plus.svg"
@@ -117,7 +117,7 @@ export default function OptionsSection({
               onChange={(event) => handleOnChange(event, index)}
               cols={100}
               wrap="soft"
-              className="text-gray-700 p-2 w-full text-sm h-10 outline-none"
+              className="text-gray-700 ss:p-2 p-1 ss:text-sm text-xs w-full  ss:h-10 h-6  outline-none"
             ></textarea>
           </div>
         );

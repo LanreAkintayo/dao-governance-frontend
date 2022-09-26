@@ -208,13 +208,13 @@ const Create: NextPage = () => {
     <div className="flex flex-col justify-between bg-gray-50 h-full">
       <div>
         <Header />
-        <div className="mt-20 flex justify-end mr-3 mb-4">
+        <div className="mt-28 ssm:mt-20 flex justify-end mr-3 mb-4">
           <VotingPower className="border border-gray-400" />
         </div>
-        <div className="flex mx-4">
-          <div className="w-8/12 p-2 pl-4 pr-11 ">
-            <div className="w-10/12">
-              <p className="text-gray-700">
+        <div className="flex lg:flex-row flex-col mx-4">
+          <div className="lg:w-7/12 w-full flex flex-col items-center lg:items-start justify-center p-2 ssm:pl-4 px-2 ssm:pr-11 ">
+            <div className="lg:w-10/12">
+              <p className="text-gray-700 ss:text-sm text-xs">
                 <small>Title: Ask a question</small>
               </p>
               <textarea
@@ -222,11 +222,11 @@ const Create: NextPage = () => {
                 id="title"
                 cols={100}
                 wrap="soft"
-                className="text-gray-700 p-2 w-full h-10 rounded-md text-base outline-none border border-gray-300"
+                className="text-gray-700 p-2 w-full h-10 rounded-md ssm:text-base text-xs outline-none border border-gray-300"
               ></textarea>
             </div>
-            <div className="mt-3 w-10/12">
-              <p className="text-gray-700">
+            <div className="mt-3 lg:w-10/12">
+              <p className="text-gray-700 ss:text-sm text-xs">
                 <small>Description: Tell more about your proposal</small>
               </p>
               <textarea
@@ -234,7 +234,7 @@ const Create: NextPage = () => {
                 id="description"
                 cols={100}
                 wrap="soft"
-                className="text-gray-700 w-full h-40 border outline-none p-2 text-sm rounded-md border-gray-300"
+                className="text-gray-700 w-full h-40 ssm:text-sm text-xs border outline-none p-2  rounded-md border-gray-300"
               ></textarea>
             </div>
             <OptionsSection
@@ -246,7 +246,7 @@ const Create: NextPage = () => {
               setOptionTexts={setOptionTexts}
             />
           </div>
-          <div className="w-4/12 rounded-md  text-sm">
+          <div className="lg:w-5/12 w-full flex lg:ml-4 items-center justify-center  lg:items-start rounded-md  text-sm">
             <div className="shadow mt-2 bg-white p-3 w-10/12">
               <h1 className="my-3 pb-3 text-gray-800 border-l-0 border-r-0 border-b border-gray-300 ">
                 Actions
@@ -256,7 +256,7 @@ const Create: NextPage = () => {
                 proposalData={proposalData}
               />
               <div className="mt-4">
-                <p className="text-sm">
+                <p className="ss:text-sm text-xs">
                   <small>Set Start Date</small>
                 </p>
 
@@ -279,7 +279,7 @@ const Create: NextPage = () => {
 
                   <DatePicker
                     id="launchDate"
-                    className=" text-gray-900 md:w-60 w-40 bg-gray-50 p-2 sm:text-sm outline-none "
+                    className=" text-gray-900 md:w-60 w-40 bg-gray-50 p-2 sm:text-sm text-xs outline-none "
                     selected={proposalData.startDate}
                     onChange={(date: Date) => {
                       const dateInMilliseconds = date.getTime();
@@ -304,7 +304,7 @@ const Create: NextPage = () => {
               </div>
               <div className="mt-4">
                 <div>
-                  <p className="md:text-auto text-sm">
+                  <p className="md:text-auto ss:text-sm text-xs">
                     <small>Specify proposal duration in minutes</small>
                   </p>
 

@@ -32,7 +32,7 @@ const VotingSystemDropdown: NextComponentType = ({handleSelectedVotingSystem, pr
           return (
             // <div onClick={() => {console.log(item)}} className="cursor-pointer">{item?.name}</div>
             <li
-              className="mt-2 p-2 border border-gray-400 hover:bg-gray-200 mx-2 rounded-md"
+              className="mt-2 p-2 border border-gray-400 hover:bg-gray-200 mx-2 rounded-md ssm:text-base text-xs"
               key={item["name"]}
               onClick={() => {
                 handleSelectedVotingSystem(item.name);
@@ -63,7 +63,7 @@ const VotingSystemDropdown: NextComponentType = ({handleSelectedVotingSystem, pr
           {proposalData.proposalType ? (
             <p className="">{proposalData.proposalType}</p>
           ) : (
-            <p>Select Voting System</p>
+            <p className="ssm:text-base text-xs">Select Voting System</p>
           )}
           <svg
             className="ml-2 w-4 h-4"
