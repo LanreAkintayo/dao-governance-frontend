@@ -88,7 +88,7 @@ const Proposals: NextPage = () => {
         <VotingPower className="self-end border border-gray-300" />
 
         <div>
-          <p>Enter Address</p>
+          <p className="mt-4">Enter Address</p>
           <input
             onChange={(event) => {
               setUserAddress(event.target.value);

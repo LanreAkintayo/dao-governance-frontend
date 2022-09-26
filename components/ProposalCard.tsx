@@ -21,7 +21,7 @@ export default function ProposalCard({ proposal }) {
   return (
     <Link href={`/proposals/${proposal.id}`}>
       <a>
-        <div className="rounded-md border border-gray-400 bg-white hover:border hover:border-gray-800 focus:bg-blue-700 w-full mt-5 p-3 px-11">
+        <div className="rounded-md border border-gray-400 bg-white hover:border hover:border-gray-800 focus:bg-blue-700 w-full mt-5 p-3 px-2 sm:px-11">
           <div className="flex w-full justify-between items-center">
             <div className="flex items-center">
               <Tooltip content={proposal.creator}>
@@ -39,8 +39,8 @@ export default function ProposalCard({ proposal }) {
               {proposal.status}
             </p>
           </div>
-          <h1 className="text-xl mt-2 text-gray-900">{proposal.title}</h1>
-          <p className="text-sm mt-2 text-gray-500">{proposal.description}</p>
+          <h1 className="text-sm xs:text-base sm:text-xl mt-2 text-gray-900">{proposal.title}</h1>
+          <p className="sm:text-sm hidden sm:block text-xs mt-2 text-gray-500">{proposal.description}</p>
           <div className="my-4">
             {proposal?.optionsArray?.map((option) => {
               const percentages = proposal.optionsArray.map(option => option.optionPercentage)

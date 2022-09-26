@@ -4,7 +4,7 @@ export default function VotersTable({ allVoters, options }) {
     // console.log("inside voters table: ", allVoters.length)
   
   return (
-    <table className="mt-10 w-10/12 self-center table-fixed rounded-lg shadow text-sm text-left ">
+    <table className="mt-10 w-10/12 self-center table-auto rounded-lg shadow text-sm text-left overflow-x-scroll">
       <thead className=" rounded-lg bg-gray-50">
         <tr className="text-gray-700 bg-gray-300">
           <th scope="col" colSpan={3} className="py-3 pl-3">
@@ -29,16 +29,16 @@ export default function VotersTable({ allVoters, options }) {
                 i++;
 
                 return (
-                  <tr className="bg-white border-t border-gray-300">
-                    <td className="py-4 pl-3">
+                  <tr className="bg-white border-t border-gray-300 ">
+                    <td className="py-4 pl-3 text-xs lg:text-sm">
                       {voterAddress.substring(0, 5)}...
                       {voterAddress.substring(
                         voterAddress.length - 6,
                         voterAddress.length
                       )}
                     </td>
-                    <td className="pl-3">{optionText}</td>
-                    <td className="pl-3 ">{inDollarFormat(Number(fromWei(currentVote)))} LAR</td>
+                    <td className="pl-3 text-xs lg:text-sm">{optionText}</td>
+                    <td className="pl-3 text-xs lg:text-sm">{inDollarFormat(Number(fromWei(currentVote)))} LAR</td>
                   </tr>
                 );
               });

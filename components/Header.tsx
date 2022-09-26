@@ -73,43 +73,51 @@ export default function Header() {
             <Menu iconShape="square">
               <div className="text-xl text-white hover:text-orange-700">
                 <MenuItem>
-                  <Link href="/"><p className="text-2xl">Get LAR Token</p></Link>
+                  <Link href="/"><p className="text-xl">Home</p></Link>
                 </MenuItem>
               </div>
               <MenuItem>
-                <Link href="/create"><p className="text-2xl">Create Proposal</p></Link>
+                <Link href="/token"><p className="text-xl">Get LAR Token</p></Link>
               </MenuItem>
               <MenuItem>
-                <Link href="/proposals"><p className="text-2xl">Vote</p></Link>
+                <Link href="/create"><p className="text-xl">Create Proposal</p></Link>
+              </MenuItem>
+              <MenuItem>
+                <Link href="/proposals"><p className="text-xl">Vote</p></Link>
               </MenuItem>
             </Menu>
           </ProSidebar>
         </div>
       )}
 
-      <nav className="flex items-center flex-col ss:flex-row w-full justify-between px-2 py-2 sm:px-4 sm:py-4 h-full text-black ">
-        <p className="font-logo text-xl hidden sm:block sm:text-3xl self-start ss:self-auto">
+      <nav className="flex items-center flex-col ss:flex-row w-full justify-between ss:px-2 py-2 sm:px-4 sm:py-4 h-full text-black ">
+        <p className="font-logo text-xl  sm:text-3xl self-start ss:self-auto">
           <span className="text-orange-700">{"<"}L</span>arry
           <span className="text-orange-700">C</span>odes
           <span className="text-orange-700">{"/>"}</span>
         </p>
-        <div className="flex  items-center text-black ss:self-auto">
-          <div className="flex items-center text-lg w-full">
+        <div className="flex items-center text-black self-end ss:self-auto">
+          <div className="flex items-center text-base w-full">
             {!isBreakpoint && (
               <>
+                <Link href="/  ">
+                  <a className="w-full text-black font-semibold hover:text-orange-700">
+                    <p className="w-full whitespace-nowrap">Home</p>
+                  </a>
+                </Link>
                 <Link href="/token  ">
-                  <a className="w-full text-black font-semibold hover:text-orange-600 ">
+                  <a className="sm:ml-5 w-full text-black font-semibold hover:text-orange-700">
                     <p className="w-full whitespace-nowrap">Get LAR Token</p>
                   </a>
                 </Link>
                 <Link href="/create">
-                  <a className="sm:ml-8 ml-6 text-black font-semibold whitespace-nowrap hover:text-orange-600">
+                  <a className="sm:ml-5 ml-6 text-black font-semibold whitespace-nowrap hover:text-orange-700">
                     Create Proposal
                   </a>
                 </Link>
 
                 <Link href="/proposals">
-                  <a className="sm:mx-6 mx-2 w-full text-black font-semibold hover:text-orange-600 ">
+                  <a className="sm:ml-5 mx-2 w-full text-black font-semibold hover:text-orange-700 ">
                     Vote
                   </a>
                 </Link>

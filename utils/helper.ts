@@ -36,7 +36,7 @@ export const fromWei = (amount: BigNumber | number | string): string => {
 };
 
 export const formatTime = (value: number): string => {
-  return moment(value).format("MMMM Do YYYY, h:mm:ss a");
+  return moment(value).format("lll");
 };
 
 export const inDollarFormat = (value:number) => {

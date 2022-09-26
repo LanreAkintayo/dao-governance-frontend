@@ -169,16 +169,21 @@ const Proposals: NextPage = () => {
             </div>
           </div> */}
 
-          <div className=" w-8/12">
+          <div className=" lg:w-9/12 w-11/12">
             <h1 className="text-xl text-gray-700 py-4 ">Proposals</h1>
 
-            {!allProposals && (
+            {!allProposals && isWeb3Enabled && (
               <div className="flex flex-col w-full my-4 items-center">
                 <div className="my-1">
                   <ScaleLoader color="black" loading={true} size={20} />
                 </div>
 
                 <p className="text-gray-500">Please Wait a few seconds</p>
+              </div>
+            )}
+            {!isWeb3Enabled && (
+              <div className="flex flex-col my-4 p-2 text-orange-800 jusify-center items-center">
+                <p className="text-center rounded-md p-2 px-8 bg-orange-200">Connect Your Wallet</p>
               </div>
             )}
 

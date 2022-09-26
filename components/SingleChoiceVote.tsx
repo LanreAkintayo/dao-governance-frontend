@@ -40,7 +40,7 @@ export default function SingleChoiceVote({
   };
 
   return (
-    <div className="shadow bg-white p-3 pb-5 mt-4 w-10/12">
+    <div className="shadow bg-white p-3 pb-5 mt-4 w-10/12 items-center justify-center">
       <h1 className="my-3 pb-3 text-gray-800 border-l-0 border-r-0 border-b border-gray-300 ">
         Cast your Vote
       </h1>
@@ -53,7 +53,7 @@ export default function SingleChoiceVote({
               <button
                 className={`p-2 mt-2 border block ${
                   selectedOption == option && "bg-gray-200"
-                } w-full rounded-full  border-gray-700 text-gray-700 text-lg`}
+                } w-full rounded-full  border-gray-700 text-gray-700 text-xs sm:text-sm`}
                 onClick={() => {
                   setSelectedOption(option);
                   setIndexToVotingPower({ [option.optionIndex]: 1 });

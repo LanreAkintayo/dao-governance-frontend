@@ -14,14 +14,14 @@ export default function Option({ option, proposal, maxPercentage }) {
   };
 
   return (
-    <div className="bg-gray-50 h-9 mt-2 border rounded-md border-gray-100 dark:bg-gray-700 relative">
+    <div className="bg-gray-50 lg:h-9 h-8 mt-2 text-xs lg:text-base border rounded-md border-gray-100 dark:bg-gray-700 relative">
       <div
-        className={`h-9 absolute top-0 rounded-md ${
+        className={`lg:h-9 h-8 absolute top-0 rounded-md ${
           isMax() ? "bg-green-200" : "bg-gray-300"
         }`}
         style={{ width: `${option?.optionPercentage}%` }}
       ></div>
-      <div className="absolute px-4 w-full h-full flex justify-between items-center">
+      <div className="absolute px-4 w-full text-xs h-full flex justify-between items-center">
         <p>
           {option?.optionText}{" "}
           {inDollarFormat(Number(fromWei(option?.optionVote)))} LAR
