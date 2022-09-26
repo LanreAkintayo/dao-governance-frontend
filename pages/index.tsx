@@ -17,7 +17,7 @@ handle all this typescript issue
 const Home: NextPage = () => {
   const settings2 = {
     particle: {
-      particleCount: 300,
+      particleCount: 100,
       color: "#000d1a",
       maxSize: 2,
     },
