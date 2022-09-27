@@ -114,7 +114,7 @@ export default function ID(props: { proposal: Proposal }) {
       .map((votingPower) => toWei(votingPower))
       .filter((votingPower) => Number(votingPower) > 0);
     const votingPowerSum: string = votingPowers
-      .reduce((a:string, b:string, c:number) => {
+      .reduce((a:string, b:string, c, d) => {
         return BigInt(a) + BigInt(b);
       }, 0)
       .toString();
@@ -189,7 +189,7 @@ export default function ID(props: { proposal: Proposal }) {
       proposalsQuery.equalTo("uid", proposalData.id);
       const proposal = await proposalsQuery.first();
 
-      const proposalAttribute = props.proposal?.attributes;
+      const proposalAttribute = proposal?.attributes;
 
       const latestOptions = await getLatestOptions(proposalAttribute?.uid);
       const validOptions: Array<Array<string>> =
