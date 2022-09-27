@@ -70,8 +70,8 @@ const Create: NextPage = () => {
 
   const [isValidDuration, setIsValidDuration] = useState(false);
   const [noOfOptions, setNoOfOptions] = useState(2);
-  const [optionsIndexes, setOptionsIndexes] = useState([]);
-  const [optionTexts, setOptionTexts] = useState({});
+  const [optionsIndexes, setOptionsIndexes] = useState<number[]>([]);
+  const [optionTexts, setOptionTexts] = useState<{[key:string]: string}>({});
   const [allValid, setAllValid] = useState(false);
 
   useEffect(() => {
@@ -146,15 +146,31 @@ const Create: NextPage = () => {
     // console.log(duration)
     console.log("Duration : ", duration);
 
-    const provider:TProvider = await enableWeb3();
+    const approveOptions = {
+      contractAddress: larAddress,
+      functionName: "approve",
+      abi: erc20Abi,
+      params: {
+        spender: daoAddress, 
+        amount:fee
+      }
+    };
 
-    const lar = new ethers.Contract(larAddress, erc20Abi, provider);
+    const tx = (await trackPromise(Moralis.executeFunction(approveOptions))) as ContractTransaction;
+    const result = await trackPromise(tx.wait(1))
 
-    const signer = provider?.getSigner(account);
-    const approveTx:ContractTransaction = await trackPromise(
-      lar.connect(signer).approve(daoAddress, fee)
-    );
-    await trackPromise(approveTx.wait(1));
+    console.log("using ethers transaction: ", result)
+
+
+    // const provider:TProvider = await enableWeb3();
+
+    // const lar = new ethers.Contract(larAddress, erc20Abi, provider);
+
+    // const signer = provider?.getSigner(account);
+    // const approveTx:ContractTransaction = await trackPromise(
+    //   lar.connect(signer).approve(daoAddress, fee)
+    // );
+    // await trackPromise(approveTx.wait(1));
 
     createProposal({
       params: {
@@ -234,7 +250,7 @@ const Create: NextPage = () => {
                 wrap="soft"
                 className="text-gray-700 w-full h-40 ssm:text-sm text-xs border outline-none p-2  rounded-md border-gray-300"
               ></textarea>
-            </div>
+            </div>  
             <OptionsSection
               noOfOptions={noOfOptions}
               setNoOfOptions={setNoOfOptions}

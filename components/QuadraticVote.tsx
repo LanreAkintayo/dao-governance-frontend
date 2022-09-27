@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { fromWei, toDp, toWei } from "../utils/helper";
 import { usePromiseTracker } from "react-promise-tracker";
 import { ClipLoader } from "react-spinners";
@@ -21,7 +21,7 @@ interface Option {
 const getCurrentPercentage = (votingPower: VotingPower) => {
   const onlyValues = Object.values(votingPower);
 
-  const percentage = {};
+  const percentage: { [key: string]: number } = {};
 
   const totalSum = onlyValues.reduce((a, b) => {
     return a + b;
@@ -50,12 +50,28 @@ export default function QuadraticVote({
   handleVote,
   isFetching,
   isLoading,
+}: {
+  votingPower: { [key: string]: number };
+  options: {
+    optionIndex: string;
+    optionText: string;
+    optionVote: string;
+    optionPercentage: string;
+  }[];
+  handleVote: () => Promise<void>;
+  isFetching: boolean;
+  isLoading: boolean;
+  setVotingPower: Dispatch<
+    SetStateAction<{
+      [key: string]: number;
+    }>
+  >;
 }) {
   const { account, enableWeb3 } = useMoralis();
 
   const { promiseInProgress } = usePromiseTracker();
 
-  const [percentages, setPercentages] = useState({});
+  const [percentages, setPercentages] = useState<{ [key: string]: number }>({});
   const [isValidVotingPower, setIsValidVotingPower] = useState(true);
 
   const checkValidity = async (votingPower: VotingPower) => {

@@ -1,6 +1,7 @@
+import { Voter } from "../lib/fetchProposals";
 import { fromWei, inDollarFormat } from "../utils/helper";
 
-export default function VotersTable({ allVoters, options }) {
+export default function VotersTable({ allVoters, options }:{allVoters:any[][], options:string[][]}) {
     // console.log("inside voters table: ", allVoters.length)
     let votersId = 1;
   
@@ -18,9 +19,9 @@ export default function VotersTable({ allVoters, options }) {
         <tbody className="">
           {allVoters.map((voter) => {
             // console.log("A voter: ", voter)
-            const optionIndexes: number[] = voter[1];
-            const optionVotes: number[] = voter[2];
-            const voterAddress: string = voter[0];
+            const optionIndexes = voter[1] as number[];
+            const optionVotes = voter[2] as number[];
+            const voterAddress = voter[0] as string;
 
             if (optionIndexes?.length > 0) {
               let i = 0;

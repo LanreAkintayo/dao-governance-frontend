@@ -30,7 +30,7 @@ export interface Proposal {
     optionPercentage: string,
   }[],
   validOptions: string[][],
-  allVoters:string
+  allVoters:any[][]
 }
 
 export interface IParam {
@@ -39,11 +39,17 @@ export interface IParam {
   }
 }
 
+export interface Voter {
+    voterAddress: string;
+    optionIndexes: number[];
+    optionVotes: number[];
+}
+
 export async function getProposalsId() {
   try{
     await Moralis.start({ serverUrl, appId, masterKey });
 
-    console.log("Now here")
+    console.log("Now here........................................")
   
         const Proposals = Moralis.Object.extend("Proposals");
         const proposalsQuery = new Moralis.Query(Proposals);
@@ -115,8 +121,7 @@ export async function getProposalsData(id:string){
         abi: abi,
         params: { id },
       };
-      const allVoters = await Moralis.Web3API.native.runContractFunction(options);
-
+      const allVoters:any[][] = await Moralis.Web3API.native.runContractFunction(options) as unknown as any[][]
       console.log("These are all voters: ", allVoters)
 
     const totalVotes = getTotalVotes(validOptions);

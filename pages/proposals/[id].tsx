@@ -2,7 +2,13 @@ import { NextPage } from "next";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import ResultSection from "../../components/ResultSection";
-import { getProposalsId, getProposalsData, Proposal, IParam } from "../../lib/fetchProposals";
+import {
+  getProposalsId,
+  getProposalsData,
+  Proposal,
+  IParam,
+  Voter
+} from "../../lib/fetchProposals";
 import { formatTime, now, toMilliseconds, toWei } from "../../utils/helper";
 import { useEffect, useState } from "react";
 import { abi, contractAddresses, erc20Abi, larAddress } from "../../constants";
@@ -12,17 +18,18 @@ import VotersTable from "../../components/VotersTable";
 import Link from "next/link";
 import QuadraticVote from "../../components/QuadraticVote";
 import SingleChoiceVote from "../../components/SingleChoiceVote";
-import { ethers, ContractTransaction } from "ethers";
+import { ContractTransaction, Signer } from "ethers";
 import VotingPower from "../../components/VotingPower";
 import { trackPromise, usePromiseTracker } from "react-promise-tracker";
 import { Blockie, Tooltip, useNotification } from "web3uikit";
+import Moralis from "moralis/types";
 
 export default function ID(props: { proposal: Proposal }) {
   // console.log("All voters: ", props.proposal.allVoters);
   interface VotingSystem {
     [key: string]: string;
   }
-  const votingSystem:VotingSystem = {
+  const votingSystem: VotingSystem = {
     "0": "Single Choice Voting",
     "1": "Weighted Voting",
     "2": "Quadratic Voting",
@@ -62,9 +69,11 @@ export default function ID(props: { proposal: Proposal }) {
       : null;
 
   const [votingIndex, setVotingIndex] = useState([]);
-  const [votingPower, setVotingPower] = useState<{[key:string]: number}>({});
+  const [votingPower, setVotingPower] = useState<{ [key: string]: number }>({});
   const [voteModalOpen, setVoteModalOpen] = useState(false);
-  const [indexToVotingPower, setIndexToVotingPower] = useState({});
+  const [indexToVotingPower, setIndexToVotingPower] = useState<{
+    [key: string]: number;
+  }>({});
 
   // console.log("Dao address: ", daoAddress);
   const {
@@ -97,32 +106,45 @@ export default function ID(props: { proposal: Proposal }) {
   const handleVote = async () => {
     console.log("About to handle vote: ", votingPower);
 
-    const provider = await enableWeb3();
-
-    console.log("Can it be this? ");
-    const lar = new ethers.Contract(larAddress, erc20Abi, provider);
-
-    const signer = provider?.getSigner(account);
-
     const id = proposalData.id;
-    const keys:string[] = Object.keys(votingPower)
+    const keys: string[] = Object.keys(votingPower);
 
-    const indexes = keys.filter(
-      (key) => votingPower[key] > 0
-    );
+    const indexes = keys.filter((key) => votingPower[key] > 0);
     const votingPowers = Object.values(votingPower)
       .map((votingPower) => toWei(votingPower))
       .filter((votingPower) => Number(votingPower) > 0);
     const votingPowerSum: string = votingPowers
-      .reduce((a:string, b:string, c, d) => {
-        return BigInt(a) + BigInt(b);
+      .reduce((a, b: string) => {
+        return Number(BigInt(a) + BigInt(b));
       }, 0)
       .toString();
 
-    const approveTx:ContractTransaction = await trackPromise(
-      lar.connect(signer).approve(daoAddress, votingPowerSum)
-    );
-    await trackPromise(approveTx.wait(1));
+      const approveOptions = {
+        contractAddress: larAddress,
+        functionName: "approve",
+        abi: erc20Abi,
+        params: {
+          spender: daoAddress, 
+          amount:votingPowerSum
+        }
+      };
+
+      const tx = await trackPromise(Moralis.executeFunction(approveOptions));
+      console.log(tx)
+
+    //   const provider = await enableWeb3() 
+    //   const ethers = Moralis.web3Library;
+  
+    //   console.log("Can it be this? ");
+    //   const lar = new ethers.Contract(larAddress, erc20Abi, provider);
+  
+    //   const signer = provider?.getSigner(account);
+
+
+    // const approveTx: ContractTransaction = await trackPromise(
+    //   lar.connect(signer).approve(daoAddress, votingPowerSum)
+    // );
+    // await trackPromise(approveTx.wait(1));
 
     if (proposalData.proposalType == "1") {
       voteProposalByQuadratic({
@@ -161,7 +183,7 @@ export default function ID(props: { proposal: Proposal }) {
     }
   };
 
-  const getTotalVotes = (options: Array<Array<string>>): number => {
+  const getTotalVotes = (options: string[][]): number => {
     let totalVotes: number = 0;
     options.forEach((option) => {
       totalVotes += Number(option[2]);
@@ -195,10 +217,22 @@ export default function ID(props: { proposal: Proposal }) {
       const validOptions: Array<Array<string>> =
         latestOptions == undefined ? proposalAttribute?.options : latestOptions;
 
-      const provider = await enableWeb3();
+        const fetchOptions:Moralis.ExecuteFunctionOptions = {
+          contractAddress: daoAddress!,
+          functionName: "getVoters",
+          abi: abi,
+          params: {
+            id:proposalData.id
+          }
+        } 
+    
+        const allVoters= (await trackPromise(Moralis.executeFunction(fetchOptions))) as any[][]
 
-      const daoContract = new ethers.Contract(daoAddress!, abi, provider);
-      const allVoters = await daoContract.getVoters(proposalData.id);
+
+      // const provider = await enableWeb3();
+
+      // const daoContract = new ethers.Contract(daoAddress!, abi, provider);
+      // const allVoters:any[][] = await daoContract.getVoters(proposalData.id);
 
       const totalVotes = getTotalVotes(validOptions);
 
@@ -268,19 +302,32 @@ export default function ID(props: { proposal: Proposal }) {
     const index = Object.keys(indexToVotingPower)[0];
     const votingPower = toWei(Object.values(indexToVotingPower)[0]);
 
-    const provider = await enableWeb3();
-    const lar = new ethers.Contract(larAddress, erc20Abi, provider);
-    const signer = provider?.getSigner(account);
+    const approveOptions = {
+      contractAddress: larAddress,
+      functionName: "approve",
+      abi: erc20Abi,
+      params: {
+        spender: daoAddress, 
+        amount:votingPower
+      }
+    };
 
-    const approveTx = await trackPromise(
-      lar.connect(signer).approve(daoAddress, votingPower)
-    );
-    await trackPromise(approveTx.wait(1));
+    const tx = (await trackPromise(Moralis.executeFunction(approveOptions))) as ContractTransaction;
+    const result = await trackPromise(tx.wait(1))
+
+    // const provider = await enableWeb3();
+    // const lar = new ethers.Contract(larAddress, erc20Abi, provider);
+    // const signer = provider?.getSigner(account);
+
+    // const approveTx: ContractTransaction = await trackPromise(
+    //   lar.connect(signer).approve(daoAddress, votingPower)
+    // );
+    // await trackPromise(approveTx.wait(1));
 
     voteProposalBySingleChoice({
       params: {
         abi: abi,
-        contractAddress: daoAddress,
+        contractAddress: daoAddress!,
         functionName: "voteProposalBySingleChoice",
         params: {
           id,
@@ -317,7 +364,8 @@ export default function ID(props: { proposal: Proposal }) {
   //   }
   // );
 
-  const handleSuccess = async (tx) => {
+  const handleSuccess = async (results: unknown) => {
+    const tx = results as ContractTransaction;
     console.log("Success transaction: ", tx);
     await trackPromise(tx.wait(1));
     // updateUIValues()
@@ -327,7 +375,7 @@ export default function ID(props: { proposal: Proposal }) {
       title: "Transaction Notification",
       position: "topR",
     });
-    const newProposal = await getLatestProposal();
+    const newProposal = (await getLatestProposal()) as Proposal;
 
     console.log("New Proposal: ", newProposal);
     setProposalData({ ...newProposal });
@@ -335,7 +383,7 @@ export default function ID(props: { proposal: Proposal }) {
     setIndexToVotingPower({});
   };
 
-  const handleFailure = async (error) => {
+  const handleFailure = async (error: Error) => {
     console.log("Error: ", error);
     dispatch({
       type: "error",
@@ -379,12 +427,16 @@ export default function ID(props: { proposal: Proposal }) {
 
         <div className="flex lg:flex-row flex-col mx-4">
           <div className="w-full lg:w-8/12 p-2 pl-4 sm:pr-11 ">
-            <h1 className="text-base ssm:text-lg sm:text-2xl">{proposalData.title}</h1>
+            <h1 className="text-base ssm:text-lg sm:text-2xl">
+              {proposalData.title}
+            </h1>
             <div className="flex items-center my-3">
-              <p className={`rounded-full px-2 p-1 mr-3 sm:text-base text-sm ${color} ${bgColor} `}>
+              <p
+                className={`rounded-full px-2 p-1 mr-3 sm:text-base text-sm ${color} ${bgColor} `}
+              >
                 {proposalData.status}
               </p>
-              <Tooltip content={creator}>
+              <Tooltip content={creator} position={"top"}>
                 <Blockie seed={creator} size={6} />
               </Tooltip>
               <p className="px-2 sm:text-base text-sm">
@@ -393,8 +445,12 @@ export default function ID(props: { proposal: Proposal }) {
               </p>
             </div>
             <div className="mt-4 ">
-              <h1 className=" text-base sm:text-lg py-2 text-gray-700">Description</h1>
-              <p className="text-gray-700 sm:text-base ss:text-sm text-xs">{proposalData.description}</p>
+              <h1 className=" text-base sm:text-lg py-2 text-gray-700">
+                Description
+              </h1>
+              <p className="text-gray-700 sm:text-base ss:text-sm text-xs">
+                {proposalData.description}
+              </p>
             </div>
 
             <div className="w-full flex justify-center lg:justify-start">
@@ -412,12 +468,10 @@ export default function ID(props: { proposal: Proposal }) {
               {proposalData?.proposalType == "2" &&
                 proposalData?.status != "Closed" && (
                   <QuadraticVote
-                    setVotingIndex={setVotingIndex}
-                    votingIndex={votingIndex}
                     votingPower={votingPower}
-                    setVotingPower={setVotingPower}
                     options={proposalData.optionsArray}
                     handleVote={handleVote}
+                    setVotingPower={setVotingPower}
                     isFetching={isFetchingQ}
                     isLoading={isLoadingQ}
                   />
@@ -425,43 +479,49 @@ export default function ID(props: { proposal: Proposal }) {
               {proposalData?.proposalType == "1" &&
                 proposalData?.status != "Closed" && (
                   <QuadraticVote
-                    setVotingIndex={setVotingIndex}
-                    votingIndex={votingIndex}
                     votingPower={votingPower}
-                    setVotingPower={setVotingPower}
                     options={proposalData.optionsArray}
                     handleVote={handleVote}
+                    setVotingPower={setVotingPower}
                     isFetching={isFetchingQ}
                     isLoading={isLoadingQ}
                   />
                 )}
             </div>
-                  
+
             <div className="w-full flex justify-center lg:justify-start">
-            {proposalData?.allVoters && (
-              <VotersTable
-                allVoters={proposalData.allVoters}
-                options={proposalData.validOptions}
-              />
-            )}
+              {proposalData?.allVoters && (
+                <VotersTable
+                  allVoters={proposalData.allVoters}
+                  options={proposalData.validOptions}
+                />
+              )}
             </div>
           </div>
-          
+
           <div className="flex lg:flex-col sm:flex-row flex-col items-center justify-center lg:justify-start lg:w-4/12 rounded-md  text-sm">
             <div className="shadow bg-white p-3 mt-8 w-10/12 justify-center sm:w-5/12 lg:w-10/12">
               <h1 className="my-3 pb-3 text-gray-800 border-l-0 border-r-0 border-b border-gray-300 ">
                 Information
               </h1>
               <div className="flex items-center justify-between">
-                <p className="text-gray-700 lg:text-xs text-xs w-5/12">Voting System</p>
-                <p className="w-7/12 lg:text-xs text-xs">{votingSystem[proposalData.proposalType]}</p>
+                <p className="text-gray-700 lg:text-xs text-xs w-5/12">
+                  Voting System
+                </p>
+                <p className="w-7/12 lg:text-xs text-xs">
+                  {votingSystem[proposalData.proposalType]}
+                </p>
               </div>
               <div className="flex pt-2 items-center justify-between">
-                <p className="text-gray-700 lg:text-xs text-xs w-5/12">Start Date</p>
+                <p className="text-gray-700 lg:text-xs text-xs w-5/12">
+                  Start Date
+                </p>
                 <p className="lg:text-xs text-xs w-7/12">{startDate}</p>
               </div>
               <div className="flex pt-2 items-center justify-between">
-                <p className="text-gray-700 lg:text-xs text-xs w-5/12">End Date</p>
+                <p className="text-gray-700 lg:text-xs text-xs w-5/12">
+                  End Date
+                </p>
                 <p className="lg:text-xs text-xs w-7/12">{endDate}</p>
               </div>
             </div>
@@ -475,7 +535,7 @@ export default function ID(props: { proposal: Proposal }) {
       <Footer />
     </div>
   );
-};
+}
 
 export async function getStaticPaths() {
   console.log("We are here");
@@ -488,7 +548,7 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({ params }:IParam) {
+export async function getStaticProps({ params }: IParam) {
   // Fetch necessary data for the blog post using params.id
   const proposal = await getProposalsData(params.id);
   return {

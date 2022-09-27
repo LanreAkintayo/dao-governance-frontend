@@ -1,10 +1,24 @@
+import { Proposal } from "../pages/proposals";
 import { fromWei, inDollarFormat } from "../utils/helper";
 
-export default function Option({ option, proposal, maxPercentage }) {
+export default function Option({
+  option,
+  proposal,
+  maxPercentage,
+}: {
+  option: {
+    optionIndex: string;
+    optionText: string;
+    optionVote: string;
+    optionPercentage: string;
+  };
+  proposal:Proposal;
+  maxPercentage: number
+}) {
   // console.log("Option: ", option)
   const isMax = () => {
     if (
-      option?.optionPercentage == maxPercentage &&
+      option?.optionPercentage == maxPercentage.toString() &&
       proposal.status == "Closed"
     ) {
       return true;

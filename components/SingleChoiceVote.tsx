@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import { usePromiseTracker } from "react-promise-tracker";
 import { ClipLoader } from "react-spinners";
@@ -13,18 +13,41 @@ export default function SingleChoiceVote({
   isFetching,
   isLoading,
   handleSingleVote,
+}: {
+  indexToVotingPower: {
+    [key: string]: number;
+  };
+  setIndexToVotingPower: Dispatch<
+    SetStateAction<{
+      [key: string]: number;
+    }>
+  >;
+  options: {
+    optionIndex: string;
+    optionText: string;
+    optionVote: string;
+    optionPercentage: string;
+  }[];
+  isFetching: boolean;
+  isLoading: boolean;
+  handleSingleVote: () => Promise<void>;
 }) {
-  const [selectedOption, setSelectedOption] = useState();
+  const [selectedOption, setSelectedOption] = useState<{
+    optionIndex: string;
+    optionText: string;
+    optionVote: string;
+    optionPercentage: string;
+  }>();
   const [canVote, setCanVote] = useState(true);
   const { enableWeb3, account } = useMoralis();
-    // useEffect(() => {
-    //   console.log("Index to voting power: ", indexToVotingPower);
-    // }, [indexToVotingPower]);
+  // useEffect(() => {
+  //   console.log("Index to voting power: ", indexToVotingPower);
+  // }, [indexToVotingPower]);
 
   const { promiseInProgress } = usePromiseTracker();
 
   const checkValidity = async () => {
-    const provider = await enableWeb3();
+    const provider = await enableWeb3() 
 
     if (provider) {
       const lar = new ethers.Contract(larAddress, erc20Abi, provider);

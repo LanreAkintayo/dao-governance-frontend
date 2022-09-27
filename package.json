@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ethersproject/providers": "^5.7.1",
     "@types/bignumber.js": "^5.0.0",
     "@web3uikit/core": "^0.1.8",
     "@web3uikit/icons": "^0.1.5",

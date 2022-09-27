@@ -3,7 +3,7 @@ import { Proposal } from "../pages/proposals";
 import Link from "next/link";
 import { Blockie, Tooltip } from "web3uikit";
 
-export default function ProposalCard({ proposal }) {
+export default function ProposalCard({ proposal }: {proposal: Proposal}) {
   const status = proposal.status;
 
   let color;
@@ -43,7 +43,7 @@ export default function ProposalCard({ proposal }) {
           <p className="sm:text-sm hidden sm:block text-xs mt-2 text-gray-500">{proposal.description}</p>
           <div className="my-4">
             {proposal?.optionsArray?.map((option) => {
-              const percentages = proposal.optionsArray.map(option => option.optionPercentage)
+              const percentages = proposal.optionsArray.map(option => option.optionPercentage) as unknown as number[]
               const maxPercentage = Math.max(...percentages)
               // console.log("Options: ", proposal.optionsArray);
               return <Option option={option} proposal={proposal} maxPercentage={maxPercentage} />;
