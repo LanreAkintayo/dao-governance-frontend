@@ -143,7 +143,7 @@ export default function QuadraticVote({
   };
 
   return (
-    <div className="shadow bg-white p-3 pb-5 mt-4 w-10/12">
+    <div className="shadow bg-white p-3 pb-5 mt-4 w-full ss:w-10/12">
       <h1 className="my-3 pb-3 text-gray-800 border-l-0 border-r-0 border-b border-gray-300 ">
         Cast your Vote
       </h1>
@@ -157,12 +157,12 @@ export default function QuadraticVote({
 
             return (
               <div className="flex mt-4 w-full justify-between rounded-full border hover:border-gray-900 border-gray-500 text-gray-700 items-center">
-                <div className="w-8/12">
-                  <p className="text-base text-start px-8">
+                <div className="lg:w-7/12 md:w-7/12 ssm:w-5/12 w-4/12">
+                  <p className="ss:text-sm text-xs whitespace-nowrap sm:text-base px-3 lg:px-8 text-start ">
                     {option.optionText}
                   </p>
                 </div>
-                <div className="flex w-4/12 text-xl items-center">
+                <div className="flex lg:w-5/12 md:w-5/12 ssm:w-7/12 w-8/12 text-xl items-center">
                   <button
                     className="text-lg w-10 outline-none border-l py-2 px-3 border-r border-gray-300"
                     onClick={() => handleSubClick(option.optionIndex)}
@@ -178,7 +178,7 @@ export default function QuadraticVote({
                     name="text"
                     placeholder="0"
                     value={votingPower[option.optionIndex]}
-                    className="px-2 text-gray-800 text-base w-14 outline-none text-center"
+                    className="px-2 text-gray-800 text-sm sm:text-base w-10 sm:w-14 outline-none text-center"
                   />
 
                   <button
@@ -187,7 +187,7 @@ export default function QuadraticVote({
                   >
                     +
                   </button>
-                  <p className="text-gray-800 px-2 text-base">
+                  <p className="text-gray-800 px-2 text-sm sm:text-base ">
                     {(percentage == 0 || isNaN(percentage)
                       ? "0"
                       : toDp(percentage || 0, 1)) || 0}

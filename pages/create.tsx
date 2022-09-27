@@ -212,7 +212,7 @@ const Create: NextPage = () => {
           <VotingPower className="border border-gray-400" />
         </div>
         <div className="flex lg:flex-row flex-col mx-4">
-          <div className="lg:w-7/12 w-full flex flex-col items-center lg:items-start justify-center p-2 ssm:pl-4 px-2 ssm:pr-11 ">
+          <div className="lg:w-7/12 w-full flex flex-col lg:items-start justify-center p-2 ssm:pl-4 px-2 ssm:pr-11 ">
             <div className="lg:w-10/12">
               <p className="text-gray-700 ss:text-sm text-xs">
                 <small>Title: Ask a question</small>

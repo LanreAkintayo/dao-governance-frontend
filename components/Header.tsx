@@ -136,7 +136,7 @@ export default function Header() {
                     switchNetwork("0x13881");
                   }}
                 >
-                  Switch to Mumbai Testnet
+                  Switch to Mumbai
                 </button>
               )}
             </div>

@@ -5,7 +5,8 @@ import ParticleBackground from "react-particle-backgrounds";
 import Link from "next/link";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-
+import { useMoralis } from "react-moralis";
+import { ConnectButton } from "web3uikit";
 
 /*
 The proposal page should be displayed properly when the contents are not yet ready
@@ -15,6 +16,7 @@ handle all this typescript issue
 
 */
 const Home: NextPage = () => {
+  const { isWeb3Enabled } = useMoralis();
   const settings2 = {
     particle: {
       particleCount: 100,
@@ -45,16 +47,29 @@ const Home: NextPage = () => {
             Decentralized Autonomous Organization
           </h1>
           <p className="w-10/12 lg:w-8/12 text-center font-light my-6 text-lg sm:text-xl lg:text-2xl">
-            The aim of this project is to showcase my understanding on what
-            DAO, Decentralized Autonomous Organization is all about.
+            The aim of this project is to showcase my understanding on what DAO,
+            Decentralized Autonomous Organization is all about.
           </p>
           <div>
-            <button className="p-2 bg-gradient-to-tr to-pink-500  from-gray-800 px-4 text-white text-base ss:text-xl ssm:text-3xl rounded-md">
-              Start Voting
-            </button>
-            <button className="ml-4 p-2 bg-gradient-to-tr from-pink-500  to-gray-800 px-4 text-white text-base ss:text-xl ssm:text-3xl rounded-md">
-              Learn more
-            </button>
+            {isWeb3Enabled ? (
+              <div>
+                <Link href="/proposals">
+                  <a className="p-2 bg-gradient-to-tr to-pink-500  from-gray-800 px-4 text-white text-sm ss:text-xl ssm:text-2xl rounded-md">
+                    Start Voting
+                  </a>
+                </Link>
+
+                <Link href="/create">
+                  <a className="p-2 ml-4 bg-gradient-to-tr to-pink-500  from-gray-800 px-4 text-white text-sm ss:text-xl ssm:text-2xl rounded-md">
+                    Create Proposal
+                  </a>
+                </Link>
+              </div>
+            ) : (
+              <p className="p-2 ml-4 bg-gradient-to-tr to-red-500  from-red-800 px-4 text-white text-base rounded-md">
+                Make sure your wallet is connected.
+              </p>
+            )}
           </div>
         </div>
       </section>

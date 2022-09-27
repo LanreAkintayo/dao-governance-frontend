@@ -87,8 +87,8 @@ const Proposals: NextPage = () => {
       <section className="px-5 mt-24 flex flex-col items-center ">
         <VotingPower className="self-end border border-gray-300" />
 
-        <div>
-          <p className="mt-4">Enter Address</p>
+        <div className="w-full flex items-center justify-center flex-col" >
+          <p className="mt-4 ">Enter Address</p>
           <input
             onChange={(event) => {
               setUserAddress(event.target.value);
@@ -97,11 +97,11 @@ const Proposals: NextPage = () => {
             name="text"
             id="duration"
             placeholder="0xdd9..."
-            className="w-96 block p-2 md:text-sm text-gray-700 text-xs mt-1 border border-gray-300 focus:outline-none rounded-md"
+            className="ssm:w-96 w-72 block p-2 md:text-sm text-gray-700 text-xs mt-1 border border-gray-300 focus:outline-none rounded-md"
           />
           <button
             onClick={handleClick}
-            className="p-2 rounded-md text-orange-800 my-4 w-full disabled:cursor-not-allowed disabled:opacity-50"
+            className="p-2 rounded-md ssm:text-lg text-sm self-center text-orange-800 my-4 ssm:w-80 disabled:cursor-not-allowed disabled:opacity-50"
             disabled={
               userAddress == "" || isFetching || isLoading || promiseInProgress
             }
@@ -122,8 +122,8 @@ const Proposals: NextPage = () => {
             )}
           </button>
         </div>
-        <div className="mt-12 w-5/12">
-          <p className="text-gray-700 text-center text-sm">
+        <div className="ssm:mt-12 mt-4 w-12/12 ssm:w-5/12">
+          <p className="text-gray-700 text-center text-xs ss:text-sm">
             Note: LAR Token is a governance token that is needed when creating a
             proposal or when voting on one.
             <br />
