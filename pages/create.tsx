@@ -3,7 +3,7 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import VotingSystemDropdown from "../components/VotingSystemDropdown";
 import DatePicker from "react-datepicker";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, ChangeEventHandler, useEffect, useState } from "react";
 import moment from "moment";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -13,14 +13,16 @@ import { trackPromise, usePromiseTracker } from "react-promise-tracker";
 import { useNotification } from "web3uikit";
 import { useSWRConfig } from "swr";
 import { abi, contractAddresses, erc20Abi, larAddress } from "../constants";
-import { ethers } from "ethers";
+import { ethers, Signer, ContractTransaction } from "ethers";
 import { now, sDuration, toSeconds, toWei } from "../utils/helper";
 import { ClipLoader } from "react-spinners";
 import VotingPower from "../components/VotingPower";
-
+import {Moralis} from "moralis/types";
 interface TypeDict {
   [key: string]: string;
 }
+
+type TProvider = Moralis.Web3Provider | Signer 
 
 const typeDict: TypeDict = {
   "Single Choice Voting": "0",
@@ -54,7 +56,7 @@ const Create: NextPage = () => {
 
   const daoAddress =
     chainId in contractAddresses
-      ? contractAddresses[chainId][length - 1]
+      ? contractAddresses[chainId.toString()][length - 1]
       : null;
 
   const [proposalData, setProposalData] = useState({
@@ -62,7 +64,7 @@ const Create: NextPage = () => {
     description: "",
     proposalType: "",
     proposalStatus: "0",
-    startDate: now(),
+    startDate: new Date(now()),
     duration: 0,
   });
 
@@ -91,7 +93,7 @@ const Create: NextPage = () => {
     runContractFunction: createProposal,
     isFetching,
     isLoading,
-  } = useWeb3Contract();
+  } = useWeb3Contract({});
 
   const handleSelectedVotingSystem = (name: string) => {
     setProposalData((prevProposal) => {
@@ -101,9 +103,9 @@ const Create: NextPage = () => {
       };
     });
   };
-  const handleOnChange = async (event: ChangeEvent<HTMLInputElement>) => {
+  const handleOnChange = async (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     // console.log(event.currentTarget.value)
-    const id = event.currentTarget.id;
+    const id = event.target.id;
 
     if (id == "duration") {
       const duration = event.target.value;
@@ -137,19 +139,19 @@ const Create: NextPage = () => {
     const description = proposalData.description;
     const proposalType = typeDict[proposalData.proposalType];
     const proposalStatus = proposalData.proposalStatus;
-    const startDate = toSeconds(proposalData.startDate);
+    const startDate = toSeconds(proposalData.startDate.getTime());
     const duration = sDuration.minutes(proposalData.duration);
     const fee = toWei(5);
 
     // console.log(duration)
     console.log("Duration : ", duration);
 
-    const provider = await enableWeb3();
+    const provider:TProvider = await enableWeb3();
 
     const lar = new ethers.Contract(larAddress, erc20Abi, provider);
 
     const signer = provider?.getSigner(account);
-    const approveTx = await trackPromise(
+    const approveTx:ContractTransaction = await trackPromise(
       lar.connect(signer).approve(daoAddress, fee)
     );
     await trackPromise(approveTx.wait(1));
@@ -157,7 +159,7 @@ const Create: NextPage = () => {
     createProposal({
       params: {
         abi: abi,
-        contractAddress: daoAddress,
+        contractAddress: daoAddress!,
         functionName: "createProposal",
         params: {
           _title: title,
@@ -169,14 +171,15 @@ const Create: NextPage = () => {
           _options: options,
         },
       },
-      onSuccess: handleSuccess,
+      onSuccess: (results:unknown) => {handleSuccess(results)},
       onError: (error) => {
         handleFailure(error);
       },
     });
   };
 
-  const handleSuccess = async (tx) => {
+  const handleSuccess = async (results:unknown) => {
+    const tx = results as ContractTransaction
     console.log("Success transaction: ", tx);
     await trackPromise(tx.wait(1));
     // updateUIValues()
@@ -186,15 +189,10 @@ const Create: NextPage = () => {
       title: "Transaction Notification",
       position: "topR",
     });
-    // const newProposal = await getLatestProposal();
-
-    // console.log("New Proposal: ", newProposal);
-    // setProposalData({ ...newProposal });
-    // mutate("web3/votingPower")
-    // setIndexToVotingPower({})
+   
   };
 
-  const handleFailure = async (error) => {
+  const handleFailure = async (error:Error) => {
     console.log("Error: ", error);
     dispatch({
       type: "error",
@@ -294,7 +292,7 @@ const Create: NextPage = () => {
                       setProposalData((prevProposalData) => {
                         return {
                           ...prevProposalData,
-                          startDate: dateInMilliseconds,
+                          startDate: date,
                         };
                       });
                       // setStartDate(date);

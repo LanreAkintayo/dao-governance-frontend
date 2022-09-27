@@ -176,7 +176,7 @@ const Proposals: NextPage = () => {
             {!allProposals && isWeb3Enabled && (
               <div className="flex flex-col w-full my-4 items-center">
                 <div className="my-1">
-                  <ScaleLoader color="black" loading={true} size={20} />
+                  <ScaleLoader color="black" loading={true} />
                 </div>
 
                 <p className="text-gray-500">Please Wait a few seconds</p>
@@ -197,7 +197,7 @@ const Proposals: NextPage = () => {
             )}
 
             {allProposals?.map((proposal) => {
-              return <ProposalCard proposal={proposal} />;
+              return <ProposalCard proposal={proposal} key={proposal.id}/>;
             })}
           </div>
         </section>

@@ -30,9 +30,14 @@ export interface Proposal {
     optionPercentage: string,
   }[],
   validOptions: string[][],
-  allVoters:any[][]
+  allVoters:string
 }
 
+export interface IParam {
+  params: {
+    id: string
+  }
+}
 
 export async function getProposalsId() {
   try{
@@ -46,13 +51,15 @@ export async function getProposalsId() {
   
         const proposals = await proposalsQuery.find();
   
-        const proposalsId = proposals.map(async (proposal) => {
+        const proposalsId:Promise<IParam>[] = proposals.map(async (proposal) => {
           const proposalAttribute = proposal.attributes
-          return {
+          const eachParam:IParam =  {
             params: {
-              id: proposalAttribute.uid
+              id: proposalAttribute.uid.toString()
             }
-          }})
+          }
+          return eachParam
+        })
          
           return await Promise.all(proposalsId);
   } catch(err) {

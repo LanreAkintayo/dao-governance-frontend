@@ -17,7 +17,16 @@ const votingMechanisms = [
   },
 ];
 
-const VotingSystemDropdown: NextComponentType = ({handleSelectedVotingSystem, proposalData}) => {
+interface  IProposalData {
+  title: string;
+  description: string;
+  proposalType: string;
+  proposalStatus: string;
+  startDate: Date;
+  duration: number;
+}
+
+export default function VotingSystemDropdown(props:{handleSelectedVotingSystem:(name: string) => void, proposalData:IProposalData}){
   const [dropdownState, setDropdownState] = useState(true);
   const [selectedVotingSystem, setSelectedVotingSystem] = useState("");
 
@@ -35,7 +44,7 @@ const VotingSystemDropdown: NextComponentType = ({handleSelectedVotingSystem, pr
               className="mt-2 p-2 border border-gray-400 hover:bg-gray-200 mx-2 rounded-md ssm:text-base text-xs"
               key={item["name"]}
               onClick={() => {
-                handleSelectedVotingSystem(item.name);
+                props.handleSelectedVotingSystem(item.name);
                 onButtonClick();
               }}
             >
@@ -60,8 +69,8 @@ const VotingSystemDropdown: NextComponentType = ({handleSelectedVotingSystem, pr
         type="button"
       >
         <div className="flex justify-between w-full items-center">
-          {proposalData.proposalType ? (
-            <p className="">{proposalData.proposalType}</p>
+          {props.proposalData.proposalType ? (
+            <p className="">{props.proposalData.proposalType}</p>
           ) : (
             <p className="ssm:text-base text-xs">Select Voting System</p>
           )}
@@ -100,4 +109,3 @@ const VotingSystemDropdown: NextComponentType = ({handleSelectedVotingSystem, pr
   );
 };
 
-export default VotingSystemDropdown;

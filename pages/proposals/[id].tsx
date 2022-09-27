@@ -2,7 +2,7 @@ import { NextPage } from "next";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import ResultSection from "../../components/ResultSection";
-import { getProposalsId, getProposalsData } from "../../lib/fetchProposals";
+import { getProposalsId, getProposalsData, Proposal, IParam } from "../../lib/fetchProposals";
 import { formatTime, now, toMilliseconds, toWei } from "../../utils/helper";
 import { useEffect, useState } from "react";
 import { abi, contractAddresses, erc20Abi, larAddress } from "../../constants";
@@ -12,20 +12,17 @@ import VotersTable from "../../components/VotersTable";
 import Link from "next/link";
 import QuadraticVote from "../../components/QuadraticVote";
 import SingleChoiceVote from "../../components/SingleChoiceVote";
-import WeightedVote from "../../components/WeightedVote";
-import VoteModal from "../../components/VoteModal";
+import { ethers, ContractTransaction } from "ethers";
+import VotingPower from "../../components/VotingPower";
 import { trackPromise, usePromiseTracker } from "react-promise-tracker";
 import { Blockie, Tooltip, useNotification } from "web3uikit";
-import { ethers } from "ethers";
-import VotingPower from "../../components/VotingPower";
-import { optionCSS } from "react-select/dist/declarations/src/components/Option";
 
-const Proposal: NextPage = ({ proposal }) => {
-  // console.log("All voters: ", proposal.allVoters);
+export default function ID(props: { proposal: Proposal }) {
+  // console.log("All voters: ", props.proposal.allVoters);
   interface VotingSystem {
     [key: string]: string;
   }
-  const votingSystem = {
+  const votingSystem:VotingSystem = {
     "0": "Single Choice Voting",
     "1": "Weighted Voting",
     "2": "Quadratic Voting",
@@ -35,12 +32,12 @@ const Proposal: NextPage = ({ proposal }) => {
   const dispatch = useNotification();
   const { mutate } = useSWRConfig();
 
-  const proposalsType: string = proposal.proposalType;
+  const proposalsType: string = props.proposal.proposalType;
   const proposalVotingSystem: string = votingSystem[proposalsType];
-  const startDate = formatTime(proposal.startDate);
-  const endDate = formatTime(proposal.endDate);
+  const startDate = formatTime(props.proposal.startDate);
+  const endDate = formatTime(props.proposal.endDate);
   const [proposalData, setProposalData] = useState({
-    ...proposal,
+    ...props.proposal,
   });
 
   const {
@@ -53,7 +50,7 @@ const Proposal: NextPage = ({ proposal }) => {
 
   // console.log("Chain: ", chain)
 
-  const chainId: number = parseInt(chainIdHex?.toString());
+  const chainId: number = parseInt(chainIdHex!);
 
   const length = contractAddresses[chainId.toString()]?.length;
 
@@ -65,7 +62,7 @@ const Proposal: NextPage = ({ proposal }) => {
       : null;
 
   const [votingIndex, setVotingIndex] = useState([]);
-  const [votingPower, setVotingPower] = useState([]);
+  const [votingPower, setVotingPower] = useState<{[key:string]: number}>({});
   const [voteModalOpen, setVoteModalOpen] = useState(false);
   const [indexToVotingPower, setIndexToVotingPower] = useState({});
 
@@ -76,7 +73,7 @@ const Proposal: NextPage = ({ proposal }) => {
     isLoading: isLoadindVoters,
   } = useWeb3Contract({
     abi: abi,
-    contractAddress: daoAddress,
+    contractAddress: daoAddress!,
     functionName: "getVoters",
     params: {
       id: proposalData.id,
@@ -108,19 +105,21 @@ const Proposal: NextPage = ({ proposal }) => {
     const signer = provider?.getSigner(account);
 
     const id = proposalData.id;
-    const indexes = Object.keys(votingPower).filter(
+    const keys:string[] = Object.keys(votingPower)
+
+    const indexes = keys.filter(
       (key) => votingPower[key] > 0
     );
     const votingPowers = Object.values(votingPower)
       .map((votingPower) => toWei(votingPower))
       .filter((votingPower) => Number(votingPower) > 0);
     const votingPowerSum: string = votingPowers
-      .reduce((a, b) => {
+      .reduce((a:string, b:string, c:number) => {
         return BigInt(a) + BigInt(b);
       }, 0)
       .toString();
 
-    const approveTx = await trackPromise(
+    const approveTx:ContractTransaction = await trackPromise(
       lar.connect(signer).approve(daoAddress, votingPowerSum)
     );
     await trackPromise(approveTx.wait(1));
@@ -129,7 +128,7 @@ const Proposal: NextPage = ({ proposal }) => {
       voteProposalByQuadratic({
         params: {
           abi: abi,
-          contractAddress: daoAddress,
+          contractAddress: daoAddress!,
           functionName: "voteProposalByWeighing",
           params: {
             id,
@@ -146,7 +145,7 @@ const Proposal: NextPage = ({ proposal }) => {
       voteProposalByQuadratic({
         params: {
           abi: abi,
-          contractAddress: daoAddress,
+          contractAddress: daoAddress!,
           functionName: "voteProposalByQuadratic",
           params: {
             id,
@@ -190,7 +189,7 @@ const Proposal: NextPage = ({ proposal }) => {
       proposalsQuery.equalTo("uid", proposalData.id);
       const proposal = await proposalsQuery.first();
 
-      const proposalAttribute = proposal?.attributes;
+      const proposalAttribute = props.proposal?.attributes;
 
       const latestOptions = await getLatestOptions(proposalAttribute?.uid);
       const validOptions: Array<Array<string>> =
@@ -198,7 +197,7 @@ const Proposal: NextPage = ({ proposal }) => {
 
       const provider = await enableWeb3();
 
-      const daoContract = new ethers.Contract(daoAddress, abi, provider);
+      const daoContract = new ethers.Contract(daoAddress!, abi, provider);
       const allVoters = await daoContract.getVoters(proposalData.id);
 
       const totalVotes = getTotalVotes(validOptions);
@@ -256,7 +255,7 @@ const Proposal: NextPage = ({ proposal }) => {
         allVoters,
       };
 
-      console.log("This is the final proposal: ", finalProposal);
+      console.log("This is the final props.proposal: ", finalProposal);
 
       return finalProposal;
     } catch (error) {
@@ -489,7 +488,7 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({ params }) {
+export async function getStaticProps({ params }:IParam) {
   // Fetch necessary data for the blog post using params.id
   const proposal = await getProposalsData(params.id);
   return {
@@ -498,4 +497,3 @@ export async function getStaticProps({ params }) {
     },
   };
 }
-export default Proposal;

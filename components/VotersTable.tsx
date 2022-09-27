@@ -2,6 +2,7 @@ import { fromWei, inDollarFormat } from "../utils/helper";
 
 export default function VotersTable({ allVoters, options }) {
     // console.log("inside voters table: ", allVoters.length)
+    let votersId = 1;
   
   return (
     <table className="mt-10 w-10/12 self-center table-auto rounded-lg shadow text-sm text-left overflow-x-scroll">
@@ -29,7 +30,7 @@ export default function VotersTable({ allVoters, options }) {
                 i++;
 
                 return (
-                  <tr className="bg-white border-t border-gray-300 ">
+                  <tr className="bg-white border-t border-gray-300 "  >
                     <td className="py-4 pl-3 text-xs lg:text-sm">
                       {voterAddress.substring(0, 5)}...
                       {voterAddress.substring(

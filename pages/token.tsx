@@ -9,7 +9,7 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import VotingPower from "../components/VotingPower";
 import { abi, contractAddresses, DEPLOYER, erc20Abi, larAddress } from "../constants";
-import { ethers } from "ethers";
+import { ethers, Signer, ContractTransaction } from "ethers";
 import { toWei } from "../utils/helper";
 
 const Proposals: NextPage = () => {
@@ -34,7 +34,7 @@ const Proposals: NextPage = () => {
     runContractFunction: sendLAR,
     isFetching,
     isLoading,
-  } = useWeb3Contract();
+  } = useWeb3Contract({});
 
   useEffect(() => {
     console.log(userAddress);
@@ -44,7 +44,7 @@ const Proposals: NextPage = () => {
     sendLAR({
       params: {
         abi: abi,
-        contractAddress: daoAddress,
+        contractAddress: daoAddress!,
         functionName: "sendLAR",
         params: {
           receiver:userAddress,
@@ -56,7 +56,8 @@ const Proposals: NextPage = () => {
       },
     });
   };
-  const handleSuccess = async (tx) => {
+  const handleSuccess = async (results:unknown) => {
+    const tx = results as ContractTransaction
     console.log("Success transaction: ", tx);
     await trackPromise(tx.wait(1));
 
@@ -70,7 +71,7 @@ const Proposals: NextPage = () => {
     mutate("web3/votingPower");
   };
 
-  const handleFailure = async (error) => {
+  const handleFailure = async (error:Error) => {
     console.log("Error: ", error);
     dispatch({
       type: "error",
