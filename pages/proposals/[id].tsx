@@ -7,7 +7,7 @@ import {
   getProposalsData,
   Proposal,
   IParam,
-  Voter
+  Voter,
 } from "../../lib/fetchProposals";
 import { formatTime, now, toMilliseconds, toWei } from "../../utils/helper";
 import { useEffect, useState } from "react";
@@ -23,14 +23,16 @@ import VotingPower from "../../components/VotingPower";
 import { trackPromise, usePromiseTracker } from "react-promise-tracker";
 import { Blockie, Tooltip, useNotification } from "web3uikit";
 import Moralis from "moralis/types";
+import { displayToast } from "../../components/Toast";
+import { ToastContainer } from "react-toastify";
 
-export default function ID({proposal}: { proposal: Proposal }) {
+export default function ID({ proposal }: { proposal: Proposal }) {
   // console.log("All voters: ", proposal.allVoters);
   interface VotingSystem {
     [key: string]: string;
   }
 
-  console.log("Proposal:::::::::::::::::::: ", proposal)
+  console.log("Proposal:::::::::::::::::::: ", proposal);
   const votingSystem: VotingSystem = {
     "0": "Single Choice Voting",
     "1": "Weighted Voting",
@@ -63,7 +65,7 @@ export default function ID({proposal}: { proposal: Proposal }) {
 
   const length = chainId && contractAddresses[chainId?.toString()]?.length;
 
-  console.log("Length: ", length)
+  console.log("Length: ", length);
   // console.log("Contract Addresses: ", contractAddresses);
   // console.log("chainId: ", chainId);
   const daoAddress =
@@ -122,27 +124,28 @@ export default function ID({proposal}: { proposal: Proposal }) {
       }, 0)
       .toString();
 
-      const approveOptions:Moralis.ExecuteFunctionOptions = {
-        contractAddress: larAddress,
-        functionName: "approve",
-        abi: erc20Abi,
-        params: {
-          spender: daoAddress, 
-          amount:votingPowerSum
-        }
-      };
+    const approveOptions: Moralis.ExecuteFunctionOptions = {
+      contractAddress: larAddress,
+      functionName: "approve",
+      abi: erc20Abi,
+      params: {
+        spender: daoAddress,
+        amount: votingPowerSum,
+      },
+    };
 
-      const tx:ContractTransaction = await trackPromise(Moralis.executeFunction(approveOptions)) as unknown as ContractTransaction
-      await trackPromise(tx.wait(1))
+    const tx: ContractTransaction = (await trackPromise(
+      Moralis.executeFunction(approveOptions)
+    )) as unknown as ContractTransaction;
+    await trackPromise(tx.wait(1));
 
-    //   const provider = await enableWeb3() 
+    //   const provider = await enableWeb3()
     //   const ethers = Moralis.web3Library;
-  
+
     //   console.log("Can it be this? ");
     //   const lar = new ethers.Contract(larAddress, erc20Abi, provider);
-  
-    //   const signer = provider?.getSigner(account);
 
+    //   const signer = provider?.getSigner(account);
 
     // const approveTx: ContractTransaction = await trackPromise(
     //   lar.connect(signer).approve(daoAddress, votingPowerSum)
@@ -220,17 +223,18 @@ export default function ID({proposal}: { proposal: Proposal }) {
       const validOptions: Array<Array<string>> =
         latestOptions == undefined ? proposalAttribute?.options : latestOptions;
 
-        const fetchOptions:Moralis.ExecuteFunctionOptions = {
-          contractAddress: daoAddress!,
-          functionName: "getVoters",
-          abi: abi,
-          params: {
-            id:proposalData?.id
-          }
-        } 
-    
-        const allVoters= (await trackPromise(Moralis.executeFunction(fetchOptions))) as any[][]
+      const fetchOptions: Moralis.ExecuteFunctionOptions = {
+        contractAddress: daoAddress!,
+        functionName: "getVoters",
+        abi: abi,
+        params: {
+          id: proposalData?.id,
+        },
+      };
 
+      const allVoters = (await trackPromise(
+        Moralis.executeFunction(fetchOptions)
+      )) as any[][];
 
       // const provider = await enableWeb3();
 
@@ -310,13 +314,15 @@ export default function ID({proposal}: { proposal: Proposal }) {
       functionName: "approve",
       abi: erc20Abi,
       params: {
-        spender: daoAddress, 
-        amount:votingPower
-      }
+        spender: daoAddress,
+        amount: votingPower,
+      },
     };
 
-    const tx = (await trackPromise(Moralis.executeFunction(approveOptions))) as ContractTransaction;
-    await trackPromise(tx.wait(1))
+    const tx = (await trackPromise(
+      Moralis.executeFunction(approveOptions)
+    )) as ContractTransaction;
+    await trackPromise(tx.wait(1));
 
     // const provider = await enableWeb3();
     // const lar = new ethers.Contract(larAddress, erc20Abi, provider);
@@ -349,18 +355,20 @@ export default function ID({proposal}: { proposal: Proposal }) {
     setVoteModalOpen((prev) => !prev);
   };
 
-
   const handleSuccess = async (results: unknown) => {
     const tx = results as ContractTransaction;
     console.log("Success transaction: ", tx);
     await trackPromise(tx.wait(1));
     // updateUIValues()
-    dispatch({
-      type: "success",
-      message: "Transaction Completed!",
-      title: "Transaction Notification",
-      position: "topR",
-    });
+    window.alert("Yay! Transaction sucessful")
+
+    // displayToast("success");
+    // dispatch({
+    //   type: "success",
+    //   message: "Transaction Completed!",
+    //   title: "Transaction Notification",
+    //   position: "topR",
+    // });
     const newProposal = (await getLatestProposal()) as Proposal;
 
     // console.log("New Proposal: ", newProposal);
@@ -371,12 +379,16 @@ export default function ID({proposal}: { proposal: Proposal }) {
 
   const handleFailure = async (error: Error) => {
     console.log("Error: ", error);
-    dispatch({
-      type: "error",
-      message: "Transation Failed",
-      title: "Transaction Notification",
-      position: "topR",
-    });
+    window.alert("Oops! Transaction Failed")
+
+    // displayToast("failure");
+
+    // dispatch({
+    //   type: "error",
+    //   message: "Transation Failed",
+    //   title: "Transaction Notification",
+    //   position: "topR",
+    // });
   };
 
   const creator = proposalData?.creator;
@@ -399,9 +411,9 @@ export default function ID({proposal}: { proposal: Proposal }) {
   // console.log(proposalData?.validOptions);
 
   return (
-    <div className="flex flex-col justify-between bg-gray-50 h-full">
+    <div className="flex flex-col justify-between bg-gray-50">
+      <Header />
       <div>
-        <Header />
         <div className="flex ss:justify-between justify-start items-center px-4">
           <Link href="/proposals">
             <button className="hover:text-gray-800 mt-24 mx-8 mb-6 text-gray-400 sm:text-base text-xs">
@@ -516,6 +528,7 @@ export default function ID({proposal}: { proposal: Proposal }) {
             )}
           </div>
         </div>
+        <ToastContainer />
       </div>
 
       <Footer />
@@ -534,13 +547,12 @@ export default function ID({proposal}: { proposal: Proposal }) {
 // }
 
 export async function getServerSideProps({ params }: IParam) {
-
-
   // Fetch necessary data for the blog post using params.id
   const proposal = await getProposalsData(params.id);
   return {
-    props: {
-      proposal: proposal || null
-    } || null
+    props:
+      {
+        proposal: proposal || null,
+      } || null,
   };
 }

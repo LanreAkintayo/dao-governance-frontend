@@ -20,6 +20,8 @@ import { toWei } from "../utils/helper";
 import { ToastContainer, toast, cssTransition } from "react-toastify";
 // import "animate.css/animate.min.css";
 import "react-toastify/dist/ReactToastify.css";
+import Image from "next/image";
+import { displayToast } from "../components/Toast";
 
 const Proposals: NextPage = () => {
   const [userAddress, setUserAddress] = useState("");
@@ -58,43 +60,6 @@ const Proposals: NextPage = () => {
     chainId in contractAddresses
       ? contractAddresses[chainId][length - 1]
       : null;
-
-  const ToastModal = ({
-    closeToast,
-    toastProps,
-    status,
-  }: {
-    closeToast: any;
-    toastProps: any;
-    status: string;
-  }) => {
-    return (
-      <div className="font-sans">
-
-        <p
-          className={`text-lg ${
-            status == "success" ? "text-green-700" : "text-red-800"
-          } font-sans`}
-        >
-          Transaction Notification
-        </p>
-        <p className="">
-          Transaction {status == "success" ? "Successful" : "Failed"}
-        </p>
-      </div>
-    );
-  };
-  const displayToast = (status: string) => {
-    toast(
-      <ToastModal
-        closeToast={undefined}
-        toastProps={undefined}
-        status={status}
-      />,
-      { autoClose: 3000 }
-    );
-    // toast(Msg) would also work
-  };
 
   const {
     runContractFunction: sendLAR,
@@ -150,10 +115,12 @@ const Proposals: NextPage = () => {
 
   return (
     <div className="flex flex-col justify-between bg-gray-50 h-screen">
+      <div>
+        <ToastContainer />
+      </div>
       <Header />
       <section className="px-5 mt-24 flex flex-col items-center ">
         <VotingPower className="self-end border border-gray-300" />
-        <ToastContainer />
 
         <div className="w-full flex items-center justify-center flex-col">
           <p className="mt-4 ">Enter Address</p>
@@ -190,7 +157,7 @@ const Proposals: NextPage = () => {
             )}
           </button>
         </div>
-        <div className="ssm:mt-12 mt-4 w-12/12 ssm:w-5/12">
+        <div className="ssm:mt-12 mt-4 w-12/12 ssm:w-7/12 sm:w-5/12">
           <p className="text-gray-700 text-center text-xs ss:text-sm">
             Note: LAR Token is a governance token that is needed when creating a
             proposal or when voting on one.
