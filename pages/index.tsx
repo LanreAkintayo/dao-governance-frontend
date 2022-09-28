@@ -48,7 +48,7 @@ const Home: NextPage = () => {
           </h1>
           <p className="w-10/12 lg:w-8/12 text-center font-light my-6 text-lg sm:text-xl lg:text-2xl">
             The aim of this project is to showcase my understanding on what DAO,
-            Decentralized Autonomous Organization is all about.
+            Decentralized Autonomous Organization entails.
           </p>
           <div>
             {isWeb3Enabled ? (
@@ -86,6 +86,7 @@ const Home: NextPage = () => {
           that achieve some predefined level of consensus are then accepted and
           enforced by the rules instantiated within the smart contract <br />
           <br />
+          
         </p>
       </section>
       <Footer />

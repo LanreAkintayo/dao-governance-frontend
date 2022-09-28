@@ -41,7 +41,7 @@ export default function VotingSystemDropdown(props:{handleSelectedVotingSystem:(
           return (
             // <div onClick={() => {console.log(item)}} className="cursor-pointer">{item?.name}</div>
             <li
-              className="mt-2 p-2 border border-gray-400 hover:bg-gray-200 mx-2 rounded-md ssm:text-base text-xs"
+              className="mt-2 p-2 border border-gray-400 hover:bg-gray-200 mx-2 rounded-md ssm:text-sm text-xs"
               key={item["name"]}
               onClick={() => {
                 props.handleSelectedVotingSystem(item.name);
@@ -72,7 +72,7 @@ export default function VotingSystemDropdown(props:{handleSelectedVotingSystem:(
           {props.proposalData.proposalType ? (
             <p className="">{props.proposalData.proposalType}</p>
           ) : (
-            <p className="ssm:text-base text-xs">Select Voting System</p>
+            <p className="ssm:text-sm text-xs">Select Voting System</p>
           )}
           <svg
             className="ml-2 w-4 h-4"

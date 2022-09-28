@@ -205,7 +205,7 @@ const Create: NextPage = () => {
     const tx = results as ContractTransaction;
     console.log("Success transaction: ", tx);
     await trackPromise(tx.wait(1));
-    window.alert("Yay! Transaction Sucessful")
+    window.alert("Yay! Transaction Sucessful");
     // displayToast("success");
     // dispatch({
     //   type: "success",
@@ -217,7 +217,7 @@ const Create: NextPage = () => {
 
   const handleFailure = async (error: Error) => {
     console.log("Error: ", error);
-    window.alert("Oops! Transaction Failed")
+    window.alert("Oops! Transaction Failed");
     // displayToast("failure");
     // dispatch({
     //   type: "error",
@@ -232,13 +232,16 @@ const Create: NextPage = () => {
       <div className="flex flex-col justify-between bg-gray-50">
         <Header />
         <div>
-          <div className="mt-28 ssm:mt-20 flex justify-end mr-3 mb-4">
-            <VotingPower className="border border-gray-400" />
+          <div className="mt-24 ssm:mt-20 flex justify-between mx-3  mb-4">
+            <p className="p-2  rounded-md bg-orange-100 text-orange-600  text-xs">
+              Note that 5 LAR is required to create a proposal
+            </p>
+            <VotingPower className="border border-gray-400 ml-4 h-8" />
           </div>
           <div className="flex lg:flex-row flex-col mx-4">
             <div className="lg:w-7/12 w-full flex flex-col lg:items-start lg:justify-start justify-center p-2 ssm:pl-4 px-2 ssm:pr-11 ">
               <div className="lg:w-10/12">
-                <p className="text-gray-700 ss:text-sm text-xs">
+                <p className="text-gray-700 ss:text-sm text-xs mt-2">
                   <small>Title: Ask a question</small>
                 </p>
                 <textarea
@@ -381,8 +384,7 @@ const Create: NextPage = () => {
 
         <Footer />
         <ToastContainer />
-
-      </div>     
+      </div>
     </>
   );
 };
