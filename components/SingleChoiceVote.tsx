@@ -3,7 +3,7 @@ import { useMoralis } from "react-moralis";
 import { usePromiseTracker } from "react-promise-tracker";
 import { ClipLoader } from "react-spinners";
 import { allValid } from "../utils/helper";
-import { ethers } from "ethers";
+import { ethers, BigNumber } from "ethers";
 import { erc20Abi, larAddress } from "../constants";
 
 export default function SingleChoiceVote({
@@ -39,7 +39,7 @@ export default function SingleChoiceVote({
     optionPercentage: string;
   }>();
   const [canVote, setCanVote] = useState(true);
-  const { enableWeb3, account } = useMoralis();
+  const { enableWeb3, account, Moralis } = useMoralis();
   // useEffect(() => {
   //   console.log("Index to voting power: ", indexToVotingPower);
   // }, [indexToVotingPower]);
@@ -47,19 +47,40 @@ export default function SingleChoiceVote({
   const { promiseInProgress } = usePromiseTracker();
 
   const checkValidity = async () => {
-    const provider = await enableWeb3() 
+    const balanceOptions = {
+      contractAddress: larAddress,
+      functionName: "balanceOf",
+      abi: erc20Abi,
+      params: {
+        account: account,
+      },
+    };
 
-    if (provider) {
-      const lar = new ethers.Contract(larAddress, erc20Abi, provider);
+    const votingPowerBalance = (await Moralis.executeFunction(
+      balanceOptions
+    )) as unknown as string;
 
-      const votingPowerBalance: string = await lar.balanceOf(account);
+    console.log("We have ", votingPowerBalance);
 
-      if (Number(votingPowerBalance) > 1) {
-        setCanVote(true);
-      } else {
-        setCanVote(false);
-      }
+    if (Number(votingPowerBalance) > 1) {
+      setCanVote(true);
+    } else {
+      setCanVote(false);
     }
+
+    // const provider = await enableWeb3()
+
+    // if (provider) {
+    //   const lar = new ethers.Contract(larAddress, erc20Abi, provider);
+
+    //   const votingPowerBalance: string = await lar.balanceOf(account);
+
+    //   if (Number(votingPowerBalance) > 1) {
+    //     setCanVote(true);
+    //   } else {
+    //     setCanVote(false);
+    //   }
+    // }
   };
 
   return (

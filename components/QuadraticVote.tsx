@@ -67,7 +67,7 @@ export default function QuadraticVote({
     }>
   >;
 }) {
-  const { account, enableWeb3 } = useMoralis();
+  const { account, enableWeb3, Moralis, isWeb3Enabled } = useMoralis();
 
   const { promiseInProgress } = usePromiseTracker();
 
@@ -75,25 +75,55 @@ export default function QuadraticVote({
   const [isValidVotingPower, setIsValidVotingPower] = useState(true);
 
   const checkValidity = async (votingPower: VotingPower) => {
-    const provider = await enableWeb3();
+    const balanceOptions = {
+      contractAddress: larAddress,
+      functionName: "balanceOf",
+      abi: erc20Abi,
+      params: {
+        account: account,
+      },
+    };
 
-    if (provider) {
-      const lar = new ethers.Contract(larAddress, erc20Abi, provider);
-      if (votingPower) {
-        const summation = toWei(
-          Object.values(votingPower).reduce((a, b) => {
-            return a + b;
-          }, 0)
-        );
-        const votingPowerBalance: string = await lar.balanceOf(account);
+    
+    const votingPowerBalance = isWeb3Enabled ? (await Moralis.executeFunction(
+      balanceOptions
+    )) as unknown as string : 0
+    
 
-        if (Number(summation) > Number(votingPowerBalance)) {
-          setIsValidVotingPower(false);
-        } else {
-          setIsValidVotingPower(true);
-        }
+    if (votingPower) {
+      const summation = toWei(
+        Object.values(votingPower).reduce((a, b) => {
+          return a + b;
+        }, 0)
+      );
+      // const votingPowerBalance: string = await lar.balanceOf(account);
+
+      if (Number(summation) > Number(votingPowerBalance)) {
+        setIsValidVotingPower(false);
+      } else {
+        setIsValidVotingPower(true);
       }
     }
+
+    // const provider = await enableWeb3();
+
+    // if (provider) {
+    //   const lar = new ethers.Contract(larAddress, erc20Abi, provider);
+    //   if (votingPower) {
+    //     const summation = toWei(
+    //       Object.values(votingPower).reduce((a, b) => {
+    //         return a + b;
+    //       }, 0)
+    //     );
+    //     const votingPowerBalance: string = await lar.balanceOf(account);
+
+    //     if (Number(summation) > Number(votingPowerBalance)) {
+    //       setIsValidVotingPower(false);
+    //     } else {
+    //       setIsValidVotingPower(true);
+    //     }
+    //   }
+    // }
   };
   useEffect(() => {
     const percentageArray = getCurrentPercentage(votingPower);

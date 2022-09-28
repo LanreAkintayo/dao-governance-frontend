@@ -18,7 +18,7 @@ export default function Option({
   // console.log("Option: ", option)
   const isMax = () => {
     if (
-      option?.optionPercentage == maxPercentage.toString() &&
+      Number(option?.optionPercentage) == maxPercentage &&
       proposal.status == "Closed"
     ) {
       return true;

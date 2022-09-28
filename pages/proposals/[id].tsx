@@ -104,7 +104,7 @@ export default function ID(props: { proposal: Proposal }) {
   } = useWeb3Contract({});
 
   const handleVote = async () => {
-    console.log("About to handle vote: ", votingPower);
+    // console.log("About to handle vote: ", votingPower);
 
     const id = proposalData.id;
     const keys: string[] = Object.keys(votingPower);
@@ -119,7 +119,7 @@ export default function ID(props: { proposal: Proposal }) {
       }, 0)
       .toString();
 
-      const approveOptions = {
+      const approveOptions:Moralis.ExecuteFunctionOptions = {
         contractAddress: larAddress,
         functionName: "approve",
         abi: erc20Abi,
@@ -129,8 +129,8 @@ export default function ID(props: { proposal: Proposal }) {
         }
       };
 
-      const tx = await trackPromise(Moralis.executeFunction(approveOptions));
-      console.log(tx)
+      const tx:ContractTransaction = await trackPromise(Moralis.executeFunction(approveOptions)) as unknown as ContractTransaction
+      await trackPromise(tx.wait(1))
 
     //   const provider = await enableWeb3() 
     //   const ethers = Moralis.web3Library;
@@ -237,7 +237,7 @@ export default function ID(props: { proposal: Proposal }) {
       const totalVotes = getTotalVotes(validOptions);
 
       const optionsArray = validOptions.map((option) => {
-        console.log("Option 2: ", option[2]);
+        // console.log("Option 2: ", option[2]);
         const percentage =
           totalVotes != 0
             ? ((Number(option[2]) / totalVotes) * 100).toFixed(1)
@@ -289,7 +289,7 @@ export default function ID(props: { proposal: Proposal }) {
         allVoters,
       };
 
-      console.log("This is the final props.proposal: ", finalProposal);
+      // console.log("This is the final props.proposal: ", finalProposal);
 
       return finalProposal;
     } catch (error) {
@@ -313,7 +313,7 @@ export default function ID(props: { proposal: Proposal }) {
     };
 
     const tx = (await trackPromise(Moralis.executeFunction(approveOptions))) as ContractTransaction;
-    const result = await trackPromise(tx.wait(1))
+    await trackPromise(tx.wait(1))
 
     // const provider = await enableWeb3();
     // const lar = new ethers.Contract(larAddress, erc20Abi, provider);
@@ -377,7 +377,7 @@ export default function ID(props: { proposal: Proposal }) {
     });
     const newProposal = (await getLatestProposal()) as Proposal;
 
-    console.log("New Proposal: ", newProposal);
+    // console.log("New Proposal: ", newProposal);
     setProposalData({ ...newProposal });
     mutate("web3/votingPower");
     setIndexToVotingPower({});
@@ -410,7 +410,7 @@ export default function ID(props: { proposal: Proposal }) {
     bgColor = "bg-red-200";
   }
 
-  console.log(proposalData.validOptions);
+  // console.log(proposalData.validOptions);
 
   return (
     <div className="flex flex-col justify-between bg-gray-50 h-full">
@@ -538,6 +538,9 @@ export default function ID(props: { proposal: Proposal }) {
 }
 
 export async function getStaticPaths() {
+
+  console.log("Getting static paths ........................................")
+
   console.log("We are here");
   const paths = await getProposalsId();
 
@@ -549,11 +552,14 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }: IParam) {
+  console.log("Getting static props ........................................")
+
+
   // Fetch necessary data for the blog post using params.id
   const proposal = await getProposalsData(params.id);
   return {
     props: {
       proposal,
-    },
+    } || null
   };
 }

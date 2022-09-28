@@ -76,14 +76,16 @@ const Home: NextPage = () => {
       <section className="my-4 p-5 flex flex-col text-center  items-center justify-center">
         <h1 className=" text-2xl ss:text-4xl">How It Works</h1>
         <p className="w-12/12 px-2 ssm:w-9/12 text-gray-800 ssm:text-base text-xs py-2">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime
-          mollitia, molestiae quas vel sint commodi repudiandae consequuntur
-          voluptatum laborum numquam blanditiis harum quisquam eius sed odit
-          fugiat iusto fuga praesentium optio, eaque rerum! Provident similique
-          accusantium nemo autem. Veritatis obcaecati tenetur iure eius earum ut
-          molestias architecto voluptate aliquam nihil, eveniet aliquid culpa
-          officia aut! Impedit sit sunt quaerat, odit, tenetur error, harum
-          nesciunt ipsum debitis quas aliquid.
+          A DAO is a community led entity with no central authority. It is fully
+          autonomous and transparent. A DAO is governed entirely by its
+          individual members who collectively make critical decisions about the
+          future of the project <br />
+          <br />
+          Community members create proposals about the future operations of the
+          protocol and then come together to vote on each proposal. Proposals
+          that achieve some predefined level of consensus are then accepted and
+          enforced by the rules instantiated within the smart contract <br />
+          <br />
         </p>
       </section>
       <Footer />

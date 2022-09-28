@@ -23,8 +23,8 @@ export default function ProposalCard({ proposal }: {proposal: Proposal}) {
       <a>
         <div className="rounded-md border border-gray-400 bg-white hover:border hover:border-gray-800 focus:bg-blue-700 w-full mt-5 p-3 px-2 sm:px-11">
           <div className="flex w-full justify-between items-center">
-            <div className="flex items-center">
-              <Tooltip content={proposal.creator}>
+            <div className="flex items-center"> 
+              <Tooltip content={proposal.creator} position="top">
                 <Blockie seed={proposal.creator} size={6} />
               </Tooltip>
               <p className="px-3">
@@ -46,7 +46,7 @@ export default function ProposalCard({ proposal }: {proposal: Proposal}) {
               const percentages = proposal.optionsArray.map(option => option.optionPercentage) as unknown as number[]
               const maxPercentage = Math.max(...percentages)
               // console.log("Options: ", proposal.optionsArray);
-              return <Option option={option} proposal={proposal} maxPercentage={maxPercentage} />;
+              return <Option option={option} proposal={proposal} maxPercentage={maxPercentage} key={option.optionIndex}/>;
             })}
           </div>
         </div>

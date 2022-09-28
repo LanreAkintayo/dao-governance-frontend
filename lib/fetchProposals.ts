@@ -3,6 +3,7 @@ import { abi, contractAddresses } from "../constants";
 import { now, toMilliseconds } from "../utils/helper";
 
 
+
 const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 const appId = process.env.NEXT_PUBLIC_APP_ID;
 const masterKey = process.env.NEXT_PUBLIC_MASTER_KEY;
@@ -39,6 +40,8 @@ export interface IParam {
   }
 }
 
+
+
 export interface Voter {
     voterAddress: string;
     optionIndexes: number[];
@@ -46,10 +49,13 @@ export interface Voter {
 }
 
 export async function getProposalsId() {
+
   try{
-    await Moralis.start({ serverUrl, appId, masterKey });
 
     console.log("Now here........................................")
+
+    await Moralis.start({ serverUrl, appId, masterKey });
+
   
         const Proposals = Moralis.Object.extend("Proposals");
         const proposalsQuery = new Moralis.Query(Proposals);
@@ -96,6 +102,8 @@ const getTotalVotes = (options: Array<Array<string>>): number => {
 
 
 export async function getProposalsData(id:string){
+  console.log("Fetching proposals data ........................................")
+
   try {
     await Moralis.start({ serverUrl, appId, masterKey });
 
@@ -115,13 +123,13 @@ export async function getProposalsData(id:string){
      
 
       const options = {
-        chain: '0x13881',
+        chain: "0x13881",
         address: contractAddress,
         function_name: "getVoters",
         abi: abi,
         params: { id },
       };
-      const allVoters:any[][] = await Moralis.Web3API.native.runContractFunction(options) as unknown as any[][]
+      const allVoters:any[][] = (await Moralis.Web3API.native.runContractFunction(options)) as unknown as any[][]
       console.log("These are all voters: ", allVoters)
 
     const totalVotes = getTotalVotes(validOptions);
