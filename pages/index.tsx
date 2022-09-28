@@ -35,12 +35,12 @@ const Home: NextPage = () => {
       opacityTransitionTime: 10000,
     },
   };
-
+// "z-10 absolute top-0 left-0 "
   return (
     <div className="bg-gradient-to-r  from-pink-200 to-white w-full h-screen relative ">
       {/* <ParticleBackground settings={settings2} /> */}
 
-      <section className="z-10 absolute top-0 left-0 ">
+      <section className="">
         <Header />
         <div className="flex flex-col w-screen h-screen items-center text-center justify-center text-black">
           <h1 className="text-2xl px-1 mt-16 ss:mt-8 ssm:text-3xl sm:text-4xl lg:text-5xl xl:text-6xl w-12/12 sm:w-10/12 lg:w-8/12 font-extrabold">
