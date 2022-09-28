@@ -184,7 +184,7 @@ const Proposals: NextPage = () => {
             )}
             {!isWeb3Enabled && (
               <div className="flex flex-col my-4 p-2 text-orange-800 jusify-center items-center">
-                <p className="text-center rounded-md p-2 px-8 bg-orange-200">
+                <p className="text-center p-2 px-10 w-96 bg-orange-200">
                   Connect Your Wallet
                 </p>
               </div>
