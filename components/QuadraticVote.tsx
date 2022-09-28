@@ -202,7 +202,7 @@ export default function QuadraticVote({
             // index++;
 
             return (
-              <div className="flex mt-4 w-full justify-between rounded-full border hover:border-gray-900 border-gray-500 text-gray-700 items-center">
+              <div key={option.optionIndex} className="flex mt-4 w-full justify-between rounded-full border hover:border-gray-900 border-gray-500 text-gray-700 items-center">
                 <div className="lg:w-7/12 md:w-7/12 ssm:w-5/12 w-4/12">
                   <p className="ss:text-sm text-xs whitespace-nowrap sm:text-base px-3 lg:px-8 text-start ">
                     {option.optionText}

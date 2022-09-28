@@ -95,6 +95,7 @@ export default function SingleChoiceVote({
             }
             return (
               <button
+              key={option.optionIndex}
                 className={`p-2 mt-2 border block ${
                   selectedOption == option && "bg-gray-200"
                 } w-full rounded-full  border-gray-700 text-gray-700 text-xs sm:text-sm`}

@@ -24,11 +24,13 @@ import { trackPromise, usePromiseTracker } from "react-promise-tracker";
 import { Blockie, Tooltip, useNotification } from "web3uikit";
 import Moralis from "moralis/types";
 
-export default function ID(props: { proposal: Proposal }) {
-  // console.log("All voters: ", props.proposal.allVoters);
+export default function ID({proposal}: { proposal: Proposal }) {
+  // console.log("All voters: ", proposal.allVoters);
   interface VotingSystem {
     [key: string]: string;
   }
+
+  console.log("Proposal:::::::::::::::::::: ", proposal)
   const votingSystem: VotingSystem = {
     "0": "Single Choice Voting",
     "1": "Weighted Voting",
@@ -39,12 +41,12 @@ export default function ID(props: { proposal: Proposal }) {
   const dispatch = useNotification();
   const { mutate } = useSWRConfig();
 
-  const proposalsType: string = props.proposal.proposalType;
+  const proposalsType: string = proposal?.proposalType;
   const proposalVotingSystem: string = votingSystem[proposalsType];
-  const startDate = formatTime(props.proposal.startDate);
-  const endDate = formatTime(props.proposal.endDate);
+  const startDate = formatTime(proposal?.startDate);
+  const endDate = formatTime(proposal?.endDate);
   const [proposalData, setProposalData] = useState({
-    ...props.proposal,
+    ...proposal,
   });
 
   const {
@@ -59,8 +61,9 @@ export default function ID(props: { proposal: Proposal }) {
 
   const chainId: number = parseInt(chainIdHex!);
 
-  const length = contractAddresses[chainId.toString()]?.length;
+  const length = chainId && contractAddresses[chainId?.toString()]?.length;
 
+  console.log("Length: ", length)
   // console.log("Contract Addresses: ", contractAddresses);
   // console.log("chainId: ", chainId);
   const daoAddress =
@@ -85,7 +88,7 @@ export default function ID(props: { proposal: Proposal }) {
     contractAddress: daoAddress!,
     functionName: "getVoters",
     params: {
-      id: proposalData.id,
+      id: proposalData?.id,
     },
   });
 
@@ -106,7 +109,7 @@ export default function ID(props: { proposal: Proposal }) {
   const handleVote = async () => {
     // console.log("About to handle vote: ", votingPower);
 
-    const id = proposalData.id;
+    const id = proposalData?.id;
     const keys: string[] = Object.keys(votingPower);
 
     const indexes = keys.filter((key) => votingPower[key] > 0);
@@ -146,7 +149,7 @@ export default function ID(props: { proposal: Proposal }) {
     // );
     // await trackPromise(approveTx.wait(1));
 
-    if (proposalData.proposalType == "1") {
+    if (proposalData?.proposalType == "1") {
       voteProposalByQuadratic({
         params: {
           abi: abi,
@@ -163,7 +166,7 @@ export default function ID(props: { proposal: Proposal }) {
           handleFailure(error);
         },
       });
-    } else if (proposalData.proposalType == "2") {
+    } else if (proposalData?.proposalType == "2") {
       voteProposalByQuadratic({
         params: {
           abi: abi,
@@ -208,7 +211,7 @@ export default function ID(props: { proposal: Proposal }) {
     try {
       const Proposals = Moralis.Object.extend("Proposals");
       const proposalsQuery = new Moralis.Query(Proposals);
-      proposalsQuery.equalTo("uid", proposalData.id);
+      proposalsQuery.equalTo("uid", proposalData?.id);
       const proposal = await proposalsQuery.first();
 
       const proposalAttribute = proposal?.attributes;
@@ -222,7 +225,7 @@ export default function ID(props: { proposal: Proposal }) {
           functionName: "getVoters",
           abi: abi,
           params: {
-            id:proposalData.id
+            id:proposalData?.id
           }
         } 
     
@@ -289,7 +292,7 @@ export default function ID(props: { proposal: Proposal }) {
         allVoters,
       };
 
-      // console.log("This is the final props.proposal: ", finalProposal);
+      // console.log("This is the final proposal: ", finalProposal);
 
       return finalProposal;
     } catch (error) {
@@ -298,7 +301,7 @@ export default function ID(props: { proposal: Proposal }) {
   };
 
   const handleSingleVote = async () => {
-    const id = proposalData.id;
+    const id = proposalData?.id;
     const index = Object.keys(indexToVotingPower)[0];
     const votingPower = toWei(Object.values(indexToVotingPower)[0]);
 
@@ -346,23 +349,6 @@ export default function ID(props: { proposal: Proposal }) {
     setVoteModalOpen((prev) => !prev);
   };
 
-  // const {
-  //   data: allVoters,
-  //   error,
-  //   mutate,
-  // } = useSWR(
-  //   () => (isWeb3Enabled ? "web3/allVoters" : null),
-  //   async () => {
-  //     const provider = await enableWeb3();
-
-  //     if (provider && daoAddress) {
-  //       const daoContract = new ethers.Contract(daoAddress, abi, provider);
-  //       const allVoters: string = await daoContract.getVoters(proposalData.id);
-
-  //       return allVoters;
-  //     }
-  //   }
-  // );
 
   const handleSuccess = async (results: unknown) => {
     const tx = results as ContractTransaction;
@@ -393,9 +379,9 @@ export default function ID(props: { proposal: Proposal }) {
     });
   };
 
-  const creator = proposalData.creator;
+  const creator = proposalData?.creator;
   const creatorLength = creator.length;
-  const status = proposalData.status;
+  const status = proposalData?.status;
 
   let color;
   let bgColor;
@@ -410,7 +396,7 @@ export default function ID(props: { proposal: Proposal }) {
     bgColor = "bg-red-200";
   }
 
-  // console.log(proposalData.validOptions);
+  // console.log(proposalData?.validOptions);
 
   return (
     <div className="flex flex-col justify-between bg-gray-50 h-full">
@@ -428,13 +414,13 @@ export default function ID(props: { proposal: Proposal }) {
         <div className="flex lg:flex-row flex-col mx-4">
           <div className="w-full lg:w-8/12 p-2 pl-4 sm:pr-11 ">
             <h1 className="text-base ssm:text-lg sm:text-2xl">
-              {proposalData.title}
+              {proposalData?.title}
             </h1>
             <div className="flex items-center my-3">
               <p
                 className={`rounded-full px-2 p-1 mr-3 sm:text-base text-sm ${color} ${bgColor} `}
               >
-                {proposalData.status}
+                {proposalData?.status}
               </p>
               <Tooltip content={creator} position={"top"}>
                 <Blockie seed={creator} size={6} />
@@ -449,7 +435,7 @@ export default function ID(props: { proposal: Proposal }) {
                 Description
               </h1>
               <p className="text-gray-700 sm:text-base ss:text-sm text-xs">
-                {proposalData.description}
+                {proposalData?.description}
               </p>
             </div>
 
@@ -459,7 +445,7 @@ export default function ID(props: { proposal: Proposal }) {
                   <SingleChoiceVote
                     indexToVotingPower={indexToVotingPower}
                     setIndexToVotingPower={setIndexToVotingPower}
-                    options={proposalData.optionsArray}
+                    options={proposalData?.optionsArray}
                     isFetching={isFetchingS}
                     isLoading={isLoadingS}
                     handleSingleVote={handleSingleVote}
@@ -469,7 +455,7 @@ export default function ID(props: { proposal: Proposal }) {
                 proposalData?.status != "Closed" && (
                   <QuadraticVote
                     votingPower={votingPower}
-                    options={proposalData.optionsArray}
+                    options={proposalData?.optionsArray}
                     handleVote={handleVote}
                     setVotingPower={setVotingPower}
                     isFetching={isFetchingQ}
@@ -480,7 +466,7 @@ export default function ID(props: { proposal: Proposal }) {
                 proposalData?.status != "Closed" && (
                   <QuadraticVote
                     votingPower={votingPower}
-                    options={proposalData.optionsArray}
+                    options={proposalData?.optionsArray}
                     handleVote={handleVote}
                     setVotingPower={setVotingPower}
                     isFetching={isFetchingQ}
@@ -492,8 +478,8 @@ export default function ID(props: { proposal: Proposal }) {
             <div className="w-full flex justify-center lg:justify-start">
               {proposalData?.allVoters && (
                 <VotersTable
-                  allVoters={proposalData.allVoters}
-                  options={proposalData.validOptions}
+                  allVoters={proposalData?.allVoters}
+                  options={proposalData?.validOptions}
                 />
               )}
             </div>
@@ -509,7 +495,7 @@ export default function ID(props: { proposal: Proposal }) {
                   Voting System
                 </p>
                 <p className="w-7/12 lg:text-xs text-xs">
-                  {votingSystem[proposalData.proposalType]}
+                  {votingSystem[proposalData?.proposalType]}
                 </p>
               </div>
               <div className="flex pt-2 items-center justify-between">
@@ -526,7 +512,7 @@ export default function ID(props: { proposal: Proposal }) {
               </div>
             </div>
             {proposalData?.optionsArray && (
-              <ResultSection options={proposalData.optionsArray} />
+              <ResultSection options={proposalData?.optionsArray} />
             )}
           </div>
         </div>
@@ -537,29 +523,24 @@ export default function ID(props: { proposal: Proposal }) {
   );
 }
 
-export async function getStaticPaths() {
+// export async function getStaticPaths() {
 
-  console.log("Getting static paths ........................................")
+//   const paths = await getProposalsId();
 
-  console.log("We are here");
-  const paths = await getProposalsId();
+//   return {
+//     paths,
+//     fallback: false,
+//   };
+// }
 
-  console.log("Paths", paths);
-  return {
-    paths,
-    fallback: false,
-  };
-}
-
-export async function getStaticProps({ params }: IParam) {
-  console.log("Getting static props ........................................")
+export async function getServerSideProps({ params }: IParam) {
 
 
   // Fetch necessary data for the blog post using params.id
   const proposal = await getProposalsData(params.id);
   return {
     props: {
-      proposal,
+      proposal: proposal || null
     } || null
   };
 }

@@ -2,7 +2,9 @@ import Moralis from "moralis/node"
 import { abi, contractAddresses } from "../constants";
 import { now, toMilliseconds } from "../utils/helper";
 
-
+interface ABI {
+  [key:string]: any
+}
 
 const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 const appId = process.env.NEXT_PUBLIC_APP_ID;
@@ -40,19 +42,28 @@ export interface IParam {
   }
 }
 
-
-
 export interface Voter {
     voterAddress: string;
     optionIndexes: number[];
     optionVotes: number[];
 }
 
+
+type RunContractFunction =  {
+  chain: "0x13881";
+  address: string;
+  function_name:string;
+  abi: ABI[];
+  params: {[key:string]: any}
+} 
+
+
+
 export async function getProposalsId() {
 
   try{
 
-    console.log("Now here........................................")
+    // console.log("Fetching Proposals........................................")
 
     await Moralis.start({ serverUrl, appId, masterKey });
 
@@ -100,9 +111,8 @@ const getTotalVotes = (options: Array<Array<string>>): number => {
   return totalVotes;
 };
 
-
 export async function getProposalsData(id:string){
-  console.log("Fetching proposals data ........................................")
+  // console.log("Fetching proposals data ........................................")
 
   try {
     await Moralis.start({ serverUrl, appId, masterKey });
@@ -113,6 +123,8 @@ export async function getProposalsData(id:string){
   const proposal = await proposalsQuery.first();
 
   const proposalAttribute = proposal?.attributes;
+  console.log("Proposal Attribute:", proposalAttribute)
+
 
     const latestOptions = await getLatestOptions(proposalAttribute?.uid);
     const validOptions: Array<Array<string>> =
@@ -122,20 +134,21 @@ export async function getProposalsData(id:string){
     
      
 
-      const options = {
+      const options:RunContractFunction = {
         chain: "0x13881",
         address: contractAddress,
         function_name: "getVoters",
         abi: abi,
-        params: { id },
+        params: { id }
       };
+
       const allVoters:any[][] = (await Moralis.Web3API.native.runContractFunction(options)) as unknown as any[][]
-      console.log("These are all voters: ", allVoters)
+      // console.log("These are all voters: ", allVoters)
 
     const totalVotes = getTotalVotes(validOptions);
 
     const optionsArray = validOptions.map((option) => {
-      console.log("Option 2: ", option[2]);
+      // console.log("Option 2: ", option[2]);
       const percentage =
         totalVotes != 0 ? ((Number(option[2]) / totalVotes) * 100).toFixed(1) : 0;
 

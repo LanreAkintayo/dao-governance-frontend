@@ -18,7 +18,7 @@ export default function VotersTable({ allVoters, options }:{allVoters:any[][], o
       {allVoters.length > 0 ? (
         <tbody className="">
           {allVoters.map((voter) => {
-            // console.log("A voter: ", voter)
+            const currentIndex = allVoters.indexOf(voter)
             const optionIndexes = voter[1] as number[];
             const optionVotes = voter[2] as number[];
             const voterAddress = voter[0] as string;
@@ -31,7 +31,7 @@ export default function VotersTable({ allVoters, options }:{allVoters:any[][], o
                 i++;
 
                 return (
-                  <tr className="bg-white border-t border-gray-300 "  >
+                  <tr key={currentIndex} className="bg-white border-t border-gray-300 "  >
                     <td className="py-4 pl-3 text-xs lg:text-sm">
                       {voterAddress.substring(0, 5)}...
                       {voterAddress.substring(
@@ -49,7 +49,7 @@ export default function VotersTable({ allVoters, options }:{allVoters:any[][], o
             } else {
               console.log("We are here....");
               return (
-                <tr className="bg-white border-t border-gray-300">
+                <tr  key={currentIndex}  className="bg-white border-t border-gray-300">
                   <td className="py-4 pl-3">No Votes </td>
                 </tr>
               );
@@ -60,7 +60,7 @@ export default function VotersTable({ allVoters, options }:{allVoters:any[][], o
         <tbody className="">
           <tr className="bg-white border-t border-gray-300">
             <td className="py-4 pl-3 text-center" colSpan={3}>
-              No Votes yet
+              No Votes 
             </td>
           </tr>
         </tbody>

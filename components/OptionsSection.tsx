@@ -134,9 +134,9 @@ export default function OptionsSection({
       </div>
 
       {optionsIndexes.map((index) => {
-        // console.log("Here at index: ", index);
+        const currentKey = optionsIndexes.indexOf(index)
         return (
-          <div className="flex border bg-white items-center mb-2 border-gray-400">
+          <div key={currentKey} className="flex border bg-white items-center mb-2 border-gray-400">
             <p className="ml-2 text-gray-700">{index + 1}. </p>
             <textarea
               value={optionTexts[index]}

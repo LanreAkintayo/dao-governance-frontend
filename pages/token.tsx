@@ -8,16 +8,47 @@ import { useNotification } from "web3uikit";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import VotingPower from "../components/VotingPower";
-import { abi, contractAddresses, DEPLOYER, erc20Abi, larAddress } from "../constants";
+import {
+  abi,
+  contractAddresses,
+  DEPLOYER,
+  erc20Abi,
+  larAddress,
+} from "../constants";
 import { ethers, Signer, ContractTransaction } from "ethers";
 import { toWei } from "../utils/helper";
+import { ToastContainer, toast, cssTransition } from "react-toastify";
+// import "animate.css/animate.min.css";
+import "react-toastify/dist/ReactToastify.css";
 
 const Proposals: NextPage = () => {
   const [userAddress, setUserAddress] = useState("");
-  const { Moralis, enableWeb3, account, chainId: chainIdHex, } = useMoralis();
+  const { Moralis, enableWeb3, account, chainId: chainIdHex } = useMoralis();
   const { promiseInProgress } = usePromiseTracker();
   const dispatch = useNotification();
   const { mutate } = useSWRConfig();
+
+  const bounce = cssTransition({
+    enter: "animate__animated animate__bounceIn",
+    exit: "animate__animated animate__bounceOut",
+  });
+
+  const swirl = cssTransition({
+    enter: "swirl-in-fwd",
+    exit: "swirl-out-bck",
+  });
+
+  // function animateCss() {
+  //   toast.dark("Hey 👋, see how easy!", {
+  //     transition: bounce
+  //   });
+  // }
+
+  // function animista() {
+  //   toast.dark("Hey 👋, see how easy!", {
+  //     transition: swirl
+  //   });
+  // }
 
   const chainId: number = parseInt(chainIdHex!);
 
@@ -28,7 +59,42 @@ const Proposals: NextPage = () => {
       ? contractAddresses[chainId][length - 1]
       : null;
 
+  const ToastModal = ({
+    closeToast,
+    toastProps,
+    status,
+  }: {
+    closeToast: any;
+    toastProps: any;
+    status: string;
+  }) => {
+    return (
+      <div className="font-sans">
 
+        <p
+          className={`text-lg ${
+            status == "success" ? "text-green-700" : "text-red-800"
+          } font-sans`}
+        >
+          Transaction Notification
+        </p>
+        <p className="">
+          Transaction {status == "success" ? "Successful" : "Failed"}
+        </p>
+      </div>
+    );
+  };
+  const displayToast = (status: string) => {
+    toast(
+      <ToastModal
+        closeToast={undefined}
+        toastProps={undefined}
+        status={status}
+      />,
+      { autoClose: 3000 }
+    );
+    // toast(Msg) would also work
+  };
 
   const {
     runContractFunction: sendLAR,
@@ -47,7 +113,7 @@ const Proposals: NextPage = () => {
         contractAddress: daoAddress!,
         functionName: "sendLAR",
         params: {
-          receiver:userAddress,
+          receiver: userAddress,
         },
       },
       onSuccess: handleSuccess,
@@ -56,39 +122,40 @@ const Proposals: NextPage = () => {
       },
     });
   };
-  const handleSuccess = async (results:unknown) => {
-    const tx = results as ContractTransaction
+  const handleSuccess = async (results: unknown) => {
+    const tx = results as ContractTransaction;
     console.log("Success transaction: ", tx);
     await trackPromise(tx.wait(1));
-
-    dispatch({
-      type: "success",
-      message: "Transaction Completed!",
-      title: "Transaction Notification",
-      position: "topR",
-    });
+    displayToast("success");
+    // dispatch({
+    //   type: "success",
+    //   message: "Transaction Completed!",
+    //   title: "Transaction Notification",
+    //   position: "bottomR",
+    // });
 
     mutate("web3/votingPower");
   };
 
-  const handleFailure = async (error:Error) => {
+  const handleFailure = async (error: Error) => {
     console.log("Error: ", error);
-    dispatch({
-      type: "error",
-      message: "Transation Failed",
-      title: "Transaction Notification",
-      position: "topR",
-    });
+    displayToast("failure");
+    // dispatch({
+    //   type: "error",
+    //   message: "Transation Failed",
+    //   title: "Transaction Notification",
+    //   position: "bottomR",
+    // });
   };
 
   return (
     <div className="flex flex-col justify-between bg-gray-50 h-screen">
       <Header />
-
       <section className="px-5 mt-24 flex flex-col items-center ">
         <VotingPower className="self-end border border-gray-300" />
+        <ToastContainer />
 
-        <div className="w-full flex items-center justify-center flex-col" >
+        <div className="w-full flex items-center justify-center flex-col">
           <p className="mt-4 ">Enter Address</p>
           <input
             onChange={(event) => {

@@ -2,6 +2,7 @@ import "../styles/globals.css";
 import { MoralisProvider } from "react-moralis";
 import type { AppProps } from "next/app";
 import { NotificationProvider } from "web3uikit";
+import { ToastContainer } from "react-toastify";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

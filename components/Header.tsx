@@ -50,7 +50,6 @@ export default function Header() {
 
 
   const handleSidebar = () => {
-    // console.log("We are here")
     setCollapsed((prevCollapsed) => !prevCollapsed);
   };
 

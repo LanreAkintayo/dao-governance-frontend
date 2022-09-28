@@ -17,7 +17,7 @@ export default function ResultSection({
       </h1>
       {options.map((option) => {
         return (
-          <div>
+          <div key={option.optionIndex}>
             <div className="w-full h-full mt-2  flex justify-between items-center">
               <p>
                 <small>{option.optionText}</small>
