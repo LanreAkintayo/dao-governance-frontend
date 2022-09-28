@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import ParticleBackground from "react-particle-backgrounds";
+// import ParticleBackground from "react-particle-backgrounds";
 import Link from "next/link";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -38,7 +38,7 @@ const Home: NextPage = () => {
 
   return (
     <div className="bg-gradient-to-r  from-pink-200 to-white w-full h-screen relative ">
-      <ParticleBackground settings={settings2} />
+      {/* <ParticleBackground settings={settings2} /> */}
 
       <section className="z-10 absolute top-0 left-0 ">
         <Header />
