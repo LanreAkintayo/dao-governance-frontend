@@ -392,7 +392,7 @@ export default function ID({ proposal }: { proposal: Proposal }) {
   };
 
   const creator = proposalData?.creator;
-  const creatorLength = creator.length;
+  const creatorLength = creator?.length;
   const status = proposalData?.status;
 
   let color;
@@ -438,8 +438,8 @@ export default function ID({ proposal }: { proposal: Proposal }) {
                 <Blockie seed={creator} size={6} />
               </Tooltip>
               <p className="px-2 sm:text-base text-sm">
-                {creator.substring(0, 4)}...
-                {creator.substring(creatorLength - 4, creatorLength)}
+                {creator?.substring(0, 4)}...
+                {creator?.substring(creatorLength - 4, creatorLength)}
               </p>
             </div>
             <div className="mt-4 ">

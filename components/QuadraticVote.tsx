@@ -177,7 +177,15 @@ export default function QuadraticVote({
     index: string
   ) => {
     setVotingPower((prevVotingPower: VotingPower) => {
-      const currentValue = Number(event.currentTarget.value);
+
+      // let currentValue
+
+      // if(isNaN(Number(event.currentTarget.value))){
+      //   currentValue = ""
+      // }
+
+    
+      const currentValue = Number(event.currentTarget.value) < 0 ? 0 : Number(event.currentTarget.value)
 
       const percentageArray = getCurrentPercentage(prevVotingPower);
       setPercentages(percentageArray);
@@ -220,7 +228,7 @@ export default function QuadraticVote({
                     onChange={(event) =>
                       handleOnChange(event, option.optionIndex)
                     }
-                    type="text"
+                    type="number"
                     name="text"
                     placeholder="0"
                     value={votingPower[option.optionIndex]}
@@ -228,7 +236,7 @@ export default function QuadraticVote({
                   />
 
                   <button
-                    className="text-lg z-50 border-l outline-none px-3 border-r py-2 border-gray-300"
+                    className="text-lg border-l outline-none px-3 border-r py-2 border-gray-300"
                     onClick={() => handleAddClick(option.optionIndex)}
                   >
                     +
