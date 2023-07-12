@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { CryptoCards, Button } from "@web3uikit/core";
-import { ConnectButton } from "web3uikit";
+// import { CryptoCards, Button } from "@web3uikit/core";
+// import { ConnectButton } from "web3uikit";
 import { ProSidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import "react-pro-sidebar/dist/css/styles.css";
 // import NavigationDropdown from "./NavigationDropdown";
 import { useEffect, useState, useCallback } from "react";
-import { useMoralis, useWeb3Contract, useChain } from "react-moralis";
+import WalletConnect from "./WalletConnect";
+// import { useMoralis, useWeb3Contract, useChain } from "react-moralis";
 
 const useMediaQuery = (width: number) => {
   const [targetReached, setTargetReached] = useState(false);
@@ -36,11 +37,11 @@ const useMediaQuery = (width: number) => {
 export default function Header() {
   const [collapsed, setCollapsed] = useState(true);
   const isBreakpoint = useMediaQuery(912);
-  const { isWeb3Enabled, chainId: chainIdHex, enableWeb3 } = useMoralis();
-  const { switchNetwork, chain, account } = useChain();
+  // const { isWeb3Enabled, chainId: chainIdHex, enableWeb3 } = useMoralis();
+  // const { switchNetwork, chain, account } = useChain();
 
   // console.log(chainIdHex)
-  const chainId = parseInt(chainIdHex!);
+  // const chainId = parseInt(chainIdHex!);
   // console.log("Chain id", chainId)
   // console.log("Here am I:", chainId != 80001)
 
@@ -54,7 +55,7 @@ export default function Header() {
   };
 
   return (
-    <div className={`fixed z-50 top-0 left-0 bg-gray-100 ss:${chainId != 80001 ? "h-30" : "h-20"} h-30 w-screen `}>
+    <div className={`fixed z-50 top-0 left-0 bg-gray-100 ss:${12 != 80001 ? "h-30" : "h-20"} h-30 w-screen `}>
       {/* Navbar */}
 
       {!collapsed && isBreakpoint && (
@@ -124,11 +125,13 @@ export default function Header() {
             )}
           
             <div className="text-white flex flex-col w-full sc:py-10 items-start">
+
+              <WalletConnect />
              
-              <div className="px-0">
+              {/* <div className="px-0">
                 <ConnectButton  />
-              </div>
-              {chainId != 80001 && isWeb3Enabled && (
+              </div> */}
+              {/* {chainId != 80001 && isWeb3Enabled && (
                 <button
                   className=" ml-4 text-red-700 text-sm my-2 cursor-pointer bg-red-100 rounded-lg p-1 px-2"
                   onClick={() => {
@@ -137,7 +140,7 @@ export default function Header() {
                 >
                   Switch to Mumbai
                 </button>
-              )}
+              )} */}
             </div>
             { isBreakpoint && (
               <div

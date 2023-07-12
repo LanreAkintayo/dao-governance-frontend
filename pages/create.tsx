@@ -17,7 +17,7 @@ import { ethers, Signer, ContractTransaction } from "ethers";
 import { now, sDuration, toSeconds, toWei } from "../utils/helper";
 import { ClipLoader } from "react-spinners";
 import VotingPower from "../components/VotingPower";
-import { Moralis } from "moralis/types";
+// import { Moralis } from "moralis/types";
 import { displayToast } from "../components/Toast";
 import { ToastContainer } from "react-toastify";
 interface TypeDict {
@@ -159,6 +159,8 @@ const Create: NextPage = () => {
         amount: fee,
       },
     };
+
+    debugger
 
     const tx = (await trackPromise(
       Moralis.executeFunction(approveOptions)

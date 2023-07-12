@@ -3,17 +3,55 @@ import { MoralisProvider } from "react-moralis";
 import type { AppProps } from "next/app";
 import { NotificationProvider } from "web3uikit";
 import { ToastContainer } from "react-toastify";
+import {
+  EthereumClient,
+  w3mConnectors,
+  w3mProvider,
+} from "@web3modal/ethereum";
+import { polygon, polygonMumbai } from "wagmi/chains";
+import { Web3Modal } from "@web3modal/react";
+import { configureChains, createConfig, WagmiConfig } from "wagmi";
+import ProposalsProvider from "../providers/ProposalsProvider";
+import { NextPageWithLayout } from "../types";
 
-function MyApp({ Component, pageProps }: AppProps) {
+if (!process.env.NEXT_PUBLIC_PROJECT_ID) {
+  throw new Error("You need to provide NEXT_PUBLIC_PROJECT_ID env variable");
+}
+const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
+
+// 2. Configure wagmi client
+const chains = [polygonMumbai, polygon];
+
+const { publicClient } = configureChains(chains, [w3mProvider({ projectId })]);
+
+const wagmiConfig = createConfig({
+  autoConnect: true,
+  connectors: w3mConnectors({ chains, projectId }),
+  publicClient,
+});
+
+// 3. Configure modal ethereum client
+const ethereumClient = new EthereumClient(wagmiConfig, chains);
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  const getLayout = Component.getLayout ?? ((page) => page);
+
   return (
-    <MoralisProvider
-      appId={process.env.NEXT_PUBLIC_APP_ID!}
-      serverUrl={process.env.NEXT_PUBLIC_SERVER_URL!}
-    >
+    <ProposalsProvider>
       <NotificationProvider>
-        <Component {...pageProps} />
+        <WagmiConfig config={wagmiConfig}>
+          {getLayout(<Component {...pageProps} />)}
+        </WagmiConfig>
+
+        <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
+
+        <ToastContainer />
       </NotificationProvider>
-    </MoralisProvider>
+    </ProposalsProvider>
   );
 }
 

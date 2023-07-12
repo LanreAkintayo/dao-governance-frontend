@@ -7,6 +7,9 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { useMoralis } from "react-moralis";
 import { ConnectButton } from "web3uikit";
+import { NextPageWithLayout } from "../types";
+import Layout from "../components/Layout";
+import useProposals from "../hooks/useProposals";
 
 /*
 The proposal page should be displayed properly when the contents are not yet ready
@@ -15,8 +18,8 @@ Responsiveness is still an issue
 handle all this typescript issue
 
 */
-const Home: NextPage = () => {
-  const { isWeb3Enabled } = useMoralis();
+const Home: NextPageWithLayout = () => {
+  // const { isWeb3Enabled } = useMoralis();
   const settings2 = {
     particle: {
       particleCount: 100,
@@ -36,12 +39,17 @@ const Home: NextPage = () => {
     },
   };
 // "z-10 absolute top-0 left-0 "
+
+  const {allProposals} = useProposals()
+
+  console.log("All Proposals: ", allProposals)
+  
   return (
     <div className="bg-gradient-to-r  from-pink-200 to-white w-full h-screen relative ">
       {/* <ParticleBackground settings={settings2} /> */}
 
       <section className="">
-        <Header />
+        {/* <Header /> */}
         <div className="flex flex-col w-screen h-screen items-center text-center justify-center text-black">
           <h1 className="text-2xl px-1 mt-16 ss:mt-8 ssm:text-3xl sm:text-4xl lg:text-5xl xl:text-6xl w-12/12 sm:w-10/12 lg:w-8/12 font-extrabold">
             Decentralized Autonomous Organization
@@ -51,7 +59,7 @@ const Home: NextPage = () => {
             Decentralized Autonomous Organization entails.
           </p>
           <div>
-            {isWeb3Enabled ? (
+            {/* {isWeb3Enabled ? (
               <div>
                 <Link href="/proposals">
                   <a className="p-2 bg-gradient-to-tr to-pink-500  from-gray-800 px-4 text-white text-sm ss:text-xl ssm:text-2xl rounded-md">
@@ -69,7 +77,7 @@ const Home: NextPage = () => {
               <p className="p-2 ml-4 bg-gradient-to-tr to-red-500  from-red-800 px-4 text-white text-base rounded-md">
                 Make sure your wallet is connected.
               </p>
-            )}
+            )} */}
           </div>
         </div>
       </section>
@@ -93,5 +101,12 @@ const Home: NextPage = () => {
     </div>
   );
 };
+
+
+
+Home.getLayout = function getLayout(page) {
+  return <Layout>{page}</Layout>;
+};
+
 
 export default Home;

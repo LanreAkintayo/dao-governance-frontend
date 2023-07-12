@@ -1,1 +1,712 @@
-[{"type":"constructor","payable":false,"inputs":[{"type":"address","name":"larTokenAddress"}]},{"type":"event","anonymous":false,"name":"ProposalCreated","inputs":[{"type":"uint256","name":"id","indexed":false},{"type":"address","name":"creator","indexed":false},{"type":"string","name":"title","indexed":false},{"type":"string","name":"description","indexed":false},{"type":"uint8","name":"proposalType","indexed":false},{"type":"uint8","name":"proposalStatus","indexed":false},{"type":"uint256","name":"startDate","indexed":false},{"type":"uint256","name":"duration","indexed":false},{"type":"tuple[]","name":"options","indexed":false,"components":[{"type":"uint256","name":"index"},{"type":"string","name":"optionText"},{"type":"uint256","name":"vote"}]}]},{"type":"event","anonymous":false,"name":"Testing","inputs":[{"type":"uint256","name":"id","indexed":false},{"type":"address","name":"voter","indexed":false}]},{"type":"event","anonymous":false,"name":"Vote","inputs":[{"type":"uint256","name":"id","indexed":false},{"type":"tuple","name":"voter","indexed":false,"components":[{"type":"address","name":"voterAddress"},{"type":"uint256[]","name":"optionIndexes"},{"type":"uint256[]","name":"optionVotes"}]},{"type":"tuple[]","name":"options","indexed":false,"components":[{"type":"uint256","name":"index"},{"type":"string","name":"optionText"},{"type":"uint256","name":"vote"}]}]},{"type":"event","anonymous":false,"name":"VoteCreated","inputs":[{"type":"uint256","name":"id","indexed":false},{"type":"uint256[]","name":"optionVotes","indexed":false},{"type":"uint256[]","name":"optionIndexes","indexed":false},{"type":"address","name":"voterAddress","indexed":false},{"type":"tuple[]","name":"proposalOptions","indexed":false,"components":[{"type":"uint256","name":"index"},{"type":"string","name":"optionText"},{"type":"uint256","name":"vote"}]}]},{"type":"function","name":"checkVotingStatus","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"uint256","name":"id"},{"type":"address","name":"voter"}],"outputs":[{"type":"int256"}]},{"type":"function","name":"createProposal","constant":false,"payable":false,"inputs":[{"type":"string","name":"_title"},{"type":"string","name":"_description"},{"type":"uint256","name":"_proposalType"},{"type":"uint256","name":"_proposalStatus"},{"type":"uint256","name":"_startDate"},{"type":"uint256","name":"_duration"},{"type":"tuple[]","name":"_options","components":[{"type":"uint256","name":"index"},{"type":"string","name":"optionText"},{"type":"uint256","name":"vote"}]}],"outputs":[]},{"type":"function","name":"getOptions","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"uint256","name":"id"}],"outputs":[{"type":"tuple[]","components":[{"type":"uint256","name":"index"},{"type":"string","name":"optionText"},{"type":"uint256","name":"vote"}]}]},{"type":"function","name":"getVoters","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"uint256","name":"id"}],"outputs":[{"type":"tuple[]","components":[{"type":"address","name":"voterAddress"},{"type":"uint256[]","name":"optionIndexes"},{"type":"uint256[]","name":"optionVotes"}]}]},{"type":"function","name":"proposals","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"uint256"}],"outputs":[{"type":"uint256","name":"id"},{"type":"address","name":"creator"},{"type":"string","name":"title"},{"type":"string","name":"description"},{"type":"uint8","name":"proposalType"},{"type":"uint8","name":"proposalStatus"},{"type":"uint256","name":"startDate"},{"type":"uint256","name":"duration"}]},{"type":"function","name":"sendLAR","constant":false,"payable":false,"inputs":[{"type":"address","name":"receiver"}],"outputs":[]},{"type":"function","name":"sqrt","constant":true,"stateMutability":"pure","payable":false,"inputs":[{"type":"uint256","name":"y"}],"outputs":[{"type":"uint256","name":"z"}]},{"type":"function","name":"voteProposalByQuadratic","constant":false,"payable":false,"inputs":[{"type":"uint256","name":"id"},{"type":"uint256[]","name":"indexes"},{"type":"uint256[]","name":"votingPower"}],"outputs":[]},{"type":"function","name":"voteProposalBySingleChoice","constant":false,"payable":false,"inputs":[{"type":"uint256","name":"id"},{"type":"uint256","name":"index"},{"type":"uint256","name":"votingPower"}],"outputs":[]},{"type":"function","name":"voteProposalByWeighing","constant":false,"payable":false,"inputs":[{"type":"uint256","name":"id"},{"type":"uint256[]","name":"indexes"},{"type":"uint256[]","name":"votingPower"}],"outputs":[]}]
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "creator",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "description",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum ProposalType",
+        "name": "proposalType",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum ProposalStatus",
+        "name": "proposalStatus",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "startDate",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "duration",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "index",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "optionText",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "vote",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct Option[]",
+        "name": "options",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "ProposalCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "voter",
+        "type": "address"
+      }
+    ],
+    "name": "Testing",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "voterAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "optionIndexes",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "optionVotes",
+            "type": "uint256[]"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct Voter",
+        "name": "voter",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "index",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "optionText",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "vote",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct Option[]",
+        "name": "options",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "Vote",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "optionVotes",
+        "type": "uint256[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "optionIndexes",
+        "type": "uint256[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "voterAddress",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "index",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "optionText",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "vote",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct Option[]",
+        "name": "proposalOptions",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "VoteCreated",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "voter",
+        "type": "address"
+      }
+    ],
+    "name": "checkVotingStatus",
+    "outputs": [
+      {
+        "internalType": "int256",
+        "name": "",
+        "type": "int256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_title",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_description",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_proposalType",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_proposalStatus",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_startDate",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_duration",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "index",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "optionText",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "vote",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Option[]",
+        "name": "_options",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "createProposal",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      }
+    ],
+    "name": "getOptions",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "index",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "optionText",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "vote",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Option[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "proposalId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getProposals",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "creator",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "internalType": "enum ProposalType",
+            "name": "proposalType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ProposalStatus",
+            "name": "proposalStatus",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint256",
+            "name": "startDate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "duration",
+            "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "index",
+                "type": "uint256"
+              },
+              {
+                "internalType": "string",
+                "name": "optionText",
+                "type": "string"
+              },
+              {
+                "internalType": "uint256",
+                "name": "vote",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Option[]",
+            "name": "options",
+            "type": "tuple[]"
+          },
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "voterAddress",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256[]",
+                "name": "optionIndexes",
+                "type": "uint256[]"
+              },
+              {
+                "internalType": "uint256[]",
+                "name": "optionVotes",
+                "type": "uint256[]"
+              }
+            ],
+            "internalType": "struct Voter[]",
+            "name": "voters",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct Proposal",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getProposalsArray",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "creator",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "internalType": "enum ProposalType",
+            "name": "proposalType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ProposalStatus",
+            "name": "proposalStatus",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint256",
+            "name": "startDate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "duration",
+            "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "index",
+                "type": "uint256"
+              },
+              {
+                "internalType": "string",
+                "name": "optionText",
+                "type": "string"
+              },
+              {
+                "internalType": "uint256",
+                "name": "vote",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Option[]",
+            "name": "options",
+            "type": "tuple[]"
+          },
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "voterAddress",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256[]",
+                "name": "optionIndexes",
+                "type": "uint256[]"
+              },
+              {
+                "internalType": "uint256[]",
+                "name": "optionVotes",
+                "type": "uint256[]"
+              }
+            ],
+            "internalType": "struct Voter[]",
+            "name": "voters",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct Proposal[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getProposalsList",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      }
+    ],
+    "name": "getVoters",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "voterAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "optionIndexes",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "optionVotes",
+            "type": "uint256[]"
+          }
+        ],
+        "internalType": "struct Voter[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "larTokenAddress",
+        "type": "address"
+      }
+    ],
+    "name": "initializeDao",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "receiver",
+        "type": "address"
+      }
+    ],
+    "name": "sendLAR",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "y",
+        "type": "uint256"
+      }
+    ],
+    "name": "sqrt",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "z",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "proposalId",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateProposalList",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "indexes",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "votingPower",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "voteProposalByQuadratic",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "votingPower",
+        "type": "uint256"
+      }
+    ],
+    "name": "voteProposalBySingleChoice",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "indexes",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "votingPower",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "voteProposalByWeighing",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
