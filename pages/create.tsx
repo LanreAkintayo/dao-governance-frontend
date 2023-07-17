@@ -12,7 +12,13 @@ import { useChain, useMoralis, useWeb3Contract } from "react-moralis";
 import { trackPromise, usePromiseTracker } from "react-promise-tracker";
 import { useNotification } from "web3uikit";
 import { useSWRConfig } from "swr";
-import { abi, contractAddresses, erc20Abi, larAddress } from "../constants";
+import {
+  daoAbi,
+  contractAddresses,
+  erc20Abi,
+  larAddress,
+  daoAddress,
+} from "../constants";
 import { ethers, Signer, ContractTransaction } from "ethers";
 import { now, sDuration, toSeconds, toWei } from "../utils/helper";
 import { ClipLoader } from "react-spinners";
@@ -20,11 +26,15 @@ import VotingPower from "../components/VotingPower";
 // import { Moralis } from "moralis/types";
 import { displayToast } from "../components/Toast";
 import { ToastContainer } from "react-toastify";
+import {
+  prepareWriteContract,
+  writeContract,
+  waitForTransaction,
+} from "@wagmi/core";
+
 interface TypeDict {
   [key: string]: string;
 }
-
-type TProvider = Moralis.Web3Provider | Signer;
 
 const typeDict: TypeDict = {
   "Single Choice Voting": "0",
@@ -40,26 +50,10 @@ const Create: NextPage = () => {
   // const formattedTime = formatTime(new Date().getTime());
   // console.log(formattedTime);
 
-  const { promiseInProgress } = usePromiseTracker();
-  const dispatch = useNotification();
   const { mutate } = useSWRConfig();
 
-  const {
-    isWeb3Enabled,
-    chainId: chainIdHex,
-    enableWeb3,
-    Moralis,
-  } = useMoralis();
-  const { switchNetwork, chain, account } = useChain();
-
-  const chainId: number = parseInt(chainIdHex!);
-
-  const length = contractAddresses[chainId]?.length;
-
-  const daoAddress =
-    chainId in contractAddresses
-      ? contractAddresses[chainId.toString()][length - 1]
-      : null;
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [publishText, setPublishText] = useState("Publish");
 
   const [proposalData, setProposalData] = useState({
     title: "",
@@ -91,11 +85,11 @@ const Create: NextPage = () => {
     console.log(proposalData);
   }, [proposalData]);
 
-  const {
-    runContractFunction: createProposal,
-    isFetching,
-    isLoading,
-  } = useWeb3Contract({});
+  // const {
+  //   runContractFunction: createProposal,
+  //   isFetching,
+  //   isLoading,
+  // } = useWeb3Contract({});
 
   const handleSelectedVotingSystem = (name: string) => {
     setProposalData((prevProposal) => {
@@ -131,6 +125,9 @@ const Create: NextPage = () => {
   };
 
   const handleCreate = async () => {
+    setIsPublishing(true);
+    setPublishText("Publishing Proposal");
+
     const options = optionsIndexes.map((index) => {
       return {
         index,
@@ -147,60 +144,84 @@ const Create: NextPage = () => {
     const duration = sDuration.minutes(proposalData.duration);
     const fee = toWei(5);
 
+
     // console.log(duration)
     console.log("Duration : ", duration);
 
-    const approveOptions = {
-      contractAddress: larAddress,
-      functionName: "approve",
-      abi: erc20Abi,
-      params: {
-        spender: daoAddress,
-        amount: fee,
-      },
-    };
 
     debugger
 
-    const tx = (await trackPromise(
-      Moralis.executeFunction(approveOptions)
-    )) as ContractTransaction;
-    const result = await trackPromise(tx.wait(1));
+    try {
+      setPublishText("Approving LAR Token");
 
-    console.log("using ethers transaction: ", result);
+      const approveRequest = await prepareWriteContract({
+        address: larAddress,
+        abi: erc20Abi,
+        functionName: "approve",
+        args: [daoAddress, fee],
+      });
 
-    // const provider:TProvider = await enableWeb3();
+      const { hash } = await writeContract(approveRequest);
 
-    // const lar = new ethers.Contract(larAddress, erc20Abi, provider);
+      const approveReceipt = await waitForTransaction({
+        hash,
+      });
 
-    // const signer = provider?.getSigner(account);
-    // const approveTx:ContractTransaction = await trackPromise(
-    //   lar.connect(signer).approve(daoAddress, fee)
-    // );
-    // await trackPromise(approveTx.wait(1));
+      if (approveReceipt.status == "success") {
+        displayToast("success", "LAR Token has successfully been approved");
+        setPublishText("Approved");
+      } else {
+        setPublishText("Publish");
+        setIsPublishing(false);
 
-    createProposal({
-      params: {
-        abi: abi,
-        contractAddress: daoAddress!,
+        displayToast("failure", "Failed to approve LAR Token");
+        return;
+      }
+    } catch (error) {
+      setPublishText("Publish");
+      setIsPublishing(false);
+
+      displayToast("Failure", "Failed to approve LAR Token");
+      return;
+    }
+
+    try {
+      setPublishText("Publishing Proposal");
+
+      const publishRequest = await prepareWriteContract({
+        address: daoAddress,
+        abi: daoAbi,
         functionName: "createProposal",
-        params: {
-          _title: title,
-          _description: description,
-          _proposalType: proposalType,
-          _proposalStatus: proposalStatus,
-          _startDate: startDate,
-          _duration: duration,
-          _options: options,
-        },
-      },
-      onSuccess: (results: unknown) => {
-        handleSuccess(results);
-      },
-      onError: (error) => {
-        handleFailure(error);
-      },
-    });
+        args: [
+          title,
+          description,
+          proposalType,
+          proposalStatus,
+          startDate,
+          duration,
+          options,
+        ],
+      });
+
+      const { hash: publishHash } = await writeContract(publishRequest);
+
+      const publishReceipt = await waitForTransaction({ hash: publishHash });
+
+      if (publishReceipt.status == "success") {
+        displayToast("success", "You've successfully publishd");
+        setPublishText("Proposal has been published successfully.");
+      } else {
+        displayToast("failure", "Failed to Publish");
+        setPublishText("Publishing Failed");
+      }
+    } catch (err) {
+      console.log("Error: ", err);
+      displayToast("Failure", "Failed to publish");
+      setPublishText("Publishing Failed");
+    }
+
+    setIsPublishing(false);
+    setPublishText("Publish Proposal");
   };
 
   const handleSuccess = async (results: unknown) => {
@@ -357,24 +378,20 @@ const Create: NextPage = () => {
                   <button
                     className="w-full p-2 px-5 self-center disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={handleCreate}
-                    disabled={
-                      !allValid || isFetching || isLoading || promiseInProgress
-                    }
+                    disabled={!allValid || isPublishing}
                   >
-                    {isFetching || isLoading || promiseInProgress ? (
+                    {isPublishing ? (
                       <div className="flex flex-col w-full justify-between bg-gray-200 rounded-md px-3 py-3 items-center">
                         <div className="flex items-center">
                           <ClipLoader color="#000" loading={true} size={30} />
                           <p className="ml-2">
-                            {promiseInProgress
-                              ? "Wait a few Seconds"
-                              : "Publishing"}
+                            {publishText}
                           </p>
                         </div>
                       </div>
                     ) : (
                       <div className="flex w-full bg-gray-200 rounded-md items-center px-3 py-3">
-                        <p className="w-full">Publish</p>
+                        <p className="w-full">{publishText}</p>
                       </div>
                     )}
                   </button>
@@ -385,7 +402,7 @@ const Create: NextPage = () => {
         </div>
 
         <Footer />
-        <ToastContainer />
+    
       </div>
     </>
   );

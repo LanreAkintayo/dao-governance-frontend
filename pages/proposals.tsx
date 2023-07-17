@@ -7,13 +7,16 @@ import useSWR from "swr";
 import { now, toMilliseconds } from "../utils/helper";
 import ProposalCard from "../components/ProposalCard";
 import { ScaleLoader } from "react-spinners";
+import useProposals from "../hooks/useProposals";
+import Layout from "../components/Layout";
+import { NextPageWithLayout } from "../types";
 
 export interface Proposal {
   id: string;
   creator: string;
   description: string;
   duration: number;
-  proposalStatus: string;
+  proposalStatus: number;
   proposalType: string;
   latestOptions: string[][] | undefined;
   startDate: number;
@@ -37,24 +40,24 @@ const getTotalVotes = (options: Array<Array<string>>): number => {
   return totalVotes;
 };
 
-const Proposals: NextPage = () => {
-  const { Moralis, isInitialized, isWeb3Enabled } = useMoralis();
+const Proposals: NextPageWithLayout = () => {
+  // const { Moralis, isInitialized, isWeb3Enabled } = useMoralis();
 
   // console.log(isWeb3Enabled);
 
-  const getLatestOptions = async (id: string): Promise<Array<string[]>> => {
-    const AllVotes: string = Moralis.Object.extend("Votes");
-    const votesQuery = new Moralis.Query(AllVotes);
+  // const getLatestOptions = async (id: string): Promise<Array<string[]>> => {
+  //   const AllVotes: string = Moralis.Object.extend("Votes");
+  //   const votesQuery = new Moralis.Query(AllVotes);
 
-    votesQuery.descending("block_timestamp");
-    votesQuery.equalTo("uid", id);
+  //   votesQuery.descending("block_timestamp");
+  //   votesQuery.equalTo("uid", id);
 
-    const lastVote = await votesQuery.first();
+  //   const lastVote = await votesQuery.first();
 
-    const latestOptions = lastVote?.attributes.proposalOptions;
+  //   const latestOptions = lastVote?.attributes.proposalOptions;
 
-    return latestOptions;
-  };
+  //   return latestOptions;
+  // };
 
   /*
   proposal1 = {
@@ -81,102 +84,9 @@ const Proposals: NextPage = () => {
   
    */
 
-  const {
-    data: allProposals,
-    error,
-    mutate,
-  } = useSWR(
-    () => (isWeb3Enabled ? "web3/proposals" : null),
-    async () => {
-      console.log("Is Initialized? ", isInitialized);
-      console.log("Fetching Proposals......");
+ const {allProposals} = useProposals()
 
-      const Proposals = Moralis.Object.extend("Proposals");
-      const proposalsQuery = new Moralis.Query(Proposals);
-      proposalsQuery.descending("uid_decimal");
-
-      const proposals = await proposalsQuery.find();
-
-      const sortedProposals = proposals.map(async (proposal) => {
-        const proposalAttribute = proposal.attributes;
-
-        const latestOptions = await getLatestOptions(proposalAttribute.uid);
-
-        console.log("Latest option: ", latestOptions);
-        const validOptions: string[][] =
-          latestOptions == undefined
-            ? proposalAttribute.options
-            : latestOptions;
-
-        const totalVotes = getTotalVotes(validOptions); // totalVotes is the addition of all option[2]
-
-        const optionsArray = validOptions.map((option) => {
-          // console.log("Option 2: ", option[2]);
-          const percentage =
-            totalVotes != 0
-              ? ((Number(option[2]) / totalVotes) * 100).toFixed(1)
-              : 0;
-
-          // option = [optionIndex, optionText, optionVote, optionPercentage]
-          // validOptions = [option1, option2]
-
-          return {
-            optionIndex: option[0],
-            optionText: option[1],
-            optionVote: option[2],
-            optionPercentage: percentage.toString(),
-          };
-        });
-
-        const startDate: number = toMilliseconds(
-          Number(proposalAttribute.startDate)
-        );
-        const duration: number = toMilliseconds(
-          Number(proposalAttribute.duration)
-        );
-        const endDate: number = startDate + duration;
-
-        const timeLeft: number =
-          startDate + duration - now() < 0 ? 0 : startDate + duration - now();
-        let status: string;
-
-        if (now() > endDate) {
-          status = "Closed";
-        } else if (now() > startDate) {
-          status = "Active";
-        } else {
-          status = "Pending";
-        }
-
-        const finalProposal: Proposal = {
-          id: proposalAttribute.uid,
-          creator: proposalAttribute.creator,
-          description: proposalAttribute.description,
-          duration: proposalAttribute.duration,
-          proposalStatus: proposalAttribute.proposalStatus,
-          proposalType: proposalAttribute.proposalType,
-          latestOptions,
-          startDate,
-          endDate,
-          status,
-          timeLeft,
-          title: proposalAttribute.title,
-          optionsArray,
-          validOptions,
-        };
-
-        return finalProposal;
-      });
-
-      const resolved = await Promise.all(sortedProposals);
-
-      // console.log(resolved);
-
-      return resolved;
-    }
-  );
-
-  console.log("All Proposals length: ", allProposals?.length);
+  console.log("All Proposals length: ", allProposals);
 
   return (
     <div
@@ -185,7 +95,7 @@ const Proposals: NextPage = () => {
       } justify-between  bg-gray-50`}
     >
       <div>
-        <Header />
+        {/* <Header /> */}
         <section className="px-5 mt-24 flex flex-col items-center ">
           {/* <div className="flex justify-center"> 
             <div className="p-2 w-80 rounded-md bg-white shadow">
@@ -201,7 +111,7 @@ const Proposals: NextPage = () => {
           <div className=" lg:w-9/12 w-11/12">
             <h1 className="text-xl text-gray-700 py-4 ">Proposals</h1>
 
-            {!allProposals && isWeb3Enabled && (
+            {!allProposals  && (
               <div className="flex flex-col w-full my-4 items-center">
                 <div className="my-1">
                   <ScaleLoader color="black" loading={true} />
@@ -210,7 +120,7 @@ const Proposals: NextPage = () => {
                 <p className="text-gray-500">Please Wait a few seconds</p>
               </div>
             )}
-            {!isWeb3Enabled && (
+            {!true && (
               <div className="flex flex-col my-4 p-2 text-orange-800 jusify-center items-center">
                 <p className="text-center p-2 px-10 w-96 bg-orange-200">
                   Connect Your Wallet
@@ -236,5 +146,12 @@ const Proposals: NextPage = () => {
     </div>
   );
 };
+
+
+
+Proposals.getLayout = function getLayout(page) {
+  return <Layout>{page}</Layout>;
+};
+
 
 export default Proposals;

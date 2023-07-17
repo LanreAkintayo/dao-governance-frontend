@@ -1,44 +1,62 @@
-import Image from "next/image";
-import { toast } from "react-toastify";
+import { ToastContainer, toast, cssTransition } from 'react-toastify';
+// import "animate.css/animate.min.css";
+import 'react-toastify/dist/ReactToastify.css';
+import Image from 'next/image';
+
+export const bounce = cssTransition({
+  enter: 'animate__animated animate__bounceIn',
+  exit: 'animate__animated animate__bounceOut',
+});
+
+export const swirl = cssTransition({
+  enter: 'swirl-in-fwd',
+  exit: 'swirl-out-bck',
+});
 
 export const ToastModal = ({
-    closeToast,
-    toastProps,
-    status,
-  }: {
-    closeToast: any;
-    toastProps: any;
-    status: string;
-  }) => {
-    return (
-      <div className="font-sans flex items-center">
-        {status == "success" && <Image src="/success.png" width={34} height={34} objectFit="contain" />}
-        {status == "failure" && <Image src="/close.png" width={34} height={34} objectFit="contain" />}
-        <div className="ml-2">
-          <p
-            className={`text-base ${
-              status == "success" ? "text-green-800" : "text-red-800"
-            } font-sans`}
-          >
-            Transaction Notification
-          </p>
-          <p className="text-sm">
-            Transaction {status == "success" ? "Successful" : "Failed"}
-          </p>
-        </div>
+  closeToast,
+  toastProps,
+  status,
+  message,
+}: {
+  closeToast: any;
+  toastProps: any;
+  status: string;
+  message: string | undefined;
+}) => {
+  return (
+    <div className="flex items-center font-body">
+      {status == 'success' && (
+        <Image src="/success.png" width={34} height={34} objectFit="contain" />
+      )}
+      {status == 'failure' && (
+        <Image src="/close.png" width={34} height={34} objectFit="contain" />
+      )}
+      <div className="ml-2">
+        <p
+          className={`text-sm font-bold ${
+            status == 'success' ? 'text-green-800' : 'text-red-800'
+          }`}
+        >
+          Transaction Notification
+        </p>
+        <p className="text-sm">
+          Transaction {status == 'success' ? 'Successful' : 'Failed'}
+        </p>
+        {message && <p className="text-xs py-2 text-gray-900">{message}</p>}
       </div>
-    );
-  };
+    </div>
+  );
+};
 
-export const displayToast = (status: string) => {
-    toast(
-      <ToastModal
-        closeToast={undefined}
-        toastProps={undefined}
-        status={status}
-      />,
-      { autoClose: 3000, position: toast.POSITION.BOTTOM_LEFT }
-    );
-  };
-
-
+export const displayToast = (status: string, message?: string) => {
+  toast(
+    <ToastModal
+      closeToast={undefined}
+      toastProps={undefined}
+      status={status}
+      message={message}
+    />,
+    { autoClose: 12000, position: toast.POSITION.TOP_LEFT }
+  );
+};

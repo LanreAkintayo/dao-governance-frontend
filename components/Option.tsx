@@ -15,7 +15,7 @@ export default function Option({
   proposal:Proposal;
   maxPercentage: number
 }) {
-  // console.log("Option: ", option)
+  // console.log("Option Texttttttt: ", option?.optionText)
   const isMax = () => {
     if (
       Number(option?.optionPercentage) == maxPercentage &&
@@ -38,7 +38,7 @@ export default function Option({
       <div className="absolute px-4 w-full text-xs h-full flex justify-between items-center">
         <p>
           {option?.optionText}{" "}
-          {inDollarFormat(Number(fromWei(option?.optionVote)))} LAR
+          {/*{inDollarFormat(Number(fromWei(option?.optionVote)))} LAR */}
         </p>
         <p>{option?.optionPercentage}%</p>
       </div>

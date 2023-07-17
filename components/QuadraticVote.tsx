@@ -2,11 +2,18 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { fromWei, toDp, toWei } from "../utils/helper";
 import { usePromiseTracker } from "react-promise-tracker";
 import { ClipLoader } from "react-spinners";
-import { useMoralis } from "react-moralis";
+// import { useMoralis } from "react-moralis";
 import { erc20Abi, larAddress } from "../constants";
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
-
+import {
+  getAccount,
+  getNetwork,
+  switchNetwork,
+  readContract,
+  getContract,
+  fetchBalance,
+} from "@wagmi/core";
 interface VotingPower {
   [key: string]: number;
 }
@@ -50,6 +57,8 @@ export default function QuadraticVote({
   handleVote,
   isFetching,
   isLoading,
+  voteText,
+  isVoting,
 }: {
   votingPower: { [key: string]: number };
   options: {
@@ -66,8 +75,11 @@ export default function QuadraticVote({
       [key: string]: number;
     }>
   >;
+  voteText: string;
+  isVoting: boolean;
 }) {
-  const { account, enableWeb3, Moralis, isWeb3Enabled } = useMoralis();
+  // const { account, enableWeb3, Moralis, isWeb3Enabled } = useMoralis();
+  const account = getAccount();
 
   const { promiseInProgress } = usePromiseTracker();
 
@@ -75,20 +87,12 @@ export default function QuadraticVote({
   const [isValidVotingPower, setIsValidVotingPower] = useState(true);
 
   const checkValidity = async (votingPower: VotingPower) => {
-    const balanceOptions = {
-      contractAddress: larAddress,
-      functionName: "balanceOf",
+    const votingPowerBalance = (await readContract({
+      address: larAddress,
       abi: erc20Abi,
-      params: {
-        account: account,
-      },
-    };
-
-    
-    const votingPowerBalance = isWeb3Enabled ? (await Moralis.executeFunction(
-      balanceOptions
-    )) as unknown as string : 0
-    
+      functionName: "balanceOf",
+      args: [account?.address],
+    })) as string;
 
     if (votingPower) {
       const summation = toWei(
@@ -177,15 +181,16 @@ export default function QuadraticVote({
     index: string
   ) => {
     setVotingPower((prevVotingPower: VotingPower) => {
-
       // let currentValue
 
       // if(isNaN(Number(event.currentTarget.value))){
       //   currentValue = ""
       // }
 
-    
-      const currentValue = Number(event.currentTarget.value) < 0 ? 0 : Number(event.currentTarget.value)
+      const currentValue =
+        Number(event.currentTarget.value) < 0
+          ? 0
+          : Number(event.currentTarget.value);
 
       const percentageArray = getCurrentPercentage(prevVotingPower);
       setPercentages(percentageArray);
@@ -210,7 +215,10 @@ export default function QuadraticVote({
             // index++;
 
             return (
-              <div key={option.optionIndex} className="flex mt-4 w-full justify-between rounded-full border hover:border-gray-900 border-gray-500 text-gray-700 items-center">
+              <div
+                key={option.optionIndex}
+                className="flex mt-4 w-full justify-between rounded-full border hover:border-gray-900 border-gray-500 text-gray-700 items-center"
+              >
                 <div className="lg:w-7/12 md:w-7/12 ssm:w-5/12 w-4/12">
                   <p className="ss:text-sm text-xs whitespace-nowrap sm:text-base px-3 lg:px-8 text-start ">
                     {option.optionText}
@@ -256,25 +264,22 @@ export default function QuadraticVote({
             onClick={handleVote}
             disabled={
               sum(votingPower) <= 0 ||
-              isFetching ||
-              isLoading ||
+              isVoting ||
               !isValidVotingPower ||
               promiseInProgress
             }
             className="mt-2 p-2  w-full disabled:opacity-50 disabled:cursor-not-allowed text-white text-xl"
           >
-            {isFetching || isLoading || promiseInProgress ? (
+            {isVoting ? (
               <div className="flex flex-col w-full justify-between bg-blue-800 rounded-full px-3 py-3 items-center">
                 <div className="flex">
                   <ClipLoader color="#fff" loading={true} size={30} />
-                  <p className="ml-2">
-                    {promiseInProgress ? "Wait a few Seconds" : "Voting"}
-                  </p>
+                  <p className="ml-2">{voteText}</p>
                 </div>
               </div>
             ) : (
               <div className="flex w-full bg-blue-800 rounded-full items-center px-3 py-3">
-                <p className="w-full">Vote</p>
+                <p className="w-full">{voteText}</p>
               </div>
             )}
           </button>

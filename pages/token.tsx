@@ -1,19 +1,18 @@
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
-import { useMoralis, useWeb3Contract, useWeb3Transfer } from "react-moralis";
 import { trackPromise, usePromiseTracker } from "react-promise-tracker";
 import { ClipLoader } from "react-spinners";
 import { useSWRConfig } from "swr";
-import { useNotification } from "web3uikit";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import VotingPower from "../components/VotingPower";
 import {
-  abi,
+  daoAbi,
   contractAddresses,
   DEPLOYER,
   erc20Abi,
   larAddress,
+  daoAddress,
 } from "../constants";
 import { ethers, Signer, ContractTransaction } from "ethers";
 import { toWei } from "../utils/helper";
@@ -22,13 +21,23 @@ import { ToastContainer, toast, cssTransition } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Image from "next/image";
 import { displayToast } from "../components/Toast";
+import {
+  prepareWriteContract,
+  writeContract,
+  waitForTransaction,
+  getAccount
+} from "@wagmi/core";
+import useProposals from "../hooks/useProposals";
 
 const Proposals: NextPage = () => {
   const [userAddress, setUserAddress] = useState("");
-  const { Moralis, enableWeb3, account, chainId: chainIdHex } = useMoralis();
   const { promiseInProgress } = usePromiseTracker();
-  const dispatch = useNotification();
-  const { mutate } = useSWRConfig();
+
+  const {loadLarBalance} = useProposals()
+  const account = getAccount()
+
+  const [isSending, setIsSending] = useState(false);
+  const [sendText, setSendText] = useState("Get 50 LAR");
 
   const bounce = cssTransition({
     enter: "animate__animated animate__bounceIn",
@@ -52,40 +61,48 @@ const Proposals: NextPage = () => {
   //   });
   // }
 
-  const chainId: number = parseInt(chainIdHex!);
 
-  const length = contractAddresses[chainId]?.length;
 
-  const daoAddress =
-    chainId in contractAddresses
-      ? contractAddresses[chainId][length - 1]
-      : null;
-
-  const {
-    runContractFunction: sendLAR,
-    isFetching,
-    isLoading,
-  } = useWeb3Contract({});
+  
 
   useEffect(() => {
     console.log(userAddress);
   }, [userAddress]);
 
   const handleClick = async () => {
-    sendLAR({
-      params: {
-        abi: abi,
-        contractAddress: daoAddress!,
+    setIsSending(true);
+
+    try {
+      setSendText("Sending 50 LAR");
+
+      const sendRequest = await prepareWriteContract({
+        address: daoAddress as `0x${string}`,
+        abi: daoAbi,
         functionName: "sendLAR",
-        params: {
-          receiver: userAddress,
-        },
-      },
-      onSuccess: handleSuccess,
-      onError: (error) => {
-        handleFailure(error);
-      },
-    });
+        args: [userAddress],
+      });
+
+      const { hash: sendHash } = await writeContract(sendRequest);
+
+      const sendReceipt = await waitForTransaction({ hash: sendHash });
+
+      if (sendReceipt.status == "success") {
+        displayToast("success", "You've been sent 50 LAR");
+
+        await loadLarBalance(account?.address)
+      } else {
+        displayToast("failure", "Failed to send 50 LAR");
+        setSendText("Sending Failed");
+
+      }
+    } catch (err) {
+      console.log("Error: ", err);
+      displayToast("Failure", "Failed to send");
+      setSendText("Sending Failed");
+    }
+
+    setIsSending(false);
+    setSendText("Get 50 LAR");
   };
   const handleSuccess = async (results: unknown) => {
     const tx = results as ContractTransaction;
@@ -99,7 +116,6 @@ const Proposals: NextPage = () => {
     //   position: "bottomR",
     // });
 
-    mutate("web3/votingPower");
   };
 
   const handleFailure = async (error: Error) => {
@@ -138,21 +154,21 @@ const Proposals: NextPage = () => {
             onClick={handleClick}
             className="p-2 rounded-md ssm:text-lg text-sm self-center text-orange-800 my-4 ssm:w-80 disabled:cursor-not-allowed disabled:opacity-50"
             disabled={
-              userAddress == "" || isFetching || isLoading || promiseInProgress
+              userAddress == "" || isSending
             }
           >
-            {isFetching || isLoading || promiseInProgress ? (
+            {isSending ? (
               <div className="flex flex-col w-full bg-orange-200 justify-between rounded-md px-3 py-3 items-center">
                 <div className="flex items-center">
                   <ClipLoader color="#000" loading={true} size={30} />
                   <p className="ml-2">
-                    {promiseInProgress ? "Wait a few Seconds" : "Sending"}
+                    {sendText}
                   </p>
                 </div>
               </div>
             ) : (
               <div className="flex w-full bg-orange-200 text-orange-700 rounded-md items-center px-3 py-3">
-                <p className="w-full">Get 50 LAR</p>
+                <p className="w-full">{sendText}</p>
               </div>
             )}
           </button>

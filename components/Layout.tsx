@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAccount, useDisconnect } from 'wagmi';
-import { watchNetwork, watchAccount } from '@wagmi/core';
+import { watchNetwork, watchAccount, getAccount} from '@wagmi/core';
 import { ethers } from 'ethers';
 import Header from './Header';
 import useProposals from '../hooks/useProposals';
@@ -16,8 +16,9 @@ export default function Layout({
 
   const { isConnected } = useAccount();
   const { disconnect } = useDisconnect();
+  const account = getAccount();
 
-  const {loadAllProposals} = useProposals()
+  const {loadAllProposals, loadLarBalance, larBalance} = useProposals()
 
   useEffect(() => {
     const getAllProposals = async () => {
@@ -28,6 +29,17 @@ export default function Layout({
     getAllProposals()
 
     }, [])
+  
+    useEffect(() => {
+    const loadBalance = async () => {
+      if (account?.address){
+        await loadLarBalance(account.address)
+      }  
+    }
+
+    loadBalance()
+
+    }, [larBalance])
 
 
   /*** -------------------------------------------- */

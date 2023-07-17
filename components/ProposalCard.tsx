@@ -2,9 +2,28 @@ import Option from "./Option";
 import { Proposal } from "../pages/proposals";
 import Link from "next/link";
 import { Blockie, Tooltip } from "web3uikit";
+import { now, toMilliseconds } from "../utils/helper";
 
 export default function ProposalCard({ proposal }: {proposal: Proposal}) {
-  const status = proposal.status;
+  let status = proposal.status;
+ 
+  // const startDate: number = toMilliseconds(
+  //   Number(proposal.startDate)
+  // );
+  // const duration: number = toMilliseconds(
+  //   Number(proposal.duration)
+  // );
+  // const endDate: number = startDate + duration;
+
+  // if (now() > endDate) {
+  //   status = "Closed";
+  // } else if (now() > startDate) {
+  //   status = "Active";
+  // } else {
+  //   status = "Pending";
+  // }
+
+
 
   let color;
   let bgColor;
@@ -18,8 +37,10 @@ export default function ProposalCard({ proposal }: {proposal: Proposal}) {
     color = "text-red-700";
     bgColor = "bg-red-200";
   }
+
+  console.log("Number(proposal.id)", Number(proposal.id))
   return (
-    <Link href={`/proposals/${proposal.id}`}>
+    <Link href={`/proposals/${Number(proposal.id)}`}>
       <a>
         <div className="rounded-md border border-gray-400 bg-white hover:border hover:border-gray-800 focus:bg-blue-700 w-full mt-5 p-3 px-2 sm:px-11">
           <div className="flex w-full justify-between items-center">
@@ -36,7 +57,7 @@ export default function ProposalCard({ proposal }: {proposal: Proposal}) {
               </p>
             </div>
             <p className={`rounded-md text-xs px-2 ${color} p-1 ${bgColor}`}>
-              {proposal.status}
+              {status}
             </p>
           </div>
           <h1 className="text-sm xs:text-base sm:text-xl mt-2 text-gray-900">{proposal.title}</h1>
@@ -45,7 +66,7 @@ export default function ProposalCard({ proposal }: {proposal: Proposal}) {
             {proposal?.optionsArray?.map((option) => {
               const percentages = proposal.optionsArray.map(option => option.optionPercentage) as unknown as number[]
               const maxPercentage = Math.max(...percentages)
-              // console.log("Options: ", proposal.optionsArray);
+              // console.log("Options:::::::::::::::::: ", proposal.optionsArray);
               return <Option option={option} proposal={proposal} maxPercentage={maxPercentage} key={option.optionIndex}/>;
             })}
           </div>

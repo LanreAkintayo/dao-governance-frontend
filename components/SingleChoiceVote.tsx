@@ -1,10 +1,18 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { useMoralis } from "react-moralis";
+// import { useMoralis } from "react-moralis";
 import { usePromiseTracker } from "react-promise-tracker";
 import { ClipLoader } from "react-spinners";
 import { allValid } from "../utils/helper";
 import { ethers, BigNumber } from "ethers";
 import { erc20Abi, larAddress } from "../constants";
+import {
+  getAccount,
+  getNetwork,
+  switchNetwork,
+  readContract,
+  getContract,
+  fetchBalance,
+} from "@wagmi/core";
 
 export default function SingleChoiceVote({
   indexToVotingPower,
@@ -13,6 +21,8 @@ export default function SingleChoiceVote({
   isFetching,
   isLoading,
   handleSingleVote,
+  voteText,
+  isVoting
 }: {
   indexToVotingPower: {
     [key: string]: number;
@@ -31,6 +41,8 @@ export default function SingleChoiceVote({
   isFetching: boolean;
   isLoading: boolean;
   handleSingleVote: () => Promise<void>;
+  voteText: string;
+  isVoting: boolean;
 }) {
   const [selectedOption, setSelectedOption] = useState<{
     optionIndex: string;
@@ -39,7 +51,9 @@ export default function SingleChoiceVote({
     optionPercentage: string;
   }>();
   const [canVote, setCanVote] = useState(true);
-  const { enableWeb3, account, Moralis } = useMoralis();
+  const account  = getAccount();
+
+  console.log("Account singlechoiceVote: ", account)
   // useEffect(() => {
   //   console.log("Index to voting power: ", indexToVotingPower);
   // }, [indexToVotingPower]);
@@ -47,18 +61,12 @@ export default function SingleChoiceVote({
   const { promiseInProgress } = usePromiseTracker();
 
   const checkValidity = async () => {
-    const balanceOptions = {
-      contractAddress: larAddress,
-      functionName: "balanceOf",
+    const votingPowerBalance = await readContract({
+      address: larAddress,
       abi: erc20Abi,
-      params: {
-        account: account,
-      },
-    };
-
-    const votingPowerBalance = (await Moralis.executeFunction(
-      balanceOptions
-    )) as unknown as string;
+      functionName: "balanceOf",
+      args: [account?.address]
+    }) as string
 
     console.log("We have ", votingPowerBalance);
 
@@ -67,20 +75,6 @@ export default function SingleChoiceVote({
     } else {
       setCanVote(false);
     }
-
-    // const provider = await enableWeb3()
-
-    // if (provider) {
-    //   const lar = new ethers.Contract(larAddress, erc20Abi, provider);
-
-    //   const votingPowerBalance: string = await lar.balanceOf(account);
-
-    //   if (Number(votingPowerBalance) > 1) {
-    //     setCanVote(true);
-    //   } else {
-    //     setCanVote(false);
-    //   }
-    // }
   };
 
   return (
@@ -113,25 +107,23 @@ export default function SingleChoiceVote({
             className="mt-2 rounded-md p-2 w-full text-white text-xl disabled:cursor-not-allowed disabled:opacity-50"
             onClick={handleSingleVote}
             disabled={
-              promiseInProgress ||
-              isFetching ||
-              isLoading ||
+              isVoting ||
               !allValid(indexToVotingPower) ||
               !canVote
             }
           >
-            {isFetching || isLoading || promiseInProgress ? (
+            {isVoting ? (
               <div className="flex flex-col w-full justify-between bg-blue-800 rounded-full px-3 py-3 items-center">
                 <div className="flex">
                   <ClipLoader color="#fff" loading={true} size={30} />
                   <p className="ml-2">
-                    {promiseInProgress ? "Wait a few Seconds" : "Voting"}
+                    {voteText}
                   </p>
                 </div>
               </div>
             ) : (
               <div className="flex w-full bg-blue-800 rounded-full items-center px-3 py-3">
-                <p className="w-full">Vote</p>
+                <p className="w-full">{voteText}</p>
               </div>
             )}
           </button>

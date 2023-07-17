@@ -1,7 +1,7 @@
-import React, { useReducer } from 'react';
-import { BigNumber, ethers } from 'ethers';
+import React, { useReducer } from "react";
+import { BigNumber, ethers } from "ethers";
 
-import ProposalsContext from './proposals-context';
+import ProposalsContext from "./proposals-context";
 import {
   getAccount,
   getNetwork,
@@ -9,28 +9,35 @@ import {
   readContract,
   getContract,
   fetchBalance,
-} from '@wagmi/core';
+} from "@wagmi/core";
 
-import { erc20ABI } from 'wagmi';
-import { daoAbi, daoAddress } from '../constants';
+import { erc20ABI } from "wagmi";
+import { daoAbi, daoAddress, erc20Abi, larAddress } from "../constants";
+import { now, toMilliseconds } from "../utils/helper";
 
 const defaultWeb3State = {
-  allProposals: null
+  allProposals: null,
+  larBalance: ""
 };
 
 const web3Reducer = (
   state: any,
   action: {
     type: string;
-   allProposals?: any;
+    allProposals?: any;
+    larbalance?:any;
   }
 ) => {
-  
-  
-  if (action.type === 'ALL_PROPOSALS') {
+  if (action.type === "ALL_PROPOSALS") {
     return {
       ...state,
       allProposals: action.allProposals,
+    };
+  }
+  if (action.type === "LAR_BALANCE") {
+    return {
+      ...state,
+      larBalance: action.larBalance,
     };
   }
 
@@ -43,77 +50,103 @@ const ProposalsProvider = (props: any) => {
     defaultWeb3State
   );
 
-
   const loadAllProposalsHandler = async () => {
     // Let's fetch all proposals
 
-    const allProposals = await readContract({
+    const allProposals: any[] = await readContract({
       address: daoAddress,
       abi: daoAbi,
-      functionName: 'getProposalsArray',
+      functionName: "getProposalsArray",
     });
-
-    // const finalizedProposal = allProposals.map((proposal) => {
-
-
-    //   // const optionsArray = proposal.options.map((option) => {
-    //   //   // console.log("Option 2: ", option[2]);
-    //   //   const percentage =
-    //   //     totalVotes != 0
-    //   //       ? ((Number(option[2]) / totalVotes) * 100).toFixed(1)
-    //   //       : 0;
-
-    //   //   // option = [optionIndex, optionText, optionVote, optionPercentage]
-    //   //   // validOptions = [option1, option2]
-
-    //   //   return {
-    //   //     optionIndex: option[0],
-    //   //     optionText: option[1],
-    //   //     optionVote: option[2],
-    //   //     optionPercentage: percentage.toString(),
-    //   //   };
-    //   // });
-      
-    
-    // })
-
-
-  
-    /*
-    
-    
-    const finalProposal: Proposal = {
-          id: proposalAttribute.uid,
-          creator: proposalAttribute.creator,
-          description: proposalAttribute.description,
-          duration: proposalAttribute.duration,
-          proposalStatus: proposalAttribute.proposalStatus,
-          proposalType: proposalAttribute.proposalType,
-          latestOptions,
-          startDate,
-          endDate,
-          status,
-          timeLeft,
-          title: proposalAttribute.title,
-          optionsArray,
-          validOptions,
-        };
-
-
-    
-    */
 
     console.log("All Proposals: ", allProposals)
 
-    // const allProposals = "These are all the proposals"
- 
+    const finalizedProposals = allProposals.map((proposal) => {
+      let totalVotes: number = 0;
+      const options = proposal.options;
 
-    dispatchWeb3Action({ type: 'ALL_PROPOSALS', allProposals });
+
+      console.log("Options::::", options);
+
+      // Get the total votes
+      options.forEach((option) => {
+        totalVotes += Number(option.vote);
+      });
+
+      console.log("Total votes: ", totalVotes);
+
+      const optionsArray = options.map((option) => {
+        console.log(option.vote);
+        const percentage =
+          totalVotes != 0
+            ? ((Number(option.vote) / totalVotes) * 100).toFixed(1)
+            : 0;
+
+        return {
+          optionIndex: option.index,
+          optionText: option.optionText,
+          optionVote: option.vote,
+          optionPercentage: percentage.toString(),
+        };
+      });
+
+      let status;
+
+      const startDate: number = toMilliseconds(Number(proposal.startDate));
+      const duration: number = toMilliseconds(Number(proposal.duration));
+      const endDate: number = startDate + duration;
+
+      if (now() > endDate) {
+        status = "Closed";
+      } else if (now() > startDate) {
+        status = "Active";
+      } else {
+        status = "Pending";
+      }
+
+      return {
+        ...proposal,
+        startDate,
+        endDate,
+        duration,
+        status,
+        optionsArray,
+      };
+    });
+
+    finalizedProposals.sort((proposal1, proposal2) =>  proposal2.startDate - proposal1.startDate);
+
+    dispatchWeb3Action({
+      type: "ALL_PROPOSALS",
+      allProposals: finalizedProposals,
+    });
   };
+
+  const loadLarBalanceHandler = async (address: string | `0x${string}`) => {
+    const larBalance: string = await readContract({
+      address: larAddress,
+      abi: erc20Abi,
+      functionName: "balanceOf",
+      args: [address]
+    }) as string
+
+
+    dispatchWeb3Action({
+      type: "LAR_BALANCE",
+      larBalance: larBalance
+    });
+
+    return larBalance
+
+
+  
+  }
 
   const web3Context = {
     allProposals: web3State.allProposals,
-    loadAllProposals: loadAllProposalsHandler
+    larBalance: web3State.larBalance,
+    loadAllProposals: loadAllProposalsHandler,
+    loadLarBalance: loadLarBalanceHandler
   };
 
   return (
