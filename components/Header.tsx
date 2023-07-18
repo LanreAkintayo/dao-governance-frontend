@@ -55,7 +55,7 @@ export default function Header() {
   };
 
   return (
-    <div className={`fixed z-50 top-0 left-0 bg-gray-100 ss:${12 != 80001 ? "h-30" : "h-20"} h-30 w-screen `}>
+    <div className={`fixed z-50 top-0 left-0 bg-gray-100 ss:${true ? "h-30" : "h-20"} h-30 w-screen `}>
       {/* Navbar */}
 
       {!collapsed && isBreakpoint && (
