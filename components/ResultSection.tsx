@@ -1,14 +1,10 @@
+import { IOption } from "../types";
 import { fromWei, inDollarFormat } from "../utils/helper";
 
 export default function ResultSection({
   options,
 }: {
-  options: {
-    optionIndex: string;
-    optionText: string;
-    optionVote: string;
-    optionPercentage: string;
-  }[];
+  options: IOption[];
 }) {
   return (
     <div className="shadow bg-white p-3 pb-5  w-10/12 justify-center mt-8 sm:ml-4 lg:ml-0 lg:mt-4 sm:w-5/12 lg:w-10/12">

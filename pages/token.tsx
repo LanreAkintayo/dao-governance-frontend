@@ -1,69 +1,34 @@
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
-import { trackPromise, usePromiseTracker } from "react-promise-tracker";
 import { ClipLoader } from "react-spinners";
-import { useSWRConfig } from "swr";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import VotingPower from "../components/VotingPower";
 import {
   daoAbi,
-  contractAddresses,
-  DEPLOYER,
-  erc20Abi,
-  larAddress,
   daoAddress,
 } from "../constants";
-import { ethers, Signer, ContractTransaction } from "ethers";
-import { toWei } from "../utils/helper";
-import { ToastContainer, toast, cssTransition } from "react-toastify";
-// import "animate.css/animate.min.css";
+import { cssTransition } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Image from "next/image";
 import { displayToast } from "../components/Toast";
 import {
   prepareWriteContract,
   writeContract,
   waitForTransaction,
-  getAccount
+  getAccount,
 } from "@wagmi/core";
 import useProposals from "../hooks/useProposals";
+import { NextPageWithLayout } from "../types";
+import Layout from "../components/Layout";
 
-const Proposals: NextPage = () => {
+const Tokens: NextPageWithLayout = () => {
   const [userAddress, setUserAddress] = useState("");
-  const { promiseInProgress } = usePromiseTracker();
 
-  const {loadLarBalance} = useProposals()
-  const account = getAccount()
+  const { loadLarBalance } = useProposals();
+  const account = getAccount();
 
   const [isSending, setIsSending] = useState(false);
   const [sendText, setSendText] = useState("Get 50 LAR");
-
-  const bounce = cssTransition({
-    enter: "animate__animated animate__bounceIn",
-    exit: "animate__animated animate__bounceOut",
-  });
-
-  const swirl = cssTransition({
-    enter: "swirl-in-fwd",
-    exit: "swirl-out-bck",
-  });
-
-  // function animateCss() {
-  //   toast.dark("Hey 👋, see how easy!", {
-  //     transition: bounce
-  //   });
-  // }
-
-  // function animista() {
-  //   toast.dark("Hey 👋, see how easy!", {
-  //     transition: swirl
-  //   });
-  // }
-
-
-
-  
 
   useEffect(() => {
     console.log(userAddress);
@@ -89,11 +54,12 @@ const Proposals: NextPage = () => {
       if (sendReceipt.status == "success") {
         displayToast("success", "You've been sent 50 LAR");
 
-        await loadLarBalance(account?.address)
+        if (account.address) {
+          await loadLarBalance(account.address);
+        }
       } else {
         displayToast("failure", "Failed to send 50 LAR");
         setSendText("Sending Failed");
-
       }
     } catch (err) {
       console.log("Error: ", err);
@@ -104,37 +70,10 @@ const Proposals: NextPage = () => {
     setIsSending(false);
     setSendText("Get 50 LAR");
   };
-  const handleSuccess = async (results: unknown) => {
-    const tx = results as ContractTransaction;
-    console.log("Success transaction: ", tx);
-    await trackPromise(tx.wait(1));
-    displayToast("success");
-    // dispatch({
-    //   type: "success",
-    //   message: "Transaction Completed!",
-    //   title: "Transaction Notification",
-    //   position: "bottomR",
-    // });
-
-  };
-
-  const handleFailure = async (error: Error) => {
-    console.log("Error: ", error);
-    displayToast("failure");
-    // dispatch({
-    //   type: "error",
-    //   message: "Transation Failed",
-    //   title: "Transaction Notification",
-    //   position: "bottomR",
-    // });
-  };
+ 
 
   return (
     <div className="flex flex-col justify-between bg-gray-50 h-screen">
-      <div>
-        <ToastContainer />
-      </div>
-      <Header />
       <section className="px-5 mt-24 flex flex-col items-center ">
         <VotingPower className="self-end border border-gray-300" />
 
@@ -153,17 +92,13 @@ const Proposals: NextPage = () => {
           <button
             onClick={handleClick}
             className="p-2 rounded-md ssm:text-lg text-sm self-center text-orange-800 my-4 ssm:w-80 disabled:cursor-not-allowed disabled:opacity-50"
-            disabled={
-              userAddress == "" || isSending
-            }
+            disabled={userAddress == "" || isSending}
           >
             {isSending ? (
               <div className="flex flex-col w-full bg-orange-200 justify-between rounded-md px-3 py-3 items-center">
                 <div className="flex items-center">
                   <ClipLoader color="#000" loading={true} size={30} />
-                  <p className="ml-2">
-                    {sendText}
-                  </p>
+                  <p className="ml-2">{sendText}</p>
                 </div>
               </div>
             ) : (
@@ -187,4 +122,11 @@ const Proposals: NextPage = () => {
   );
 };
 
-export default Proposals;
+
+Tokens.getLayout = function getLayout(page) {
+  return <Layout>{page}</Layout>;
+};
+
+
+export default Tokens;
+

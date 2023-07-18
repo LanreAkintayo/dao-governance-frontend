@@ -1,36 +1,29 @@
-import { NextPage } from "next";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import VotingSystemDropdown from "../components/VotingSystemDropdown";
 import DatePicker from "react-datepicker";
-import { ChangeEvent, ChangeEventHandler, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import moment from "moment";
 
 import "react-datepicker/dist/react-datepicker.css";
 import OptionsSection from "../components/OptionsSection";
-import { useChain, useMoralis, useWeb3Contract } from "react-moralis";
-import { trackPromise, usePromiseTracker } from "react-promise-tracker";
-import { useNotification } from "web3uikit";
-import { useSWRConfig } from "swr";
 import {
   daoAbi,
-  contractAddresses,
   erc20Abi,
   larAddress,
   daoAddress,
 } from "../constants";
-import { ethers, Signer, ContractTransaction } from "ethers";
 import { now, sDuration, toSeconds, toWei } from "../utils/helper";
 import { ClipLoader } from "react-spinners";
 import VotingPower from "../components/VotingPower";
-// import { Moralis } from "moralis/types";
 import { displayToast } from "../components/Toast";
-import { ToastContainer } from "react-toastify";
 import {
   prepareWriteContract,
   writeContract,
   waitForTransaction,
 } from "@wagmi/core";
+import { NextPageWithLayout } from "../types";
+import Layout from "../components/Layout";
 
 interface TypeDict {
   [key: string]: string;
@@ -46,11 +39,8 @@ const formatTime = (value: number): string => {
   return moment(value).format("MMMM Do YYYY, h:mm:ss a");
 };
 
-const Create: NextPage = () => {
-  // const formattedTime = formatTime(new Date().getTime());
-  // console.log(formattedTime);
-
-  const { mutate } = useSWRConfig();
+const Create: NextPageWithLayout = () => {
+  
 
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishText, setPublishText] = useState("Publish");
@@ -84,12 +74,6 @@ const Create: NextPage = () => {
   useEffect(() => {
     console.log(proposalData);
   }, [proposalData]);
-
-  // const {
-  //   runContractFunction: createProposal,
-  //   isFetching,
-  //   isLoading,
-  // } = useWeb3Contract({});
 
   const handleSelectedVotingSystem = (name: string) => {
     setProposalData((prevProposal) => {
@@ -145,11 +129,8 @@ const Create: NextPage = () => {
     const fee = toWei(5);
 
 
-    // console.log(duration)
     console.log("Duration : ", duration);
 
-
-    debugger
 
     try {
       setPublishText("Approving LAR Token");
@@ -224,31 +205,7 @@ const Create: NextPage = () => {
     setPublishText("Publish Proposal");
   };
 
-  const handleSuccess = async (results: unknown) => {
-    const tx = results as ContractTransaction;
-    console.log("Success transaction: ", tx);
-    await trackPromise(tx.wait(1));
-    window.alert("Yay! Transaction Sucessful");
-    // displayToast("success");
-    // dispatch({
-    //   type: "success",
-    //   message: "Transaction Completed!",
-    //   title: "Transaction Notification",
-    //   position: "topR",
-    // });
-  };
-
-  const handleFailure = async (error: Error) => {
-    console.log("Error: ", error);
-    window.alert("Oops! Transaction Failed");
-    // displayToast("failure");
-    // dispatch({
-    //   type: "error",
-    //   message: "Transation Failed",
-    //   title: "Transaction Notification",
-    //   position: "topR",
-    // });
-  };
+ 
 
   return (
     <>
@@ -408,4 +365,9 @@ const Create: NextPage = () => {
   );
 };
 
+Create.getLayout = function getLayout(page) {
+  return <Layout>{page}</Layout>;
+};
+
 export default Create;
+

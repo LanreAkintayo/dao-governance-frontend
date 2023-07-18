@@ -1,19 +1,11 @@
 import React, { useReducer } from "react";
-import { BigNumber, ethers } from "ethers";
-
 import ProposalsContext from "./proposals-context";
 import {
-  getAccount,
-  getNetwork,
-  switchNetwork,
   readContract,
-  getContract,
-  fetchBalance,
 } from "@wagmi/core";
-
-import { erc20ABI } from "wagmi";
 import { daoAbi, daoAddress, erc20Abi, larAddress } from "../constants";
 import { now, toMilliseconds } from "../utils/helper";
+import { IOriginalProposal } from "../types";
 
 const defaultWeb3State = {
   allProposals: null,
@@ -25,7 +17,7 @@ const web3Reducer = (
   action: {
     type: string;
     allProposals?: any;
-    larbalance?:any;
+    larBalance?:any;
   }
 ) => {
   if (action.type === "ALL_PROPOSALS") {
@@ -53,11 +45,11 @@ const ProposalsProvider = (props: any) => {
   const loadAllProposalsHandler = async () => {
     // Let's fetch all proposals
 
-    const allProposals: any[] = await readContract({
+    const allProposals = await readContract({
       address: daoAddress,
       abi: daoAbi,
       functionName: "getProposalsArray",
-    });
+    }) as IOriginalProposal[]
 
     console.log("All Proposals: ", allProposals)
 

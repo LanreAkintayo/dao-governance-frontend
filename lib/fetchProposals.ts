@@ -1,92 +1,14 @@
 // import Moralis from "moralis/node"
 import { daoAbi, contractAddresses, daoAddress } from "../constants";
+import { IOriginalProposal, IOriginalOption, Proposal } from "../types";
 import { now, toMilliseconds } from "../utils/helper";
 import {
-  getAccount,
-  getNetwork,
-  switchNetwork,
   readContract,
-  getContract,
-  fetchBalance,
 } from "@wagmi/core";
 
-interface ABI {
-  [key:string]: any
-}
-
-export interface IOption 
-  {
-    optionIndex: string,
-    optionText: string,
-    optionVote: string,
-    optionPercentage: string,
-  }
-export interface IOriginalOption 
-  {
-    index: number;
-    optionText: string;
-    vote: number;
-  }
 
 
-export interface Proposal {
-  id: string;
-  creator: string;
-  description: string;
-  duration: number;
-  proposalStatus: string;
-  proposalType: string;
-  startDate: number;
-  endDate: number;
-  status: string;
-  timeLeft: number;
-  title: string;
-  options: IOriginalOption[];
-  optionsArray: IOption[];
-  allVoters:any[][]
-}
-export interface IOriginalProposal {
-        id: number;
-        creator: string;
-        title: string;
-        description: string;
-        ProposalType: string;
-        ProposalStatus: string;
-        startDate: number;
-        duration: number;
-        options: IOriginalOption[];
-        voters: {
-          voterAddress: string;
-          optionIndexes: number[];
-          optionVotes: number[];
-      }[];
-}
-
-export interface IParam {
-  params: {
-    id: string
-  }
-}
-
-export interface Voter {
-    voterAddress: string;
-    optionIndexes: number[];
-    optionVotes: number[];
-}
-
-
-type RunContractFunction =  {
-  chain: "0x13881";
-  address: string;
-  function_name:string;
-  daoAbi: ABI[];
-  params: {[key:string]: any}
-} 
-
-
-export async function getProposalsData(id:string){
-
-  console.log("Id is ", id);
+export const getProposalsData = async (id:number): Promise<Proposal> => {
 
   const proposal = await readContract({
     address: daoAddress,
@@ -115,14 +37,21 @@ export async function getProposalsData(id:string){
   })
 
 
-  
-
   let totalVotes: number = 0;
-  const options = proposal.options;
+  const options = proposal.options.map((option: IOriginalOption) => {
+   
+    return {
+      index: Number(option.index),
+      optionText: option.optionText,
+      vote: Number(option.vote),
+    };
+  });
+
+
 
   // Get the total votes
   options.forEach((option: IOriginalOption) => {
-    totalVotes += Number(option.vote);
+    totalVotes += option.vote;
   });
 
   console.log("Total votes: ", totalVotes);
@@ -141,12 +70,15 @@ export async function getProposalsData(id:string){
       optionPercentage: percentage.toString(),
     };
   });
+ 
 
   let status;
 
   const startDate: number = toMilliseconds(Number(proposal.startDate));
   const duration: number = toMilliseconds(Number(proposal.duration));
   const endDate: number = startDate + duration;
+  const timeLeft: number =
+        startDate + duration - now() < 0 ? 0 : startDate + duration - now();
 
   if (now() > endDate) {
     status = "Closed";
@@ -156,80 +88,31 @@ export async function getProposalsData(id:string){
     status = "Pending";
   }
 
-  return {
+  console.log("Proposal: ", proposal)
+
+  const finalizedProposal =  {
     ...proposal,
-    options: optionsArray,
+    options,
     id: Number(proposal.id),
     startDate,
     endDate,
     duration,
     status,
     optionsArray,
-    voters: newVoters
+    allVoters: newVoters,
+    voters: newVoters,
+    proposalStatus: proposal.proposalStatus,
+    proposalType: proposal.proposalType,
+    timeLeft: timeLeft
+
   };
 
 
+  console.log("New voters: ", newVoters[0].optionVotes, newVoters[0].optionIndexes)
 
+  console.log('Finalized Proposal: ', finalizedProposal)
 
-  // const allProposals = await readContract({
-  //   address: daoAddress,
-  //   abi: daoAbi,
-  //   functionName: "getProposalsArray",
-  // }) as Proposal[]
-
-  // const finalizedProposals = allProposals.map((proposal) => {
-  //   let totalVotes: number = 0;
-  //   const options = proposal.options;
-
-  //   // Get the total votes
-  //   options.forEach((option: IOriginalOption) => {
-  //     totalVotes += Number(option.vote);
-  //   });
-
-  //   console.log("Total votes: ", totalVotes);
-
-  //   const optionsArray = options.map((option: IOriginalOption) => {
-  //     console.log(option.vote);
-  //     const percentage =
-  //       totalVotes != 0
-  //         ? ((Number(option.vote) / totalVotes) * 100).toFixed(1)
-  //         : 0;
-
-  //     return {
-  //       optionIndex: Number(option.index),
-  //       optionText: option.optionText,
-  //       optionVote: Number(option.vote),
-  //       optionPercentage: percentage.toString(),
-  //     };
-  //   });
-
-  //   let status;
-
-  //   const startDate: number = toMilliseconds(Number(proposal.startDate));
-  //   const duration: number = toMilliseconds(Number(proposal.duration));
-  //   const endDate: number = startDate + duration;
-
-  //   if (now() > endDate) {
-  //     status = "Closed";
-  //   } else if (now() > startDate) {
-  //     status = "Active";
-  //   } else {
-  //     status = "Pending";
-  //   }
-
-  //   return {
-  //     ...proposal,
-  //     options: optionsArray,
-  //     id: Number(proposal.id),
-  //     startDate,
-  //     endDate,
-  //     duration,
-  //     status,
-  //     optionsArray,
-  //   };
-  // });
-
-  // return finalizedProposals[Number(id)]
+  return finalizedProposal
 
 }
 

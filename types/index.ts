@@ -20,5 +20,73 @@ export type Reward = {
     rewardPercentages: BigNumber[];
   }
 
-export type Request = { body: { address: any; chain: any; network: any; }; }
-export type Response = { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { error: unknown; }): void; new(): any; }; }; }
+
+  interface ABI {
+    [key:string]: any
+  }
+  
+  export interface IOption 
+    {
+      optionIndex: number,
+      optionText: string,
+      optionVote: number,
+      optionPercentage: string,
+    }
+  export interface IOriginalOption 
+    {
+      index: number;
+      optionText: string;
+      vote: number;
+    }
+
+    export interface IVoter {
+      voterAddress: string;
+      optionVotes: number[];
+      optionIndexes: number[];
+    }
+  
+  
+  export interface Proposal {
+    id: number;
+    creator: string;
+    description: string;
+    duration: number;
+    proposalStatus: string;
+    proposalType: string;
+    startDate: number;
+    endDate: number;
+    status: string;
+    timeLeft: number;
+    title: string;
+    options: IOriginalOption[];
+    optionsArray: IOption[];
+    allVoters: IVoter[];
+    voters?: IVoter[];
+  }
+  export interface IOriginalProposal {
+          id: number;
+          creator: string;
+          title: string;
+          description: string;
+          proposalType: string;
+          proposalStatus: string;
+          startDate: number;
+          duration: number;
+          options: IOriginalOption[];
+          voters: IVoter[];
+  }
+  
+  export interface IParam {
+    params: {
+      id: number
+    }
+  }
+  
+  export interface Voter {
+      voterAddress: string;
+      optionIndexes: number[];
+      optionVotes: number[];
+  }
+
+
+

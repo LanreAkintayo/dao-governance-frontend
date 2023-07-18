@@ -1,4 +1,4 @@
-import { Proposal } from "../pages/proposals";
+import { IOption, Proposal } from "../types";
 import { fromWei, inDollarFormat } from "../utils/helper";
 
 export default function Option({
@@ -6,12 +6,7 @@ export default function Option({
   proposal,
   maxPercentage,
 }: {
-  option: {
-    optionIndex: string;
-    optionText: string;
-    optionVote: string;
-    optionPercentage: string;
-  };
+  option: IOption
   proposal:Proposal;
   maxPercentage: number
 }) {

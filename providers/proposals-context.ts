@@ -14,7 +14,7 @@ const ProposalsContext = React.createContext<IProposalsContext>({
     allProposals:  null,
     larBalance: "",
     loadAllProposals: () => null,
-    loadLarBalance: () => ""
+    loadLarBalance: () => null
 })    
 
 export default ProposalsContext;

@@ -1,7 +1,7 @@
-import { Voter } from "../lib/fetchProposals";
+import { IVoter, IOption} from "../types";
 import { fromWei, inDollarFormat } from "../utils/helper";
 
-export default function VotersTable({ allVoters, options }:{allVoters:any[][], options:string[][]}) {
+export default function VotersTable({ allVoters, options }:{allVoters:IVoter[], options:IOption[]}) {
     // console.log("inside voters table: ", allVoters.length)
     let votersId = 1;
   
@@ -17,17 +17,17 @@ export default function VotersTable({ allVoters, options }:{allVoters:any[][], o
 
       {allVoters.length > 0 ? (
         <tbody className="">
-          {allVoters.map((voter) => {
+          {allVoters.map((voter: IVoter) => {
             const currentIndex = allVoters.indexOf(voter)
-            const optionIndexes = voter[1] as number[];
-            const optionVotes = voter[2] as number[];
-            const voterAddress = voter[0] as string;
+            const optionIndexes = voter.optionIndexes as number[];
+            const optionVotes = voter.optionVotes as number[];
+            const voterAddress = voter.voterAddress as string;
 
             if (optionIndexes?.length > 0) {
               let i = 0;
               const rows = optionIndexes.map((currentIndex) => {
                 const currentVote: number = Number(optionVotes[i]);
-                const optionText = options[currentIndex][1];
+                const optionText = options[currentIndex].optionText;
                 i++;
 
                 return (

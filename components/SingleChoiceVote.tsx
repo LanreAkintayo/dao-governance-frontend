@@ -7,12 +7,9 @@ import { ethers, BigNumber } from "ethers";
 import { erc20Abi, larAddress } from "../constants";
 import {
   getAccount,
-  getNetwork,
-  switchNetwork,
   readContract,
-  getContract,
-  fetchBalance,
 } from "@wagmi/core";
+import { IOption } from "../types";
 
 export default function SingleChoiceVote({
   indexToVotingPower,
@@ -32,24 +29,14 @@ export default function SingleChoiceVote({
       [key: string]: number;
     }>
   >;
-  options: {
-    optionIndex: string;
-    optionText: string;
-    optionVote: string;
-    optionPercentage: string;
-  }[];
+  options: IOption[];
   isFetching: boolean;
   isLoading: boolean;
   handleSingleVote: () => Promise<void>;
   voteText: string;
   isVoting: boolean;
 }) {
-  const [selectedOption, setSelectedOption] = useState<{
-    optionIndex: string;
-    optionText: string;
-    optionVote: string;
-    optionPercentage: string;
-  }>();
+  const [selectedOption, setSelectedOption] = useState<IOption>();
   const [canVote, setCanVote] = useState(true);
   const account  = getAccount();
 

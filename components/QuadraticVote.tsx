@@ -14,6 +14,7 @@ import {
   getContract,
   fetchBalance,
 } from "@wagmi/core";
+import { IOption } from "../types";
 interface VotingPower {
   [key: string]: number;
 }
@@ -61,12 +62,7 @@ export default function QuadraticVote({
   isVoting,
 }: {
   votingPower: { [key: string]: number };
-  options: {
-    optionIndex: string;
-    optionText: string;
-    optionVote: string;
-    optionPercentage: string;
-  }[];
+  options: IOption[];
   handleVote: () => Promise<void>;
   isFetching: boolean;
   isLoading: boolean;
@@ -108,26 +104,6 @@ export default function QuadraticVote({
         setIsValidVotingPower(true);
       }
     }
-
-    // const provider = await enableWeb3();
-
-    // if (provider) {
-    //   const lar = new ethers.Contract(larAddress, erc20Abi, provider);
-    //   if (votingPower) {
-    //     const summation = toWei(
-    //       Object.values(votingPower).reduce((a, b) => {
-    //         return a + b;
-    //       }, 0)
-    //     );
-    //     const votingPowerBalance: string = await lar.balanceOf(account);
-
-    //     if (Number(summation) > Number(votingPowerBalance)) {
-    //       setIsValidVotingPower(false);
-    //     } else {
-    //       setIsValidVotingPower(true);
-    //     }
-    //   }
-    // }
   };
   useEffect(() => {
     const percentageArray = getCurrentPercentage(votingPower);
@@ -227,14 +203,16 @@ export default function QuadraticVote({
                 <div className="flex lg:w-5/12 md:w-5/12 ssm:w-7/12 w-8/12 text-xl items-center">
                   <button
                     className="text-lg w-10 outline-none border-l py-2 px-3 border-r border-gray-300"
-                    onClick={() => handleSubClick(option.optionIndex)}
+                    onClick={() =>
+                      handleSubClick(option.optionIndex.toString())
+                    }
                   >
                     <p className="w-full">-</p>
                   </button>
 
                   <input
                     onChange={(event) =>
-                      handleOnChange(event, option.optionIndex)
+                      handleOnChange(event, option.optionIndex.toString())
                     }
                     type="number"
                     name="text"
@@ -245,7 +223,9 @@ export default function QuadraticVote({
 
                   <button
                     className="text-lg border-l outline-none px-3 border-r py-2 border-gray-300"
-                    onClick={() => handleAddClick(option.optionIndex)}
+                    onClick={() =>
+                      handleAddClick(option.optionIndex.toString())
+                    }
                   >
                     +
                   </button>

@@ -1,59 +1,43 @@
-import { NextPage } from "next";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import ResultSection from "../../components/ResultSection";
-import {
-  getProposalsData,
-  Proposal,
-  IParam,
-  Voter,
-} from "../../lib/fetchProposals";
-import { formatTime, now, toMilliseconds, toWei } from "../../utils/helper";
+import { getProposalsData } from "../../lib/fetchProposals";
+import { formatTime, toWei } from "../../utils/helper";
 import { useEffect, useState } from "react";
 import {
   daoAbi,
-  contractAddresses,
   erc20Abi,
   larAddress,
   daoAddress,
 } from "../../constants";
-// import { useChain, useMoralis, useWeb3Contract } from "react-moralis";
-import useSWR, { useSWRConfig } from "swr";
 import VotersTable from "../../components/VotersTable";
 import Link from "next/link";
 import QuadraticVote from "../../components/QuadraticVote";
 import SingleChoiceVote from "../../components/SingleChoiceVote";
-import { ContractTransaction, Signer } from "ethers";
 import VotingPower from "../../components/VotingPower";
-// import { trackPromise, usePromiseTracker } from "react-promise-tracker";
-// import { Blockie, Tooltip, useNotification } from "web3uikit";
-// import Moralis from "moralis/types";
 import { displayToast } from "../../components/Toast";
 import { ToastContainer } from "react-toastify";
 import { Blockie, Tooltip } from "web3uikit";
 import {
   prepareWriteContract,
   writeContract,
-  readContract,
   waitForTransaction,
-  fetchBalance,
   getAccount,
 } from "@wagmi/core";
-import { NextPageWithLayout } from "../../types";
+import { IParam, NextPageWithLayout, Proposal } from "../../types";
 import Layout from "../../components/Layout";
-import { useAccount, useDisconnect } from "wagmi";
+import { useAccount } from "wagmi";
 
 interface IDProps {
   proposal: Proposal;
 }
 
-// IndexPage: NextPageWithLayout
 const ID: NextPageWithLayout<IDProps> = ({
   proposal,
 }: {
   proposal: Proposal;
 }) => {
-  // console.log("All voters: ", proposal.allVoters);
+ 
   interface VotingSystem {
     [key: string]: string;
   }
@@ -65,13 +49,6 @@ const ID: NextPageWithLayout<IDProps> = ({
     "2": "Quadratic Voting",
   };
 
-  // const { promiseInProgress } = usePromiseTracker();
-  // const dispatch = useNotification();
-  const { mutate } = useSWRConfig();
-
-  console.log(
-    "We are here...................................................."
-  );
 
   const proposalsType: string = proposal?.proposalType;
   const proposalVotingSystem: string = votingSystem[proposalsType];
@@ -84,7 +61,6 @@ const ID: NextPageWithLayout<IDProps> = ({
   const account = getAccount();
   const { isConnected, status: accountStatus } = useAccount();
 
-  
   const [votingIndex, setVotingIndex] = useState([]);
   const [votingPower, setVotingPower] = useState<{ [key: string]: number }>({});
   const [voteModalOpen, setVoteModalOpen] = useState(false);
@@ -99,21 +75,17 @@ const ID: NextPageWithLayout<IDProps> = ({
   const [isVotingW, setIsVotingW] = useState(false);
 
   const updateProposalData = async () => {
-
-    console.log("Updating proposal data: ")
+    console.log("Updating proposal data: ");
     // Updating proposal Data
-    const latestProposal = await getProposalsData(proposalData.id)
+    const latestProposal:Proposal = await getProposalsData(proposalData.id);
 
-    console.log("proposal data updated ")
-    console.log("Latest proposal: ", latestProposal)
+    console.log("proposal data updated ");
+    console.log("Latest proposal: ", latestProposal);
 
-
-    setProposalData(latestProposal)
-    
-  }
+    setProposalData(latestProposal);
+  };
 
   const handleVote = async () => {
-
     // console.log("About to handle vote: ", votingPower);
     console.log("Handling vote");
     setIsVotingS(true);
@@ -185,7 +157,7 @@ const ID: NextPageWithLayout<IDProps> = ({
           displayToast("success", "You've successfully voted");
           setSVoteText("Voted Successfully");
 
-          await updateProposalData()
+          await updateProposalData();
         } else {
           displayToast("failure", "Failed to Vote");
           setSVoteText("Voting Failed");
@@ -206,15 +178,14 @@ const ID: NextPageWithLayout<IDProps> = ({
           displayToast("success", "You've successfully voted");
           setSVoteText("Voted Successfully");
 
-          await updateProposalData()
-
+          await updateProposalData();
         } else {
           displayToast("failure", "Failed to Vote");
           setSVoteText("Voting Failed");
         }
       }
     } catch (err) {
-      console.log("Error: ", err)
+      console.log("Error: ", err);
       displayToast("Failure", "Failed to vote");
       setSVoteText("Voting Failed");
     }
@@ -231,112 +202,6 @@ const ID: NextPageWithLayout<IDProps> = ({
     return totalVotes;
   };
 
-  // const getLatestOptions = async (id: string): Promise<Array<string[]>> => {
-  //   const AllVotes: string = Moralis.Object.extend("Votes");
-  //   const votesQuery = new Moralis.Query(AllVotes);
-
-  //   votesQuery.descending("block_timestamp");
-  //   votesQuery.equalTo("uid", id);
-
-  //   const lastVote = await votesQuery.first();
-
-  //   const latestOptions = lastVote?.attributes.proposalOptions;
-  //   return latestOptions;
-  // };
-
-  // const getLatestProposal = async () => {
-  //   try {
-  //     const Proposals = Moralis.Object.extend("Proposals");
-  //     const proposalsQuery = new Moralis.Query(Proposals);
-  //     proposalsQuery.equalTo("uid", proposalData?.id);
-  //     const proposal = await proposalsQuery.first();
-
-  //     const proposalAttribute = proposal?.attributes;
-
-  //     const latestOptions = await getLatestOptions(proposalAttribute?.uid);
-  //     const validOptions: Array<Array<string>> =
-  //       latestOptions == undefined ? proposalAttribute?.options : latestOptions;
-
-  //     // const fetchOptions: Moralis.ExecuteFunctionOptions = {
-  //     //   contractAddress: daoAddress!,
-  //     //   functionName: "getVoters",
-  //     //   daoAbi: daoAbi,
-  //     //   params: {
-  //     //     id: proposalData?.id,
-  //     //   },
-  //     // };
-
-  //     // const allVoters = (await trackPromise(
-  //     //   Moralis.executeFunction(fetchOptions)
-  //     // )) as any[][];
-
-  //     // const provider = await enableWeb3();
-
-  //     // const daoContract = new ethers.Contract(daoAddress!, daoAbi, provider);
-  //     // const allVoters:any[][] = await daoContract.getVoters(proposalData.id);
-
-  //     const totalVotes = getTotalVotes(validOptions);
-
-  //     const optionsArray = validOptions.map((option) => {
-  //       // console.log("Option 2: ", option[2]);
-  //       const percentage =
-  //         totalVotes != 0
-  //           ? ((Number(option[2]) / totalVotes) * 100).toFixed(1)
-  //           : 0;
-
-  //       return {
-  //         optionIndex: option[0],
-  //         optionText: option[1],
-  //         optionVote: option[2],
-  //         optionPercentage: percentage.toString(),
-  //       };
-  //     });
-
-  //     const startDate: number = toMilliseconds(
-  //       Number(proposalAttribute?.startDate)
-  //     );
-  //     const duration: number = toMilliseconds(
-  //       Number(proposalAttribute?.duration)
-  //     );
-  //     const endDate: number = startDate + duration;
-
-  //     const timeLeft: number =
-  //       startDate + duration - now() < 0 ? 0 : startDate + duration - now();
-  //     let status: string;
-
-  //     if (now() > endDate) {
-  //       status = "Closed";
-  //     } else if (now() > startDate) {
-  //       status = "Active";
-  //     } else {
-  //       status = "Pending";
-  //     }
-
-  //     // const finalProposal = {
-  //     //   id: proposalAttribute?.uid,
-  //     //   creator: proposalAttribute?.creator,
-  //     //   description: proposalAttribute?.description,
-  //     //   duration: proposalAttribute?.duration,
-  //     //   proposalStatus: proposalAttribute?.proposalStatus,
-  //     //   proposalType: proposalAttribute?.proposalType,
-  //     //   latestOptions: latestOptions || null,
-  //     //   startDate,
-  //     //   endDate,
-  //     //   status,
-  //     //   timeLeft,
-  //     //   title: proposalAttribute?.title,
-  //     //   optionsArray,
-  //     //   validOptions,
-  //     //   allVoters,
-  //     // };
-
-  //     // console.log("This is the final proposal: ", finalProposal);
-
-  //     // return finalProposal;
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   const handleSingleVote = async () => {
     console.log("Handling single vote");
@@ -399,8 +264,7 @@ const ID: NextPageWithLayout<IDProps> = ({
         displayToast("success", "You've successfully voted");
         setSVoteText("Voted Successfully");
 
-        await updateProposalData()
-
+        await updateProposalData();
       } else {
         displayToast("failure", "Failed to Vote");
         setSVoteText("Voting Failed");
@@ -525,7 +389,6 @@ const ID: NextPageWithLayout<IDProps> = ({
                     voteText={sVoteText}
                     isVoting={isVotingS}
                     isFetching={false}
-                    // isFetching={isFetchingS}
                     isLoading={false}
                     // isLoading={isLoadingS}
                     handleSingleVote={handleSingleVote}
@@ -569,7 +432,7 @@ const ID: NextPageWithLayout<IDProps> = ({
               {proposalData?.allVoters && (
                 <VotersTable
                   allVoters={proposalData?.allVoters}
-                  options={proposalData?.validOptions}
+                  options={proposalData?.optionsArray}
                 />
               )}
             </div>
@@ -623,6 +486,8 @@ export default ID;
 export async function getServerSideProps({ params }: IParam) {
   // Fetch necessary data for the blog post using params.id
   const proposal = await getProposalsData(params.id);
+
+  console.log("INside serverside prpos:::", proposal)
 
   return {
     props:
