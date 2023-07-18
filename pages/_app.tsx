@@ -8,7 +8,7 @@ import {
   w3mConnectors,
   w3mProvider,
 } from "@web3modal/ethereum";
-import { polygon, polygonMumbai } from "wagmi/chains";
+import { polygon, polygonMumbai, avalanche, zkSync } from "wagmi/chains";
 import { Web3Modal } from "@web3modal/react";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import ProposalsProvider from "../providers/ProposalsProvider";
@@ -20,7 +20,7 @@ if (!process.env.NEXT_PUBLIC_PROJECT_ID) {
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
 
 // 2. Configure wagmi client
-const chains = [polygonMumbai, polygon];
+const chains = [polygonMumbai, polygon, avalanche, zkSync];
 
 const { publicClient } = configureChains(chains, [w3mProvider({ projectId })]);
 

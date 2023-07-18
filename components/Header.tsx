@@ -6,12 +6,17 @@ import "react-pro-sidebar/dist/css/styles.css";
 // import NavigationDropdown from "./NavigationDropdown";
 import { useEffect, useState, useCallback } from "react";
 import WalletConnect from "./WalletConnect";
+import { getAccount, getNetwork, switchNetwork } from "@wagmi/core";
+import { supportedChainId } from "../constants";
+import { createWalletClient, custom } from 'viem'
+import { mainnet, avalanche, polygonMumbai, zkSync } from 'viem/chains'
+
 // import { useMoralis, useWeb3Contract, useChain } from "react-moralis";
 
 const useMediaQuery = (width: number) => {
   const [targetReached, setTargetReached] = useState(false);
 
-  const updateTarget = useCallback((e: { matches: any; }) => {
+  const updateTarget = useCallback((e: { matches: any }) => {
     if (e.matches) {
       setTargetReached(true);
     } else {
@@ -44,26 +49,27 @@ export default function Header() {
   // const chainId = parseInt(chainIdHex!);
   // console.log("Chain id", chainId)
   // console.log("Here am I:", chainId != 80001)
+  const { chain, chains } = getNetwork();
 
   useEffect(() => {
     console.log("Collapsing: ", collapsed);
   }, [collapsed]);
-
 
   const handleSidebar = () => {
     setCollapsed((prevCollapsed) => !prevCollapsed);
   };
 
   return (
-    <div className={`fixed z-50 top-0 left-0 bg-gray-100 ss:${true ? "h-30" : "h-20"} h-30 w-screen `}>
+    <div
+      className={`fixed z-50 top-0 left-0 bg-gray-100 ss:${
+        true ? "h-30" : "h-20"
+      } h-30 w-screen `}
+    >
       {/* Navbar */}
 
       {!collapsed && isBreakpoint && (
         <div className={`z-50 h-screen ${!collapsed && "fixed inset-0"}`}>
-          <ProSidebar
-            collapsedWidth="0px"
-            collapsed={collapsed}
-          >
+          <ProSidebar collapsedWidth="0px" collapsed={collapsed}>
             <div
               className="px-4 pt-4 w-full text-end cursor-pointer text-xl"
               onClick={handleSidebar}
@@ -73,17 +79,25 @@ export default function Header() {
             <Menu iconShape="square">
               <div className="text-xl text-white hover:text-orange-700">
                 <MenuItem>
-                  <Link href="/"><p className="text-xl">Home</p></Link>
+                  <Link href="/">
+                    <p className="text-xl">Home</p>
+                  </Link>
                 </MenuItem>
               </div>
               <MenuItem>
-                <Link href="/token"><p className="text-xl">Get LAR Token</p></Link>
+                <Link href="/token">
+                  <p className="text-xl">Get LAR Token</p>
+                </Link>
               </MenuItem>
               <MenuItem>
-                <Link href="/create"><p className="text-xl">Create Proposal</p></Link>
+                <Link href="/create">
+                  <p className="text-xl">Create Proposal</p>
+                </Link>
               </MenuItem>
               <MenuItem>
-                <Link href="/proposals"><p className="text-xl">Vote</p></Link>
+                <Link href="/proposals">
+                  <p className="text-xl">Vote</p>
+                </Link>
               </MenuItem>
             </Menu>
           </ProSidebar>
@@ -123,31 +137,39 @@ export default function Header() {
                 </Link>
               </>
             )}
-          
-            <div className="text-white flex flex-col w-full sc:py-10 items-start">
 
+            <div className="text-white flex flex-col w-full sc:py-10 items-start">
               <WalletConnect />
-             
-              {/* <div className="px-0">
-                <ConnectButton  />
-              </div> */}
-              {/* {chainId != 80001 && isWeb3Enabled && (
+              {chain?.id != supportedChainId && (
                 <button
-                  className=" ml-4 text-red-700 text-sm my-2 cursor-pointer bg-red-100 rounded-lg p-1 px-2"
-                  onClick={() => {
-                    switchNetwork("0x13881");
+                  className="text-red-700 text-sm my-2 cursor-pointer bg-red-100 rounded-lg p-1 px-2"
+                  onClick={async () => {
+                    try {
+
+                      const walletClient = createWalletClient({
+                        chain: polygonMumbai,
+                        transport: custom(window.ethereum)
+                      })
+
+                      await walletClient.addChain({ chain: polygonMumbai }) 
+
+                      await switchNetwork({
+                        chainId: supportedChainId,
+                      });
+                    } catch (err) {
+                      console.log("Error", err);
+                    }
                   }}
                 >
                   Switch to Mumbai
                 </button>
-              )} */}
+              )}
             </div>
-            { isBreakpoint && (
+            {isBreakpoint && (
               <div
                 className="w-8 h-8 mr-11 text-black hover:text-orange-500 cursor-pointer"
                 onClick={handleSidebar}
               >
-                
                 <img
                   alt="..."
                   src="/menubar.svg"

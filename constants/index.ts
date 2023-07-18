@@ -13,4 +13,6 @@ export const larAddress = "0x17B9D1f610645DB2b10297e9F4924f6E9557a080"
 export const daoAddress = "0x56EA0cC500FcE3d874D51F76D4C90d3C3C85e720"
 
 export {daoAbi, contractAddresses, erc20Abi}
+
+export const supportedChainId = 80001
  

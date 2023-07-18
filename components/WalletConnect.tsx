@@ -1,9 +1,10 @@
 import { useState } from "react";
 
 import { useAccount, useDisconnect } from "wagmi";
-import { getAccount } from "@wagmi/core";
+import { getAccount, getNetwork } from "@wagmi/core";
 import { useWeb3Modal } from "@web3modal/react";
 import ConnectButton from "./ConnectButton";
+import { supportedChainId } from "../constants";
 
 export default function WalletConnect() {
   const { open } = useWeb3Modal();
@@ -16,6 +17,9 @@ export default function WalletConnect() {
 
   //   const { account?.address, chainId, switchToAppNetwork, loadBalance } = useWeb3();
   const account = getAccount();
+  const { chain, chains } = getNetwork()
+
+  console.log("Chain: ", chain)
 
   console.log("Is connected: ", isConnected);
   console.log("Account: ", account?.address);
