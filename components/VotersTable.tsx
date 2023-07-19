@@ -39,8 +39,8 @@ export default function VotersTable({ allVoters, options }:{allVoters:IVoter[], 
                         voterAddress.length
                       )}
                     </td>
-                    <td className="pl-3 text-xs lg:text-sm">{optionText}</td>
-                    <td className="pl-3 text-xs lg:text-sm">{inDollarFormat(Number(fromWei(currentVote)))} LAR</td>
+                    <td className="pl-3 text-[12px] lg:text-sm">{optionText}</td>
+                    <td className="pl-3 lg:text-sm"><p className="text-[12px]">{inDollarFormat(Number(fromWei(currentVote)))} LAR</p></td>
                   </tr>
                 );
               });

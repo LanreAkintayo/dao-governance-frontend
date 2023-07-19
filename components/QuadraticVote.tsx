@@ -196,13 +196,13 @@ export default function QuadraticVote({
                 className="flex mt-4 w-full justify-between rounded-full border hover:border-gray-900 border-gray-500 text-gray-700 items-center"
               >
                 <div className="lg:w-7/12 md:w-7/12 ssm:w-5/12 w-4/12">
-                  <p className="ss:text-sm text-xs whitespace-nowrap sm:text-base px-3 lg:px-8 text-start ">
+                  <p className="ss:text-sm text-xs break-words truncate whitespace-nowrap sm:text-base px-3 lg:px-8 text-start ">
                     {option.optionText}
                   </p>
                 </div>
                 <div className="flex lg:w-5/12 md:w-5/12 ssm:w-7/12 w-8/12 text-xl items-center">
                   <button
-                    className="text-lg w-10 outline-none border-l py-2 px-3 border-r border-gray-300"
+                    className=" ml-4 text-lg w-10 outline-none border-l py-2 px-3 border-r border-gray-300"
                     onClick={() =>
                       handleSubClick(option.optionIndex.toString())
                     }
@@ -218,7 +218,7 @@ export default function QuadraticVote({
                     name="text"
                     placeholder="0"
                     value={votingPower[option.optionIndex]}
-                    className="px-2 text-gray-800 text-sm sm:text-base w-10 sm:w-14 outline-none text-center"
+                    className="px-2 text-gray-800 text-[12px] sm:text-base w-10 sm:w-14 outline-none text-center"
                   />
 
                   <button
@@ -229,7 +229,7 @@ export default function QuadraticVote({
                   >
                     +
                   </button>
-                  <p className="text-gray-800 px-2 text-sm sm:text-base ">
+                  <p className="text-gray-800 pl-2 text-[12px] sm:text-base ">
                     {(percentage == 0 || isNaN(percentage)
                       ? "0"
                       : toDp(percentage || 0, 1)) || 0}

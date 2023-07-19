@@ -210,7 +210,6 @@ const Create: NextPageWithLayout = () => {
   return (
     <>
       <div className="flex flex-col justify-between bg-gray-50">
-        <Header />
         <div>
           <div className="mt-24 ssm:mt-20 flex justify-between mx-3  mb-4">
             <p className="p-2  rounded-md bg-orange-100 text-orange-600  text-xs">
