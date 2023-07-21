@@ -12,6 +12,8 @@ import { createWalletClient, custom } from 'viem'
 import { mainnet, avalanche, polygonMumbai, zkSync } from 'viem/chains'
 import useProposals from "../hooks/useProposals";
 import { displayToast } from "./Toast";
+import { useRouter } from 'next/router';
+import { FaBars } from "react-icons/fa";
 
 // import { useMoralis, useWeb3Contract, useChain } from "react-moralis";
 
@@ -56,6 +58,13 @@ export default function Header() {
   // const chainId = chain?.id
 
   const {chainId} = useProposals()
+  const router = useRouter();
+  const currentUrl = router.asPath;
+
+  console.log("Current url:: ", currentUrl)
+
+
+
 
   useEffect(() => {
 
@@ -73,7 +82,7 @@ export default function Header() {
 
   return (
     <div
-      className={`fixed z-50 top-0 left-0 bg-gray-100 ss:${
+      className={`fixed bg-black bg-gradient-to-r from-[#0D1321] via-[#0D1321] to-[#11264d]  z-50 top-0 left-0 ss:${
         true ? "h-30" : "h-20"
       } h-30 w-screen `}
     >
@@ -92,23 +101,23 @@ export default function Header() {
               <div className="text-xl text-white hover:text-orange-700">
                 <MenuItem>
                   <Link href="/">
-                    <p className="text-xl">Home</p>
+                    <p className={`text-[16px] text-white ${currentUrl == "/" && "border-b-2 border-orange-700"}`}>Home</p>
                   </Link>
                 </MenuItem>
               </div>
               <MenuItem>
                 <Link href="/token">
-                  <p className="text-xl">Get LAR Token</p>
+                  <p className="text-[16px]">Get LAR Token</p>
                 </Link>
               </MenuItem>
               <MenuItem>
                 <Link href="/create">
-                  <p className="text-xl">Create Proposal</p>
+                  <p className="text-[16px]">Create Proposal</p>
                 </Link>
               </MenuItem>
               <MenuItem>
                 <Link href="/proposals">
-                  <p className="text-xl">Vote</p>
+                  <p className="text-[16px]">Vote</p>
                 </Link>
               </MenuItem>
             </Menu>
@@ -116,87 +125,89 @@ export default function Header() {
         </div>
       )}
 
-      <nav className="flex items-center flex-col ss:flex-row w-full justify-between ss:px-2 py-2 sm:px-4 sm:py-4 h-full text-black ">
-        <p className="font-logo text-xl  sm:text-3xl self-start ss:self-auto">
+      <nav className="flex items-center flex-col ss:flex-row w-full justify-between ss:px-2 py-2 sm:px-4 sm:py-4 h-full">
+        <p className="font-logo text-xl text-white sm:text-3xl self-start ss:self-auto">
           <span className="text-orange-700">{"<"}L</span>arry
           <span className="text-orange-700">C</span>odes
           <span className="text-orange-700">{"/>"}</span>
         </p>
-        <div className="flex items-center text-black self-end ss:self-auto">
-          <div className="flex items-center text-base w-full">
+        <div className="flex items-center text-black self-end  ss:self-auto">
+          <div className="flex items-center self-center text-base w-full">
             {!isBreakpoint && (
               <>
                 <Link href="/  ">
-                  <a className="w-full text-black font-semibold hover:text-orange-700">
+                  <a className={`w-full text-white font-semibold ${currentUrl == "/" && "border-b-2 border-orange-700"} hover:text-orange-700`}>
                     <p className="w-full whitespace-nowrap">Home</p>
                   </a>
                 </Link>
                 <Link href="/token  ">
-                  <a className="sm:ml-5 w-full text-black font-semibold hover:text-orange-700">
+                  <a className={`sm:ml-5 w-full text-white ${currentUrl == "/token" && "border-b-2 border-orange-700"} font-semibold hover:text-orange-700`}>
                     <p className="w-full whitespace-nowrap">Get LAR Token</p>
                   </a>
                 </Link>
                 <Link href="/create">
-                  <a className="sm:ml-5 ml-6 text-black font-semibold whitespace-nowrap hover:text-orange-700">
+                  <a className={`sm:ml-5 ml-6 text-white font-semibold whitespace-nowrap ${currentUrl == "/create" && "border-b-2 border-orange-700"}  hover:text-orange-700`}>
                     Create Proposal
                   </a>
                 </Link>
 
                 <Link href="/proposals">
-                  <a className="sm:ml-5 mx-2 w-full text-black font-semibold hover:text-orange-700 ">
+                  <a className={`sm:ml-5 mx-2 w-full ${currentUrl == "/proposals" && "border-b-2 border-orange-700"}  text-white font-semibold hover:text-orange-700`}>
                     Vote
                   </a>
                 </Link>
               </>
             )}
 
-            <div className="text-white flex flex-col w-full sc:py-10 items-start">
-              <WalletConnect />
-              {chainId && chainId != supportedChainId && (
-                <button
-                  className="text-red-700 text-sm my-2 cursor-pointer bg-red-100 rounded-lg p-1 px-2"
-                  onClick={async () => {
-                    try {
-
-                      // const chainIds = await window.ethereum.request({ method: 'eth_chainId' });
-
-                      // console.log("ChainID: ", chainIds)
-
-                      // const walletClient = createWalletClient({
-                      //   chain: polygonMumbai,
-                      //   transport: custom(window.ethereum)
-                      // })
-
-                      // await walletClient.addChain({ chain: polygonMumbai }) 
-
-                      await switchNetwork({
-                        chainId: supportedChainId,
-                      });
-                    } catch (err) {
-                      console.log("Error", err);
-
-                      displayToast("failure", "Make sure you add Polygon Mumbai testnet with a chain id of 80001")
-                    }
-                  }}
-                >
-                  Switch to Mumbai
-                </button>
-              )}
-            </div>
-            {isBreakpoint && (
-              <div
-                className="w-8 h-8 mr-11 text-black hover:text-orange-500 cursor-pointer"
-                onClick={handleSidebar}
-              >
-                <img
-                  alt="..."
-                  src="/menubar.svg"
-                  className="object-cover w-full h-full cursor-pointer hover:text-orange-500"
-                />
-              </div>
-            )}
+            
           </div>
+
+         
         </div>
+        <div className="flex mx-2 items-center">
+
+<div className=" text-white flex items-center w-full sc:py-10">
+  <WalletConnect />
+  {chainId && chainId != supportedChainId && (
+    <button
+      className="text-red-700 text-sm my-2 cursor-pointer bg-red-100 rounded-lg p-1 px-2"
+      onClick={async () => {
+        try {
+
+          // const chainIds = await window.ethereum.request({ method: 'eth_chainId' });
+
+          // console.log("ChainID: ", chainIds)
+
+          // const walletClient = createWalletClient({
+          //   chain: polygonMumbai,
+          //   transport: custom(window.ethereum)
+          // })
+
+          // await walletClient.addChain({ chain: polygonMumbai }) 
+
+          await switchNetwork({
+            chainId: supportedChainId,
+          });
+        } catch (err) {
+          console.log("Error", err);
+
+          displayToast("failure", "Make sure you add Polygon Mumbai testnet with a chain id of 80001")
+        }
+      }}
+    >
+      Switch to Mumbai
+    </button>
+  )}
+</div>
+{isBreakpoint && (
+  <div
+    className="text-white rounded-full hover:text-orange-500 cursor-pointer"
+    onClick={handleSidebar}
+  >
+    <FaBars/>
+  </div>
+)}
+</div>
       </nav>
     </div>
   );

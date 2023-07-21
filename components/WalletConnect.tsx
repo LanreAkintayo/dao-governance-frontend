@@ -48,9 +48,9 @@ export default function WalletConnect() {
       {status == "connected" && account.address ? (
         <div className="flex items-center gap-3 sm:gap-6 lg:gap-8">
           {isConnected ? (
-            <div className="mr-5 rounded-md bg-orange-700 px-3 hover:bg-orange-100 ">
+            <div className="mr-5 px-3 bg-orange-700 py-2 rounded-md hover:bg-orange-800 hover:text-white ">
               <div
-                className="flex cursor-pointer items-center gap-3 rounded-md py-1.5 px-2 text-sm font-medium text-orange-100 transition hover:text-orange-800"
+                className="flex cursor-pointer items-center gap-3 rounded-md py-1.5 px-2 text-sm font-medium text-white transition"
                 onClick={() => {
                   disconnect();
                 }}

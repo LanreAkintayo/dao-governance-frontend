@@ -27,15 +27,15 @@ const Home: NextPageWithLayout = () => {
   const { status } = useAccount();
 
   return (
-    <div className="bg-gradient-to-r  from-pink-200 to-white w-full h-screen relative ">
+    <div className="bg-gradient-to-r from-[#0D1321] via-[#0D1321] to-[#11264d]  w-full h-screen relative ">
       {/* <ParticleBackground settings={settings2} /> */}
 
       <section className="">
-        <div className="flex flex-col w-screen h-screen items-center text-center justify-center text-black">
+        <div className="flex flex-col w-screen h-screen items-center text-center justify-center text-white">
           <h1 className="text-2xl px-1 mt-16 ss:mt-8 ssm:text-3xl sm:text-4xl lg:text-5xl xl:text-6xl w-12/12 sm:w-10/12 lg:w-8/12 font-extrabold">
             Decentralized Autonomous Organization
           </h1>
-          <p className="w-10/12 lg:w-8/12 text-center font-light my-6 text-lg sm:text-xl lg:text-2xl">
+          <p className="w-10/12 lg:w-8/12 text-center font-light my-6 text-lg sm:text-xl lg:text-xl">
             The aim of this project is to showcase my understanding on what DAO,
             Decentralized Autonomous Organization entails.
           </p>
@@ -43,13 +43,13 @@ const Home: NextPageWithLayout = () => {
             {status == "connected" ? (
               <div>
                 <Link href="/proposals">
-                  <a className="p-2 bg-gradient-to-tr to-pink-500  from-gray-800 px-4 text-white text-sm ss:text-xl ssm:text-2xl rounded-md">
+                  <a className="p-2 bg-orange-800 text-white px-5 rounded-md text-sm ss:text-xl ssm:text-xl">
                     Start Voting
                   </a>
                 </Link>
 
                 <Link href="/create">
-                  <a className="p-2 ml-4 bg-gradient-to-tr to-pink-500  from-gray-800 px-4 text-white text-sm ss:text-xl ssm:text-2xl rounded-md">
+                  <a className="p-2 ml-4 bg-gradient-to-tr border px-5 rounded-md text-white text-sm ss:text-xl ssm:text-xl">
                     Create Proposal
                   </a>
                 </Link>
