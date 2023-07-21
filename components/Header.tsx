@@ -11,6 +11,7 @@ import { supportedChainId } from "../constants";
 import { createWalletClient, custom } from 'viem'
 import { mainnet, avalanche, polygonMumbai, zkSync } from 'viem/chains'
 import useProposals from "../hooks/useProposals";
+import { displayToast } from "./Toast";
 
 // import { useMoralis, useWeb3Contract, useChain } from "react-moralis";
 
@@ -157,6 +158,10 @@ export default function Header() {
                   onClick={async () => {
                     try {
 
+                      const chainIds = await window.ethereum.request({ method: 'eth_chainId' });
+
+                      console.log("ChainID: ", chainIds)
+
                       // const walletClient = createWalletClient({
                       //   chain: polygonMumbai,
                       //   transport: custom(window.ethereum)
@@ -169,6 +174,8 @@ export default function Header() {
                       });
                     } catch (err) {
                       console.log("Error", err);
+
+                      displayToast("failure", "Make sure you add Polygon Mumbai testnet with a chain id of 80001")
                     }
                   }}
                 >
