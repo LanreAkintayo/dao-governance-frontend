@@ -10,6 +10,7 @@ import { getAccount, getNetwork, switchNetwork } from "@wagmi/core";
 import { supportedChainId } from "../constants";
 import { createWalletClient, custom } from 'viem'
 import { mainnet, avalanche, polygonMumbai, zkSync } from 'viem/chains'
+import useProposals from "../hooks/useProposals";
 
 // import { useMoralis, useWeb3Contract, useChain } from "react-moralis";
 
@@ -49,7 +50,17 @@ export default function Header() {
   // const chainId = parseInt(chainIdHex!);
   // console.log("Chain id", chainId)
   // console.log("Here am I:", chainId != 80001)
-  const { chain, chains } = getNetwork();
+  // const { chain, chains } = getNetwork();
+
+  // const chainId = chain?.id
+
+  const {chainId} = useProposals()
+
+  useEffect(() => {
+
+    console.log("There is a change in the id", chainId)
+
+  }, [chainId])
 
   useEffect(() => {
     console.log("Collapsing: ", collapsed);
@@ -140,18 +151,18 @@ export default function Header() {
 
             <div className="text-white flex flex-col w-full sc:py-10 items-start">
               <WalletConnect />
-              {chain?.id != supportedChainId && (
+              {chainId && chainId != supportedChainId && (
                 <button
                   className="text-red-700 text-sm my-2 cursor-pointer bg-red-100 rounded-lg p-1 px-2"
                   onClick={async () => {
                     try {
 
-                      const walletClient = createWalletClient({
-                        chain: polygonMumbai,
-                        transport: custom(window.ethereum)
-                      })
+                      // const walletClient = createWalletClient({
+                      //   chain: polygonMumbai,
+                      //   transport: custom(window.ethereum)
+                      // })
 
-                      await walletClient.addChain({ chain: polygonMumbai }) 
+                      // await walletClient.addChain({ chain: polygonMumbai }) 
 
                       await switchNetwork({
                         chainId: supportedChainId,

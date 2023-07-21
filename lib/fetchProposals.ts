@@ -108,9 +108,9 @@ export const getProposalsData = async (id:number): Promise<Proposal> => {
   };
 
 
-  console.log("New voters: ", newVoters[0].optionVotes, newVoters[0].optionIndexes)
+  // console.log("New voters: ", newVoters[0].optionVotes, newVoters[0].optionIndexes)
 
-  console.log('Finalized Proposal: ', finalizedProposal)
+  // console.log('Finalized Proposal: ', finalizedProposal)
 
   return finalizedProposal
 

@@ -19,10 +19,10 @@ export default function WalletConnect() {
   const account = getAccount();
   const { chain, chains } = getNetwork()
 
-  console.log("Chain: ", chain)
+  // console.log("Chain: ", chain)
 
-  console.log("Is connected: ", isConnected);
-  console.log("Account: ", account?.address);
+  // console.log("Is connected: ", isConnected);
+  // console.log("Account: ", account?.address);
 
   // console.log('Provider: ', provider);
   // console.log('Chain ID: ', chainId);

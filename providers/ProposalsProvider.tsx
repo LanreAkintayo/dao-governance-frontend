@@ -2,6 +2,7 @@ import React, { useReducer } from "react";
 import ProposalsContext from "./proposals-context";
 import {
   readContract,
+  getNetwork
 } from "@wagmi/core";
 import { daoAbi, daoAddress, erc20Abi, larAddress } from "../constants";
 import { now, toMilliseconds } from "../utils/helper";
@@ -9,7 +10,8 @@ import { IOriginalProposal } from "../types";
 
 const defaultWeb3State = {
   allProposals: null,
-  larBalance: ""
+  larBalance: "",
+  chainId: null
 };
 
 const web3Reducer = (
@@ -18,6 +20,7 @@ const web3Reducer = (
     type: string;
     allProposals?: any;
     larBalance?:any;
+    chainId?: any;
   }
 ) => {
   if (action.type === "ALL_PROPOSALS") {
@@ -32,6 +35,12 @@ const web3Reducer = (
       larBalance: action.larBalance,
     };
   }
+  if (action.type === "CHAIN_ID") {
+    return {
+      ...state,
+      chainId: action.chainId,
+    };
+  }
 
   return defaultWeb3State;
 };
@@ -42,6 +51,29 @@ const ProposalsProvider = (props: any) => {
     defaultWeb3State
   );
 
+  const loadChainIdHandler = async () => {
+
+    const { chain, chains } = getNetwork()
+    let chainId = -1
+
+    if (chain){
+
+      chainId = chain.id;
+
+      dispatchWeb3Action({
+        type: "CHAIN_ID",
+        chainId: chainId
+      });
+  
+  
+      
+    }
+    return chainId
+
+   
+
+  }
+
   const loadAllProposalsHandler = async () => {
     // Let's fetch all proposals
 
@@ -51,24 +83,24 @@ const ProposalsProvider = (props: any) => {
       functionName: "getProposalsArray",
     }) as IOriginalProposal[]
 
-    console.log("All Proposals: ", allProposals)
+    // console.log("All Proposals: ", allProposals)
 
     const finalizedProposals = allProposals.map((proposal) => {
       let totalVotes: number = 0;
       const options = proposal.options;
 
 
-      console.log("Options::::", options);
+      // console.log("Options::::", options);
 
       // Get the total votes
       options.forEach((option) => {
         totalVotes += Number(option.vote);
       });
 
-      console.log("Total votes: ", totalVotes);
+      // console.log("Total votes: ", totalVotes);
 
       const optionsArray = options.map((option) => {
-        console.log(option.vote);
+        // console.log(option.vote);
         const percentage =
           totalVotes != 0
             ? ((Number(option.vote) / totalVotes) * 100).toFixed(1)
@@ -137,8 +169,10 @@ const ProposalsProvider = (props: any) => {
   const web3Context = {
     allProposals: web3State.allProposals,
     larBalance: web3State.larBalance,
+    chainId: web3State.chainId,
     loadAllProposals: loadAllProposalsHandler,
-    loadLarBalance: loadLarBalanceHandler
+    loadLarBalance: loadLarBalanceHandler,
+    loadChainId: loadChainIdHandler
   };
 
   return (

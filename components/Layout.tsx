@@ -18,7 +18,7 @@ export default function Layout({
   const { disconnect } = useDisconnect();
   const account = getAccount();
 
-  const {loadAllProposals, loadLarBalance, larBalance} = useProposals()
+  const {loadAllProposals, loadLarBalance, larBalance, loadChainId} = useProposals()
 
   useEffect(() => {
     const getAllProposals = async () => {
@@ -32,6 +32,7 @@ export default function Layout({
   
     useEffect(() => {
     const loadBalance = async () => {
+      // console.log("Account.address:::::", account?.address)
       if (account?.address){
         await loadLarBalance(account.address)
       }  
@@ -50,13 +51,14 @@ export default function Layout({
 
       try {
         const unwatchAccount = watchAccount(async (account) => {
-          console.log('Account has changed......', account);
+          // console.log('Account has changed......', account);
           const newAccountAddress = account && account.address;
          
         });
 
         const unwatchNetwork = watchNetwork(async (network) => {
-          console.log('Network has changed:.......... ', network);
+          // console.log('Network has changed:.......... ', network);
+          await loadChainId()
 
 
         });
