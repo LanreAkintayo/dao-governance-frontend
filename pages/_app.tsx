@@ -1,7 +1,6 @@
 import "../styles/globals.css";
 import { MoralisProvider } from "react-moralis";
 import type { AppProps } from "next/app";
-import { NotificationProvider } from "web3uikit";
 import { ToastContainer } from "react-toastify";
 import {
   EthereumClient,
@@ -42,7 +41,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <ProposalsProvider>
-      <NotificationProvider>
         <WagmiConfig config={wagmiConfig}>
           {getLayout(<Component {...pageProps} />)}
         </WagmiConfig>
@@ -50,7 +48,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
 
         <ToastContainer />
-      </NotificationProvider>
+      {/* </NotificationProvider> */}
     </ProposalsProvider>
   );
 }
