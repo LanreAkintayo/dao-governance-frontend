@@ -32,7 +32,7 @@ const Home: NextPageWithLayout = () => {
       
       <section className="flex flex-col ft:grid ft:grid-cols-12 items-center h-full px-10 py-10">
         <div className="flex flex-col text-center ft:text-left  ft:col-span-6 px-3 justify-center text-white">
-          <h1 className="text-4xl mt-12 ft:mt-0 font-bold lg:text-4xl xl:text-4xl">
+          <h1 className="text-xl ssm:text-3xl mt-12 ft:mt-0 font-bold lg:text-4xl xl:text-4xl">
             Decentralized Autonomous Organization
           </h1>
           <p className="font-light my-6 text-lg sm:text-lg lg:text-[18px]">

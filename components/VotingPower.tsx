@@ -9,11 +9,15 @@ export default function VotingPower({ className }: { className: string }) {
 
 
   return (
-    <div className={`${className} bg-white p-2 rounded-full text-xs `}>
+    <div className={`${className}`}>
       {larBalance && (
-        <p className="whitespace-nowrap">
+        <div className={` bg-white p-2 rounded-full text-xs `}>
+
+<p className="whitespace-nowrap">
           Voting Power: {inDollarFormat(Number(fromWei(larBalance.toString())))} LAR
         </p>
+        </div>
+      
       )}
     </div>
   );

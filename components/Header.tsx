@@ -13,7 +13,7 @@ import { mainnet, avalanche, polygonMumbai, zkSync } from 'viem/chains'
 import useProposals from "../hooks/useProposals";
 import { displayToast } from "./Toast";
 import { useRouter } from 'next/router';
-import { FaBars } from "react-icons/fa";
+import { FaBars, FaTimes } from "react-icons/fa";
 
 // import { useMoralis, useWeb3Contract, useChain } from "react-moralis";
 
@@ -89,15 +89,16 @@ export default function Header() {
       {/* Navbar */}
 
       {!collapsed && isBreakpoint && (
-        <div className={`z-50 h-screen ${!collapsed && "fixed inset-0"}`}>
-          <ProSidebar collapsedWidth="0px" collapsed={collapsed}>
+        <div className={`z-50 h-screen ${!collapsed && "fixed  inset-0"}`}>
+          <ProSidebar collapsedWidth="0px" collapsed={collapsed} >
             <div
-              className="px-4 pt-4 w-full text-end cursor-pointer text-xl"
+              className="px-4 pt-4 w-full flex justify-end cursor-pointer "
               onClick={handleSidebar}
             >
-              X
+              <FaTimes />
+              
             </div>
-            <Menu iconShape="square">
+            <Menu iconShape="square" className="">
               <div className="text-xl text-white hover:text-orange-700">
                 <MenuItem>
                   <Link href="/">
