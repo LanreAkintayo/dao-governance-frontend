@@ -158,9 +158,9 @@ export default function Header() {
                   onClick={async () => {
                     try {
 
-                      const chainIds = await window.ethereum.request({ method: 'eth_chainId' });
+                      // const chainIds = await window.ethereum.request({ method: 'eth_chainId' });
 
-                      console.log("ChainID: ", chainIds)
+                      // console.log("ChainID: ", chainIds)
 
                       // const walletClient = createWalletClient({
                       //   chain: polygonMumbai,
