@@ -27,32 +27,36 @@ const Home: NextPageWithLayout = () => {
   const { status } = useAccount();
 
   return (
-    <div className="bg-gradient-to-r from-[#0D1321] via-[#0D1321] to-[#11264d]  w-full h-screen relative ">
+    <div className="bg-gradient-to-r from-[#0D1321] via-[#0D1321] to-[#11264d]  w-full relative">
       {/* <ParticleBackground settings={settings2} /> */}
-
-      <section className="">
-        <div className="flex flex-col w-screen h-screen items-center text-center justify-center text-white">
-          <h1 className="text-2xl px-1 mt-16 ss:mt-8 ssm:text-3xl sm:text-4xl lg:text-5xl xl:text-6xl w-12/12 sm:w-10/12 lg:w-8/12 font-extrabold">
+      
+      <section className="flex flex-col ft:grid ft:grid-cols-12 items-center h-full px-10 py-10">
+        <div className="flex flex-col text-center ft:text-left  ft:col-span-6 px-3 justify-center text-white">
+          <h1 className="text-4xl mt-12 ft:mt-0 font-bold lg:text-4xl xl:text-4xl">
             Decentralized Autonomous Organization
           </h1>
-          <p className="w-10/12 lg:w-8/12 text-center font-light my-6 text-lg sm:text-xl lg:text-xl">
+          <p className="font-light my-6 text-lg sm:text-lg lg:text-[18px]">
             The aim of this project is to showcase my understanding on what DAO,
             Decentralized Autonomous Organization entails.
           </p>
           <div>
             {status == "connected" ? (
-              <div>
+              <div className="mt-2 flex flex-col ssm:flex-row justify-center ft:justify-start gap-4">
+                <div className="bg-orange-800 text-white rounded-md px-5 p-2 ">
                 <Link href="/proposals">
-                  <a className="p-2 bg-orange-800 text-white px-5 rounded-md text-sm ss:text-xl ssm:text-xl">
+                  <a className="text-sm ss:text-xl ssm:text-xl">
                     Start Voting
                   </a>
                 </Link>
+                </div>
 
+              <div className="rounded-md border border-white px-5 p-2 ">
                 <Link href="/create">
-                  <a className="p-2 ml-4 bg-gradient-to-tr border px-5 rounded-md text-white text-sm ss:text-xl ssm:text-xl">
+                  <a className="text-white text-sm ss:text-xl ssm:text-xl">
                     Create Proposal
                   </a>
                 </Link>
+                </div>
               </div>
             ) : (
               <p className="p-2 ml-4 bg-gradient-to-tr to-red-500  from-red-800 px-4 text-white text-base rounded-md">
@@ -61,10 +65,17 @@ const Home: NextPageWithLayout = () => {
             )}
           </div>
         </div>
+        <div className="ft:col-span-5 md:col-span-6 mt-12">
+
+        <img src="./thumbs_up.png" width={500} height={300}/>
+
+        </div>
+
       </section>
-      <section className="my-4 p-5 flex flex-col text-center  items-center justify-center">
+
+      <section className="my-5 sm:my-16 p-5 flex flex-col text-center  text-white items-center justify-center">
         <h1 className=" text-2xl ss:text-4xl">How It Works</h1>
-        <p className="w-12/12 px-2 ssm:w-9/12 text-gray-800 ssm:text-base text-xs py-2">
+        <p className="w-12/12 px-2 ssm:w-9/12  ssm:text-base text-xs py-2">
           A DAO is a community led entity with no central authority. It is fully
           autonomous and transparent. A DAO is governed entirely by its
           individual members who collectively make critical decisions about the

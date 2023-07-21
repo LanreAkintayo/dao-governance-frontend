@@ -4,6 +4,7 @@ import { watchNetwork, watchAccount, getAccount} from '@wagmi/core';
 import { ethers } from 'ethers';
 import Header from './Header';
 import useProposals from '../hooks/useProposals';
+import Footer from './Footer';
 const Moralis = require('moralis').default;
 
 
@@ -84,6 +85,7 @@ export default function Layout({
       <main className="flex flex-grow flex-col ">
         {children}
       </main>
+
     </div>
   );
 }
