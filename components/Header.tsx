@@ -99,10 +99,10 @@ export default function Header() {
               
             </div>
             <Menu iconShape="square" className="">
-              <div className="text-xl text-white hover:text-orange-700">
+              <div className="text-xl text-white hover:text-amber-600">
                 <MenuItem>
                   <Link href="/">
-                    <p className={`text-[16px] text-white ${currentUrl == "/" && "border-b-2 border-orange-700"}`}>Home</p>
+                    <p className={`text-[16px] text-white ${currentUrl == "/" && "border-b-2 border-amber-600"}`}>Home</p>
                   </Link>
                 </MenuItem>
               </div>
@@ -128,32 +128,32 @@ export default function Header() {
 
       <nav className="flex items-center flex-col ss:flex-row w-full justify-between ss:px-2 py-2 sm:px-4 sm:py-4 h-full">
         <p className="font-logo text-xl text-white sm:text-3xl self-start ss:self-auto">
-          <span className="text-orange-700">{"<"}L</span>arry
-          <span className="text-orange-700">C</span>odes
-          <span className="text-orange-700">{"/>"}</span>
+          <span className="text-amber-600">{"<"}L</span>arry
+          <span className="text-amber-600">C</span>odes
+          <span className="text-amber-600">{"/>"}</span>
         </p>
         <div className="flex items-center text-black self-end  ss:self-auto">
           <div className="flex items-center self-center text-base w-full">
             {!isBreakpoint && (
               <>
                 <Link href="/  ">
-                  <a className={`w-full text-white font-semibold ${currentUrl == "/" && "border-b-2 border-orange-700"} hover:text-orange-700`}>
+                  <a className={`w-full text-white font-semibold ${currentUrl == "/" && "border-b-2 border-amber-600"} hover:text-amber-600`}>
                     <p className="w-full whitespace-nowrap">Home</p>
                   </a>
                 </Link>
                 <Link href="/token  ">
-                  <a className={`sm:ml-5 w-full text-white ${currentUrl == "/token" && "border-b-2 border-orange-700"} font-semibold hover:text-orange-700`}>
+                  <a className={`sm:ml-5 w-full text-white ${currentUrl == "/token" && "border-b-2 border-amber-600"} font-semibold hover:text-amber-600`}>
                     <p className="w-full whitespace-nowrap">Get LAR Token</p>
                   </a>
                 </Link>
                 <Link href="/create">
-                  <a className={`sm:ml-5 ml-6 text-white font-semibold whitespace-nowrap ${currentUrl == "/create" && "border-b-2 border-orange-700"}  hover:text-orange-700`}>
+                  <a className={`sm:ml-5 ml-6 text-white font-semibold whitespace-nowrap ${currentUrl == "/create" && "border-b-2 border-amber-600"}  hover:text-amber-600`}>
                     Create Proposal
                   </a>
                 </Link>
 
                 <Link href="/proposals">
-                  <a className={`sm:ml-5 mx-2 w-full ${currentUrl == "/proposals" && "border-b-2 border-orange-700"}  text-white font-semibold hover:text-orange-700`}>
+                  <a className={`sm:ml-5 mx-2 w-full ${currentUrl == "/proposals" && "border-b-2 border-amber-600"}  text-white font-semibold hover:text-amber-600`}>
                     Vote
                   </a>
                 </Link>
@@ -171,7 +171,7 @@ export default function Header() {
   <WalletConnect />
   {chainId && chainId != supportedChainId && (
     <button
-      className="text-red-700 text-sm my-2 cursor-pointer bg-red-100 rounded-lg p-1 px-2"
+      className="text-amber-600 text-sm my-2 cursor-pointer bg-amber-100 rounded-lg p-2 px-2"
       onClick={async () => {
         try {
 
@@ -202,10 +202,10 @@ export default function Header() {
 </div>
 {isBreakpoint && (
   <div
-    className="text-white rounded-full hover:text-orange-500 cursor-pointer"
+    className="text-white rounded-full hover:text-amber-500 cursor-pointer"
     onClick={handleSidebar}
   >
-    <FaBars/>
+    <FaBars className="ml-3 w-9 h-9 bg-amber-500 rounded-full text-black p-2"/>
   </div>
 )}
 </div>
