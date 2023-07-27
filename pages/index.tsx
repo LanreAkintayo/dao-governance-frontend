@@ -31,8 +31,8 @@ const Home: NextPageWithLayout = () => {
     <div className="bg-gradient-to-r from-[#0D1321] via-[#0D1321] to-[#11264d]  w-full relative">
       {/* <ParticleBackground settings={settings2} /> */}
       
-      <section className="flex flex-col ft:grid ft:grid-cols-12 items-center h-full px-10 py-10">
-        <div className="flex flex-col text-center ft:text-left  ft:col-span-6 px-3 justify-center text-white">
+      <section className="flex flex-col ft:gap-8 ft:grid ft:grid-cols-12 items-center h-full px-10 py-10">
+        <div className="flex flex-col text-center ft:text-left ft:col-span-6 px-3 justify-center text-white">
           <h1 className="text-xl ssm:text-3xl mt-12 ft:mt-0 font-bold lg:text-4xl xl:text-4xl">
             Decentralized
           </h1>
@@ -69,9 +69,9 @@ const Home: NextPageWithLayout = () => {
             )}
           </div>
         </div>
-        <div className="ft:col-span-5 md:col-span-6 mt-12">
+        <div className="ft:col-span-5 md:col-span-6 mt-12 flex justify-center">
 
-        <img src="./governance2.svg" width={500} height={300}/>
+        <img src="/governance2.svg" width={500} height={500}/>
 
         </div>
 
