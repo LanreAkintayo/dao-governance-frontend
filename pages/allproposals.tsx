@@ -19,9 +19,10 @@ const AllProposals: NextPageWithLayout = () => {
           <div className=" lg:w-9/12 w-11/12">
             <h1 className="text-xl text-gray-700 pt-4 ">All Proposals</h1>
 
-            {/* {allProposals?.map((proposal: Proposal) => {
-              return <ProposalCard proposal={proposal} key={proposal.id} />;
-            })} */}
+            {allProposals?.map((proposal: Proposal) => {
+              return <div>1</div>;
+              // return <ProposalCard proposal={proposal} key={proposal.id} />;
+            })}
           </div>
         </section>
       </div>
