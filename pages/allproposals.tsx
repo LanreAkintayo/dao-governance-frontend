@@ -15,16 +15,16 @@ const AllProposals: NextPageWithLayout = () => {
 
   return (
     <div
-      className={`flex flex-col mb-8 ${
-        (!allProposals || allProposals?.length == 0) && "h-screen"
-      } justify-between  bg-gray-50`}
+      className={`flex flex-col mb-8 justify-between  bg-gray-50`}
     >
       <div>
         <section className="px-5 mt-24 flex flex-col items-center ">
           <div className=" lg:w-9/12 w-11/12">
             <h1 className="text-xl text-gray-700 pt-4 ">All Proposals</h1>
 
-            {!allProposals && (
+            <p>All proposals will be shown here</p>
+
+            {/* {!allProposals && (
               <div className="flex flex-col w-full my-4 items-center">
                 <div className="my-1">
                   <ScaleLoader color="black" loading={true} />
@@ -49,7 +49,7 @@ const AllProposals: NextPageWithLayout = () => {
 
             {allProposals?.map((proposal: Proposal) => {
               return <ProposalCard proposal={proposal} key={proposal.id} />;
-            })}
+            })} */}
           </div>
         </section>
       </div>
