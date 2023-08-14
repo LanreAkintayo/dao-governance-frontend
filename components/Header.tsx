@@ -122,7 +122,7 @@ export default function Header() {
                 </Link>
               </MenuItem>
               <MenuItem>
-                <Link href="/proposals">
+                <Link href="/all_proposals">
                   <p className="text-[16px]">Vote</p>
                 </Link>
               </MenuItem>
@@ -169,10 +169,10 @@ export default function Header() {
                   </a>
                 </Link>
 
-                <Link href="/proposals">
+                <Link href="/all_proposals">
                   <a
                     className={`sm:ml-5 mx-2 w-full ${
-                      currentUrl == "/proposals" && "border-b-2 border-red-800"
+                      currentUrl == "/all_proposals" && "border-b-2 border-red-800"
                     }  text-gray-800 font-semibold hover:text-red-800`}
                   >
                     Vote
