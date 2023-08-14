@@ -8,6 +8,7 @@ import { NextPageWithLayout, Proposal } from "../types";
 
 const AllProposals: NextPageWithLayout = () => {
   const { allProposals } = useProposals();
+  console.log("Are there proposals?", allProposals == null)
 
   console.log("All Proposals: ", allProposals);
 
@@ -18,7 +19,7 @@ const AllProposals: NextPageWithLayout = () => {
           <div className=" lg:w-9/12 w-11/12">
             <h1 className="text-xl text-gray-700 pt-4 ">All Proposals</h1>
 
-            {!allProposals ? (
+            {allProposals == null ? (
               <div className="flex flex-col w-full my-4 items-center">
                 <div className="my-1">
                   <ScaleLoader color="black" loading={true} />
