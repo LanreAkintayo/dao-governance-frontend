@@ -7,7 +7,7 @@ import Layout from "../components/Layout";
 import { NextPageWithLayout, Proposal } from "../types";
 
 
-const Proposals: NextPageWithLayout = () => {
+const AllProposals: NextPageWithLayout = () => {
  
  const {allProposals} = useProposals()
 
@@ -58,9 +58,9 @@ const Proposals: NextPageWithLayout = () => {
 
 
 
-Proposals.getLayout = function getLayout(page) {
+AllProposals.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };
 
 
-export default Proposals;
+export default AllProposals;
