@@ -6,25 +6,19 @@ import useProposals from "../hooks/useProposals";
 import Layout from "../components/Layout";
 import { NextPageWithLayout, Proposal } from "../types";
 
-
 const AllProposals: NextPageWithLayout = () => {
- 
-  const { allProposals } = useProposals()
-  
-  console.log("All Proposals: ", allProposals)
+  const { allProposals } = useProposals();
+
+  console.log("All Proposals: ", allProposals);
 
   return (
-    <div
-      className={`flex flex-col mb-8 justify-between  bg-gray-50`}
-    >
+    <div className={`flex flex-col mb-8 justify-between`}>
       <div>
         <section className="px-5 mt-24 flex flex-col items-center ">
           <div className=" lg:w-9/12 w-11/12">
             <h1 className="text-xl text-gray-700 pt-4 ">All Proposals</h1>
 
-            <p>All proposals will be shown here</p>
-
-            {/* {!allProposals && (
+            {!allProposals ? (
               <div className="flex flex-col w-full my-4 items-center">
                 <div className="my-1">
                   <ScaleLoader color="black" loading={true} />
@@ -32,24 +26,17 @@ const AllProposals: NextPageWithLayout = () => {
 
                 <p className="text-gray-500">Please Wait a few seconds</p>
               </div>
-            )}
-            {!true && (
-              <div className="flex flex-col my-4 p-2 text-orange-800 jusify-center items-center">
-                <p className="text-center p-2 px-10 w-96 bg-orange-200">
-                  Connect Your Wallet
-                </p>
-              </div>
-            )}
-
-            {allProposals && allProposals.length == 0 && (
+            ) : allProposals && allProposals.length == 0 ? (
               <div className="w-full text-center">
                 <p className="my-12">No Proposals at the moment</p>
               </div>
+            ) : (
+              <div>
+                {allProposals?.map((proposal: Proposal) => {
+                  return <ProposalCard proposal={proposal} key={proposal.id} />;
+                })}
+              </div>
             )}
-
-            {allProposals?.map((proposal: Proposal) => {
-              return <ProposalCard proposal={proposal} key={proposal.id} />;
-            })} */}
           </div>
         </section>
       </div>
@@ -57,11 +44,8 @@ const AllProposals: NextPageWithLayout = () => {
   );
 };
 
-
-
 AllProposals.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };
-
 
 export default AllProposals;
