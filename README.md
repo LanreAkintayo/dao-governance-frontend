@@ -49,3 +49,22 @@ It is deployed on the Mumbai testnet.
 
 
 
+ {allProposals == null ? (
+              <div className="flex flex-col w-full my-4 items-center">
+                <div className="my-1">
+                  <ScaleLoader color="black" loading={true} />
+                </div>
+
+                <p className="text-gray-500">Please Wait a few seconds</p>
+              </div>
+            ) : allProposals && allProposals.length == 0 ? (
+              <div className="w-full text-center">
+                <p className="my-12">No Proposals at the moment</p>
+              </div>
+            ) : (
+              <div>
+                {allProposals?.map((proposal: Proposal) => {
+                  return <ProposalCard proposal={proposal} key={proposal.id} />;
+                })}
+              </div>
+            )}
