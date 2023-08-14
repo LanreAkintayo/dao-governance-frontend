@@ -212,7 +212,7 @@ const Create: NextPageWithLayout = () => {
       <div className="flex flex-col justify-between bg-gray-50">
         <div className="my-6">
           <div className="  ssm:mt-20 flex justify-between mx-3  mb-4">
-            <p className="p-2  rounded-md bg-orange-100 text-orange-600  text-xs">
+            <p className="p-2  rounded-md bg-red-100 text-red-600  text-xs">
               Note that 5 LAR is required to create a proposal
             </p>
             <VotingPower className="border border-gray-400 ml-4 h-8" />
@@ -357,7 +357,6 @@ const Create: NextPageWithLayout = () => {
           </div>
         </div>
 
-        <Footer />
     
       </div>
     </>

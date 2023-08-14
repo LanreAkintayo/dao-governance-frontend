@@ -7,7 +7,7 @@ export default function ResultSection({
   options: IOption[];
 }) {
   return (
-    <div className="shadow bg-white p-3 pb-5  w-10/12 justify-center mt-8 sm:ml-4 lg:ml-0 lg:mt-4 sm:w-5/12 lg:w-10/12">
+    <div className="shadow bg-white p-3 pb-5  w-full justify-center mt-8 sm:ml-4 lg:ml-0 lg:mt-4 sm:w-5/12 lg:w-10/12">
       <h1 className="my-3 pb-3 text-gray-800 border-l-0 border-r-0 border-b border-gray-300 ">
         Results
       </h1>

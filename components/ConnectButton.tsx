@@ -1,23 +1,22 @@
-import { useWeb3Modal } from '@web3modal/react';
-import { useState } from 'react';
-import { useAccount, useDisconnect } from 'wagmi';
-import { getNetwork } from '@wagmi/core'
-
+import { useWeb3Modal } from "@web3modal/react";
+import { useState } from "react";
+import { useAccount, useDisconnect } from "wagmi";
+import { getNetwork } from "@wagmi/core";
 
 export default function ConnectButton() {
   const [loading, setLoading] = useState(false);
   const { open } = useWeb3Modal();
   const { isConnected } = useAccount();
   const { disconnect } = useDisconnect();
-//   const { chainId } = useWeb3();
-  const { chain, chains } = getNetwork()
+  //   const { chainId } = useWeb3();
+  const { chain, chains } = getNetwork();
 
   async function onOpen() {
     setLoading(true);
     try {
       await open();
     } catch (err) {
-      console.log('Error: ', err);
+      console.log("Error: ", err);
     }
     setLoading(false);
   }
@@ -30,7 +29,7 @@ export default function ConnectButton() {
         onOpen();
       }
     } catch (err) {
-      console.log('Error: ', err);
+      console.log("Error: ", err);
     }
   }
 
@@ -39,9 +38,9 @@ export default function ConnectButton() {
       <button
         onClick={onClick}
         disabled={loading}
-        className="rounded-md bg-amber-600 text-white w-40 p-2 mr-3"
+        className="rounded-full bg-red-800 hover:bg-red-700 text-[12px] ssm:text-sm text-white w-40 p-2 mr-3"
       >
-        {loading ? 'Loading...' : 'Connect Wallet'}
+        {loading ? "Loading..." : "Connect Wallet"}
       </button>
     </div>
   );

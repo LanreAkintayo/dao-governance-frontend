@@ -338,20 +338,19 @@ const ID: NextPageWithLayout<IDProps> = ({
   // console.log(proposalData?.validOptions);
 
   return (
-    <div className="flex flex-col justify-between bg-gray-50">
-      <Header />
+    <div className="flex flex-col justify-between bg-gray-50 mb-8">
       <div>
-        <div className="flex ss:justify-between justify-start items-center px-4">
+        <div className="flex flex-row justify-between space-x-3 items-center px-4">
           <Link href="/proposals">
-            <button className="hover:text-gray-800 mt-24 mx-8 mb-6 text-gray-400 sm:text-base text-xs">
+            <button className="hover:text-gray-800 mt-24 ssm:mx-8 mb-6 text-gray-400 sm:text-base text-xs">
               ← Back
             </button>
           </Link>
-          <VotingPower className="mt-24 mx-4 ss:mx-8 mb-4 border px-4" />
+          <VotingPower className="mt-24 ssm:mx-4 ss:mx-8 mb-4 border px-4" />
         </div>
 
         <div className="flex lg:flex-row flex-col mx-4">
-          <div className="w-full lg:w-8/12 p-2 pl-4 sm:pr-11 ">
+          <div className="w-full lg:w-8/12 sm:p-2 sm:pl-4 sm:pr-11 ">
             <h1 className="text-base ssm:text-lg sm:text-2xl">
               {proposalData?.title}
             </h1>
@@ -439,7 +438,7 @@ const ID: NextPageWithLayout<IDProps> = ({
           </div>
 
           <div className="flex lg:flex-col sm:flex-row flex-col items-center justify-center lg:justify-start lg:w-4/12 rounded-md  text-sm">
-            <div className="shadow bg-white p-3 mt-8 w-10/12 justify-center sm:w-5/12 lg:w-10/12">
+            <div className="shadow bg-white p-3 mt-8 w-full justify-center sm:w-5/12 lg:w-10/12">
               <h1 className="my-3 pb-3 text-gray-800 border-l-0 border-r-0 border-b border-gray-300 ">
                 Information
               </h1>
@@ -472,7 +471,6 @@ const ID: NextPageWithLayout<IDProps> = ({
         <ToastContainer />
       </div>
 
-      <Footer />
     </div>
   );
 };

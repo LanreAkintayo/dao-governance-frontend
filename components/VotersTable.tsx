@@ -6,7 +6,7 @@ export default function VotersTable({ allVoters, options }:{allVoters:IVoter[], 
     let votersId = 1;
   
   return (
-    <table className="mt-10 w-10/12 self-center table-auto rounded-lg shadow text-sm text-left overflow-x-scroll">
+    <table className="mt-10 w-full sm:w-10/12 self-center table-auto rounded-lg shadow text-sm text-left overflow-x-scroll">
       <thead className=" rounded-lg bg-gray-50">
         <tr className="text-gray-700 bg-gray-300">
           <th scope="col" colSpan={3} className="py-3 pl-3">

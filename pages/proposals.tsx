@@ -13,7 +13,7 @@ const Proposals: NextPageWithLayout = () => {
 
   return (
     <div
-      className={`flex flex-col ${
+      className={`flex flex-col mb-8 ${
         (!allProposals || allProposals?.length == 0) && "h-screen"
       } justify-between  bg-gray-50`}
     >
@@ -51,9 +51,6 @@ const Proposals: NextPageWithLayout = () => {
             })}
           </div>
         </section>
-      </div>
-      <div>
-        <Footer />
       </div>
     </div>
   );

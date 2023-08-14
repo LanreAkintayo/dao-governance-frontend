@@ -85,6 +85,7 @@ export default function Layout({
       <main className="flex flex-grow flex-col ">
         {children}
       </main>
+      <Footer />
 
     </div>
   );

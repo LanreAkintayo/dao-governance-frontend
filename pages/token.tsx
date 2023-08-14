@@ -91,18 +91,18 @@ const Tokens: NextPageWithLayout = () => {
           />
           <button
             onClick={handleClick}
-            className="p-2 rounded-md ssm:text-lg text-sm self-center text-orange-800 my-4 ssm:w-80 disabled:cursor-not-allowed disabled:opacity-50"
+            className="p-2 rounded-md ssm:text-lg text-sm self-center text-red-800 my-4 ssm:w-80 disabled:cursor-not-allowed disabled:opacity-50"
             disabled={userAddress == "" || isSending}
           >
             {isSending ? (
-              <div className="flex flex-col w-full bg-orange-200 justify-between rounded-md px-3 py-3 items-center">
+              <div className="flex flex-col w-full bg-red-200 justify-between rounded-md px-3 py-3 items-center">
                 <div className="flex items-center">
                   <ClipLoader color="#000" loading={true} size={30} />
                   <p className="ml-2">{sendText}</p>
                 </div>
               </div>
             ) : (
-              <div className="flex w-full bg-orange-200 text-orange-700 rounded-md items-center px-3 py-3">
+              <div className="flex w-full bg-red-200 text-red-700 rounded-md items-center px-3 py-3">
                 <p className="w-full">{sendText}</p>
               </div>
             )}
@@ -117,7 +117,6 @@ const Tokens: NextPageWithLayout = () => {
           </p>
         </div>
       </section>
-      <Footer />
     </div>
   );
 };
