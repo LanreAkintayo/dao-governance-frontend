@@ -9,7 +9,9 @@ import { NextPageWithLayout, Proposal } from "../types";
 
 const AllProposals: NextPageWithLayout = () => {
  
- const {allProposals} = useProposals()
+  const { allProposals } = useProposals()
+  
+  console.log("All Proposals: ", allProposals)
 
   return (
    <div>This is a simple page</div>
