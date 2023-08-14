@@ -62,14 +62,14 @@ export default function ProposalCard({ proposal }: {proposal: Proposal}) {
           </div>
           <h1 className="text-sm xs:text-base sm:text-xl mt-2 text-gray-900">{proposal.title}</h1>
           <p className="sm:text-sm hidden sm:block text-xs mt-2 text-gray-500">{proposal.description}</p>
-          <div className="my-4">
+          {/* <div className="my-4">
             {proposal?.optionsArray?.map((option:IOption) => {
               const percentages = proposal.optionsArray.map((option:IOption) => option.optionPercentage) as unknown as number[]
               const maxPercentage = Math.max(...percentages)
               // console.log("Options:::::::::::::::::: ", proposal.optionsArray);
               return <Option option={option} proposal={proposal} maxPercentage={maxPercentage} key={option.optionIndex}/>;
             })}
-          </div>
+          </div> */}
         </div>
       </a>
     </Link>
