@@ -8,7 +8,7 @@ import { NextPageWithLayout, Proposal } from "../types";
 
 const AllProposals: NextPageWithLayout = () => {
   const { allProposals } = useProposals();
-  console.log("Are there proposals?", allProposals == null);
+  console.log("Are there proposals?", allProposals == null)
 
   console.log("All Proposals: ", allProposals);
 
@@ -19,9 +19,26 @@ const AllProposals: NextPageWithLayout = () => {
           <div className=" lg:w-9/12 w-11/12">
             <h1 className="text-xl text-gray-700 pt-4 ">All Proposals</h1>
 
-            {allProposals?.map((proposal: Proposal) => {
-              return <ProposalCard proposal={proposal} key={proposal?.id} />;
-            })}
+            {allProposals == null ? (
+              <div className="flex flex-col w-full my-4 items-center">
+                <div className="my-1">
+                  <ScaleLoader color="black" loading={true} />
+                </div>
+
+                <p className="text-gray-500">Please Wait a few seconds</p>
+              </div>
+            ) : allProposals && allProposals?.length == 0 ? (
+              <div className="w-full text-center">
+                <p className="my-12">No Proposals at the moment</p>
+              </div>
+            ) : (
+              <div>
+                {allProposals?.map((proposal: Proposal) => {
+                  return <div key={proposal?.id}>1</div>;
+                  // return <ProposalCard proposal={proposal} key={proposal.id} />;
+                })}
+              </div>
+            )}
           </div>
         </section>
       </div>
