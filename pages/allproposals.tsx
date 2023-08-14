@@ -8,7 +8,7 @@ import { NextPageWithLayout, Proposal } from "../types";
 
 const AllProposals: NextPageWithLayout = () => {
   const { allProposals } = useProposals();
-  console.log("Are there proposals?", allProposals == null)
+  console.log("Are there proposals?", allProposals == null);
 
   console.log("All Proposals: ", allProposals);
 
@@ -34,8 +34,11 @@ const AllProposals: NextPageWithLayout = () => {
             ) : (
               <div>
                 {allProposals?.map((proposal: Proposal) => {
-                  return <div key={proposal?.id}>1</div>;
-                  // return <ProposalCard proposal={proposal} key={proposal.id} />;
+                  if (proposal) {
+                    return (
+                      <ProposalCard proposal={proposal} key={proposal.id} />
+                    );
+                  }
                 })}
               </div>
             )}
