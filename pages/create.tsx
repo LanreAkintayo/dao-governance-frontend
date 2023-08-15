@@ -209,16 +209,16 @@ const Create: NextPageWithLayout = () => {
 
   return (
     <>
-      <div className="flex flex-col justify-between bg-gray-50">
-        <div className="my-6">
-          <div className="  ssm:mt-20 flex justify-between mx-3  mb-4">
+      <div className="flex flex-col justify-between bg-gray-50 my-8">
+        <div className="my-6 space-y-6">
+          <div className="mt-4 sm:mt-8 mx-4 ssm:mx-8 space-y-4 sm:space-y-0 flex flex-col sm:flex-row justify-between">
             <p className="p-2  rounded-md bg-red-100 text-red-600  text-xs">
               Note that 5 LAR is required to create a proposal
             </p>
-            <VotingPower className="border border-gray-400 ml-4 h-8" />
+            <VotingPower className="border border-gray-400 h-8" />
           </div>
-          <div className="flex lg:flex-row flex-col mx-4">
-            <div className="lg:w-7/12 w-full flex flex-col lg:items-start lg:justify-start justify-center p-2 ssm:pl-4 px-2 ssm:pr-11 ">
+          <div className="flex lg:flex-row flex-col mx-4 ssm:mx-8">
+            <div className="lg:w-7/12 space-y-7">
               <div className="lg:w-10/12">
                 <p className="text-gray-700 ss:text-sm text-xs mt-2">
                   <small>Title: Ask a question</small>
@@ -253,7 +253,7 @@ const Create: NextPageWithLayout = () => {
               />
             </div>
             <div className="lg:w-5/12 w-full flex lg:ml-4 items-center justify-center  lg:items-start rounded-md  text-sm">
-              <div className="shadow mt-2 bg-white p-3 w-10/12">
+              <div className="shadow mt-8 w-full bg-white p-3">
                 <h1 className="my-3 pb-3 text-gray-800 border-l-0 border-r-0 border-b border-gray-300 ">
                   Actions
                 </h1>
@@ -340,9 +340,7 @@ const Create: NextPageWithLayout = () => {
                       <div className="flex flex-col w-full justify-between bg-gray-200 rounded-md px-3 py-3 items-center">
                         <div className="flex items-center">
                           <ClipLoader color="#000" loading={true} size={30} />
-                          <p className="ml-2">
-                            {publishText}
-                          </p>
+                          <p className="ml-2">{publishText}</p>
                         </div>
                       </div>
                     ) : (
@@ -356,8 +354,6 @@ const Create: NextPageWithLayout = () => {
             </div>
           </div>
         </div>
-
-    
       </div>
     </>
   );
