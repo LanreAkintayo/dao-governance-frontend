@@ -360,9 +360,9 @@ const ID: NextPageWithLayout<IDProps> = ({
               >
                 {proposalData?.status}
               </p>
-              <Tooltip content={creator} position={"top"}>
+              {/* <Tooltip content={creator} position={"top"}>
                 <Blockie seed={creator} size={6} />
-              </Tooltip>
+              </Tooltip> */}
               <p className="px-2 sm:text-base text-sm">
                 {creator?.substring(0, 4)}...
                 {creator?.substring(creatorLength - 4, creatorLength)}
