@@ -4,16 +4,17 @@ import Link from "next/link";
 import { ProSidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import "react-pro-sidebar/dist/css/styles.css";
 // import NavigationDropdown from "./NavigationDropdown";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import WalletConnect from "./WalletConnect";
 import { getAccount, getNetwork, switchNetwork } from "@wagmi/core";
 import { supportedChainId } from "../constants";
-import { createWalletClient, custom } from 'viem'
-import { mainnet, avalanche, polygonMumbai, zkSync } from 'viem/chains'
+import { createWalletClient, custom } from "viem";
+import { mainnet, avalanche, polygonMumbai, zkSync } from "viem/chains";
 import useProposals from "../hooks/useProposals";
 import { displayToast } from "./Toast";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 import { FaBars, FaTimes } from "react-icons/fa";
+import Sidebar from "./Sidebar";
 
 // import { useMoralis, useWeb3Contract, useChain } from "react-moralis";
 
@@ -46,31 +47,38 @@ const useMediaQuery = (width: number) => {
 export default function Header() {
   const [collapsed, setCollapsed] = useState(true);
   const isBreakpoint = useMediaQuery(912);
-  // const { isWeb3Enabled, chainId: chainIdHex, enableWeb3 } = useMoralis();
-  // const { switchNetwork, chain, account } = useChain();
-
-  // console.log(chainIdHex)
-  // const chainId = parseInt(chainIdHex!);
-  // console.log("Chain id", chainId)
-  // console.log("Here am I:", chainId != 80001)
-  // const { chain, chains } = getNetwork();
-
-  // const chainId = chain?.id
-
-  const {chainId} = useProposals()
+  const { chainId } = useProposals();
   const router = useRouter();
   const currentUrl = router.asPath;
 
-  console.log("Current url:: ", currentUrl)
-
-
-
+  const [showSidebar, setShowSidebar] = useState(false);
 
   useEffect(() => {
+    console.log("Show sidebar: ", showSidebar);
+  }, [showSidebar]);
+  // const sidebarRef = useRef(null);
 
-    console.log("There is a change in the id", chainId)
+  // const handleDocumentClick = (event: MouseEvent) => {
+  //   if (
+  //     sidebarRef.current &&
+  //     !sidebarRef.current.contains(event.target as Node)
+  //   ) {
+  //      setCollapsed((prevCollapsed) => false);
+  //   }
+  // };
 
-  }, [chainId])
+  // useEffect(() => {
+  //   document.addEventListener("click", handleDocumentClick);
+  //   return () => {
+  //     document.removeEventListener("click", handleDocumentClick);
+  //   };
+  // }, []);
+
+  console.log("Current url:: ", currentUrl);
+
+  useEffect(() => {
+    console.log("There is a change in the id", chainId);
+  }, [chainId]);
 
   useEffect(() => {
     console.log("Collapsing: ", collapsed);
@@ -80,55 +88,19 @@ export default function Header() {
     setCollapsed((prevCollapsed) => !prevCollapsed);
   };
 
+  // console.log("SidebarRef.Current: ",sidebarRef.current)
   return (
     <div
       className={`fixed  bg-gradient-to-r from-red-50 via-red-100 to-red-100   z-50 top-0 left-0 ss:${
         true ? "h-30" : "h-20"
       } h-30 w-screen `}
     >
-      {/* Navbar */}
 
-      {!collapsed && isBreakpoint && (
-        <div className={`z-50 h-screen ${!collapsed && "fixed  inset-0"}`}>
-          <ProSidebar collapsedWidth="0px" collapsed={collapsed}>
-            <div
-              className="px-4 pt-4 w-full flex justify-end cursor-pointer "
-              onClick={handleSidebar}
-            >
-              <FaTimes />
-            </div>
-            <Menu iconShape="square" className="">
-              <div className="text-xl text-gray-800 hover:text-red-800">
-                <MenuItem>
-                  <Link href="/">
-                    <p
-                      className={`text-[16px] text-gray-800 ${
-                        currentUrl == "/" && "border-b-2 border-red-800"
-                      }`}
-                    >
-                      Home
-                    </p>
-                  </Link>
-                </MenuItem>
-              </div>
-              <MenuItem>
-                <Link href="/token">
-                  <p className="text-[16px]">Get LAR Token</p>
-                </Link>
-              </MenuItem>
-              <MenuItem>
-                <Link href="/create">
-                  <p className="text-[16px]">Create Proposal</p>
-                </Link>
-              </MenuItem>
-              <MenuItem>
-                <Link href="/proposals">
-                  <p className="text-[16px]">Vote</p>
-                </Link>
-              </MenuItem>
-            </Menu>
-          </ProSidebar>
-        </div>
+      {showSidebar && isBreakpoint && (
+        <Sidebar
+          showSidebar={showSidebar}
+          closeSidebar={() => setShowSidebar(false)}
+        />
       )}
 
       <nav className="flex items-center flex-row w-full justify-end ss:justify-between ss:px-2 py-2 sm:px-4 sm:py-4 h-full">
@@ -189,7 +161,7 @@ export default function Header() {
           {isBreakpoint && (
             <div
               className="text-gray-800 rounded-full hover:text-red-500 cursor-pointer"
-              onClick={handleSidebar}
+              onClick={() => setShowSidebar(!showSidebar)}
             >
               <FaBars className="ml-3 w-9 h-9 bg-red-200 rounded-full text-black p-2" />
             </div>
