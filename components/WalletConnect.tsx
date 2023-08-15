@@ -80,17 +80,6 @@ export default function WalletConnect() {
         </div>
       )}
 
-      {/* {isConnected && chainId && chainId != appSettings.chainId && (
-        <Button
-          onClick={async () => {
-            await switchToAppNetwork(toHex(appSettings.chainId));
-            await loadBalance(account?.address as `0x${string}`);
-          }}
-          className="bg-red-600"
-        >
-          Switch To BNB
-        </Button>
-      )} */}
     </>
   );
 }

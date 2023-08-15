@@ -180,7 +180,7 @@ export default function Header() {
         </div>
         <div className="flex mx-2 items-center">
           <div className=" text-white flex items-center w-full sc:py-10">
-            {/* <WalletConnect /> */}
+            <WalletConnect />
             {chainId && chainId != supportedChainId && (
               <button
                 className="text-amber-600 text-sm my-2 cursor-pointer bg-amber-100 rounded-lg p-2 px-2"
