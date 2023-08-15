@@ -15,7 +15,7 @@ const AllProposals: NextPageWithLayout = () => {
   return (
     <div className={`flex flex-col mb-8 justify-between`}>
       <div>
-        <section className="px-5 mt-24 flex flex-col items-center ">
+        <section className="px-1 sm:px-5 mt-12 sm:mt-24 flex flex-col items-center ">
           <div className=" lg:w-9/12 w-11/12">
             <h1 className="text-xl text-gray-700 pt-4 ">All Proposals</h1>
 
