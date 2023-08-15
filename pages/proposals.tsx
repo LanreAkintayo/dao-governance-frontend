@@ -8,9 +8,9 @@ import { NextPageWithLayout, Proposal } from "../types";
 
 const AllProposals: NextPageWithLayout = () => {
   const { allProposals } = useProposals();
-  console.log("Are there proposals?", allProposals == null)
+  // console.log("Are there proposals?", allProposals == null)
 
-  console.log("All Proposals: ", allProposals);
+  // console.log("All Proposals: ", allProposals);
 
   return (
     <div className={`flex flex-col mb-8 justify-between`}>
