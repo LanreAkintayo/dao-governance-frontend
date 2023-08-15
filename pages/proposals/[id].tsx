@@ -340,13 +340,13 @@ const ID: NextPageWithLayout<IDProps> = ({
   return (
     <div className="flex flex-col justify-between bg-gray-50 mb-8">
       <div>
-        <div className="flex flex-row justify-between space-x-3 items-center px-4">
+        <div className="flex flex-row justify-between space-x-3 items-center px-8 mt-16 sm:mt-24">
           <Link href="/proposals">
-            <button className="hover:text-gray-800 mt-24 ssm:mx-8 mb-6 text-gray-400 sm:text-base text-xs">
+            <button className="hover:text-gray-800ssm:mx-8 mb-6 text-gray-400 sm:text-base text-xs">
               ← Back
             </button>
           </Link>
-          <VotingPower className="mt-24 ssm:mx-4 ss:mx-8 mb-4 border px-4" />
+          <VotingPower className="ssm:mx-4 ss:mx-8 mb-4 border px-4" />
         </div>
 
         <div className="flex lg:flex-row flex-col mx-4">
@@ -372,7 +372,7 @@ const ID: NextPageWithLayout<IDProps> = ({
               <h1 className=" text-base sm:text-lg py-2 text-gray-700">
                 Description
               </h1>
-              <p className="text-gray-700 sm:text-base ss:text-sm text-xs">
+              <p className="text-gray-700 sm:text-base ss:text-sm text-[12px]">
                 {proposalData?.description}
               </p>
             </div>

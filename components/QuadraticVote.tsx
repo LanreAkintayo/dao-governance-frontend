@@ -178,7 +178,7 @@ export default function QuadraticVote({
   };
 
   return (
-    <div className="shadow bg-white p-3 pb-5 mt-4 w-full ss:w-10/12">
+    <div className="shadow bg-white p-3 pb-5 mt-4 w-full sm:w-10/12">
       <h1 className="my-3 pb-3 text-gray-800 border-l-0 border-r-0 border-b border-gray-300 ">
         Cast your Vote
       </h1>
@@ -193,14 +193,14 @@ export default function QuadraticVote({
             return (
               <div
                 key={option.optionIndex}
-                className="flex mt-4 w-full justify-between rounded-full border hover:border-gray-900 border-gray-500 text-gray-700 items-center"
+                className="grid grid-cols-12 mt-4 w-full justify-between rounded-full border hover:border-gray-900 border-gray-500 text-gray-700 items-center"
               >
-                <div className="lg:w-7/12 md:w-7/12 ssm:w-5/12 w-4/12">
+                <div className="ssm:col-span-6 col-span-4">
                   <p className="ss:text-sm text-xs break-words truncate whitespace-nowrap sm:text-base px-3 lg:px-8 text-start ">
                     {option.optionText}
                   </p>
                 </div>
-                <div className="flex lg:w-5/12 md:w-5/12 ssm:w-7/12 w-8/12 text-xl items-center">
+                <div className="flex ssm:col-span-6 col-span-8 text-xl items-center">
                   <button
                     className=" ml-4 text-lg w-10 outline-none border-l py-2 px-3 border-r border-gray-300"
                     onClick={() =>
@@ -229,7 +229,7 @@ export default function QuadraticVote({
                   >
                     +
                   </button>
-                  <p className="text-gray-800 pl-2 text-[12px] sm:text-base ">
+                  <p className="text-gray-800 pl-2 text-[12px] sm:text-base flex">
                     {(percentage == 0 || isNaN(percentage)
                       ? "0"
                       : toDp(percentage || 0, 1)) || 0}
@@ -248,7 +248,7 @@ export default function QuadraticVote({
               !isValidVotingPower ||
               promiseInProgress
             }
-            className="mt-2 p-2  w-full disabled:opacity-50 disabled:cursor-not-allowed text-white text-xl"
+            className="mt-2 w-full disabled:opacity-50 disabled:cursor-not-allowed text-white text-base sm:text-xl"
           >
             {isVoting ? (
               <div className="flex flex-col w-full justify-between bg-blue-800 rounded-full px-3 py-3 items-center">
