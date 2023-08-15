@@ -39,11 +39,11 @@ export default function ProposalCard({ proposal }: {proposal: Proposal}) {
   }
 
   // console.log("Number(proposal.id)", Number(proposal?.id))
-  // console.log("Proposal.creator: ", proposal?.creator)
   return (
     
     <Link href={`/proposals/${Number(proposal?.id)}`}>
       <a>
+        <p>We are here</p>
         <div className="rounded-md border border-gray-400 bg-white hover:border hover:border-gray-800 focus:bg-blue-700 w-full mt-5 p-3 px-2 sm:px-11">
           <div className="flex w-full justify-between items-center">
             <div className="flex items-center"> 
@@ -72,8 +72,8 @@ export default function ProposalCard({ proposal }: {proposal: Proposal}) {
               return <Option option={option} proposal={proposal} maxPercentage={maxPercentage} key={option.optionIndex}/>;
             })}
           </div>
-          </div>
-      </a> 
+        </div>
+      </a>
     </Link>
   );
 }
