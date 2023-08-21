@@ -95,7 +95,6 @@ export default function Header() {
         true ? "h-30" : "h-20"
       } h-30 w-screen `}
     >
-
       {showSidebar && isBreakpoint && (
         <Sidebar
           showSidebar={showSidebar}
@@ -103,12 +102,19 @@ export default function Header() {
         />
       )}
 
-      <nav className="flex items-center flex-row w-full justify-end ss:justify-between ss:px-2 py-2 sm:px-4 sm:py-4 h-full">
-        <p className="font-logo text-xl text-gray-800 sm:text-3xl self-start ss:self-auto hidden ssm:block">
-          <span className="text-red-800">{"<"}L</span>arry
-          <span className="text-red-800">C</span>odes
-          <span className="text-red-800">{"/>"}</span>
-        </p>
+      <nav className=" px-2 flex items-center flex-row w-full justify-between ss:justify-between ss:px-2 py-2 sm:px-4 sm:py-4 h-full">
+        <img
+          src="./my_logo.svg"
+          width={200}
+          height={30}
+          className="object-cover p-0 ssm:block hidden"
+        />
+        <img
+          src="./my_icon.svg"
+          width={40}
+          height={10}
+          className="object-cover p-0 ssm:hidden block"
+        />
         <div className="flex items-center text-black self-end  ss:self-auto">
           <div className="flex items-center self-center text-base w-full">
             {!isBreakpoint && (
