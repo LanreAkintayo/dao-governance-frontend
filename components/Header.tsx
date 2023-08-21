@@ -102,7 +102,7 @@ export default function Header() {
         />
       )}
 
-      <nav className=" px-2 flex items-center flex-row w-full justify-between ss:justify-between ss:px-2 py-2 sm:px-4 sm:py-4 h-full">
+      <nav className=" px-2 flex items-center flex-row w-full justify-between ss:justify-between ss:px-2 py-1 sm:px-4 sm:py-3 h-full">
         <img
           src="./my_logo.svg"
           width={200}
