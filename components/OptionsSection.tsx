@@ -136,14 +136,14 @@ export default function OptionsSection({
       {optionsIndexes.map((index) => {
         const currentKey = optionsIndexes.indexOf(index)
         return (
-          <div key={currentKey} className="flex border bg-white items-start mb-2 border-gray-400">
+          <div key={currentKey} className="flex border bg-white items-center mb-2 border-gray-400">
             <p className="ml-2 text-gray-700">{index + 1}. </p>
             <textarea
               value={optionTexts[index]}
               onChange={(event) => handleOnChange(event, index)}
               cols={100}
               wrap="soft"
-              className="text-gray-700 ss:p-2 p-1 ss:text-sm text-xs w-full  ss:h-10  outline-none"
+              className="text-gray-700 ss:p-2 p-1 ss:text-sm text-xs w-full ss:h-10  outline-none"
             ></textarea>
           </div>
         );
