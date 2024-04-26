@@ -14,7 +14,13 @@ export default function Footer() {
             href="https://github.com/LanreAkintayo"
             className="object-cover rounded-md "
           >
-            <Image src="/github.svg" alt="github" width={28} height={28} />
+            <Image
+              src="/github.svg"
+              alt="github"
+              width={28}
+              height={28}
+              className=""
+            />
           </a>
         </div>
         <div>
@@ -24,7 +30,13 @@ export default function Footer() {
             href="https://www.linkedin.com/in/lanre-akintayo-b6462b238"
             className="object-cover ml-3 rounded-md "
           >
-            <Image src="/linkedin.svg" alt="github" width={28} height={28} />
+            <Image
+              src="/linkedin.svg"
+              alt="github"
+              width={28}
+              height={28}
+              className=""
+            />
           </a>
         </div>
         <div>
@@ -36,7 +48,13 @@ export default function Footer() {
             }
             className="object-cover ml-3 rounded-md "
           >
-            <Image src="/twitter.svg" alt="twitter" width={28} height={28} />
+            <Image
+              src="/twitter.svg"
+              alt="twitter"
+              width={28}
+              height={28}
+              className=""
+            />
           </a>
         </div>
         <div>
@@ -46,7 +64,13 @@ export default function Footer() {
             href="https://www.youtube.com/channel/UC3QRrkhldo19vFvcilncvrw"
             className="object-cover ml-3 rounded-md "
           >
-            <Image src="/youtube.svg" alt="youtube" width={28} height={28} />
+            <Image
+              src="/youtube.svg"
+              alt="youtube"
+              width={28}
+              height={28}
+              className=""
+            />
           </a>
         </div>
         <div>
@@ -56,7 +80,13 @@ export default function Footer() {
             href={"mailto:akintayolanre2019@gmail.com"}
             className="object-cover ml-3 rounded-md "
           >
-            <Image src="/email.png" alt="email" width={28} height={28} />
+            <Image
+              src="/email.png"
+              alt="email"
+              width={28}
+              height={28}
+              className=""
+            />
           </a>
         </div>
       </div>
