@@ -3,7 +3,7 @@ import { NextPageWithLayout } from "../types";
 import Layout from "../components/Layout";
 import Link from "next/link";
 import { useAccount } from "wagmi";
-import "animate.css"
+import "animate.css";
 
 const Home: NextPageWithLayout = () => {
   const settings2 = {
@@ -46,17 +46,23 @@ const Home: NextPageWithLayout = () => {
           <div>
             {status == "connected" ? (
               <div className="mt-2 flex flex-col ssm:flex-row justify-center ft:justify-start gap-4">
-                <div className="bg-red-700 rounded-full text-white  px-5 py-2 sm:py-3 hover:bg-red-600 ">
-                  <Link href="/proposals">
-                    <a className="text-sm text-[15px]" target="_parent">Start Voting</a>
-                  </Link>
-                </div>
+                <Link href="/proposals">
+                  <a
+                    className="text-sm text-[15px] bg-red-700 rounded-full text-white px-5 py-2  sm:py-4 hover:bg-red-600"
+                    target="_parent"
+                  >
+                    Start Voting
+                  </a>
+                </Link>
 
-                <div className="border border-red-800 rounded-full px-5 py-2 sm:py-3 hover:border-red-500 ">
-                  <Link href="/create">
-                    <a className="text-red-800  hover:text-red-500 text-[15px]" target="_parent">Create Proposal</a>
-                  </Link>
-                </div>
+                <Link href="/create">
+                  <a
+                    className="text-red-800  hover:text-red-500 text-[15px] border border-red-800 rounded-full px-5 py-2 sm:py-4 hover:border-red-500"
+                    target="_parent"
+                  >
+                    Create Proposal
+                  </a>
+                </Link>
               </div>
             ) : (
               <p className="p-2 bg-gradient-to-tr to-red-500  from-red-800 px-4 text-white text-base rounded-md">
