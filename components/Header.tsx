@@ -15,6 +15,7 @@ import { displayToast } from "./Toast";
 import { useRouter } from "next/router";
 import { FaBars, FaTimes } from "react-icons/fa";
 import Sidebar from "./Sidebar";
+import Image from "next/image"
 
 // import { useMoralis, useWeb3Contract, useChain } from "react-moralis";
 
@@ -103,18 +104,18 @@ export default function Header() {
       )}
 
       <nav className=" px-2 flex items-center flex-row w-full justify-between ss:justify-between ss:px-2 py-1 sm:px-4 sm:py-3 h-full">
-        <img
-          src="./my_logo.svg"
+        <Image
+          src="/my_logo.svg"
           width={200}
           height={30}
           className="object-cover p-0 ssm:block hidden"
         />
-        <img
-          src="./my_icon.svg"
+        {/* <Image
+          src="/my_icon.svg"
           width={40}
           height={10}
-          className="object-cover p-0 ssm:hidden block"
-        />
+          className="object-cover p-0 block ssm:hidden"
+        /> */}
         <div className="flex items-center text-black self-end  ss:self-auto">
           <div className="flex items-center self-center text-base w-full">
             {!isBreakpoint && (
