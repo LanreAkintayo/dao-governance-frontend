@@ -122,7 +122,7 @@ const Tokens: NextPageWithLayout = () => {
 };
 
 
-Tokens.getLayout = function getLayout(page) {
+Tokens.getLayout = function getLayout(page: any) {
   return <Layout>{page}</Layout>;
 };
 

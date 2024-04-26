@@ -3,7 +3,7 @@ import Header from "../../components/Header";
 import ResultSection from "../../components/ResultSection";
 import { getProposalsData } from "../../lib/fetchProposals";
 import { formatTime, toWei } from "../../utils/helper";
-import { useEffect, useState } from "react";
+import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useEffect, useState } from "react";
 import { daoAbi, erc20Abi, larAddress, daoAddress } from "../../constants";
 import VotersTable from "../../components/VotersTable";
 import Link from "next/link";
@@ -472,7 +472,7 @@ const ID: NextPageWithLayout<IDProps> = ({
   );
 };
 
-ID.getLayout = function getLayout(page) {
+ID.getLayout = function getLayout(page: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined) {
   return <Layout>{page}</Layout>;
 };
 

@@ -2,7 +2,7 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import VotingSystemDropdown from "../components/VotingSystemDropdown";
 import DatePicker from "react-datepicker";
-import { useEffect, useState } from "react";
+import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useEffect, useState } from "react";
 import moment from "moment";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -359,7 +359,7 @@ const Create: NextPageWithLayout = () => {
   );
 };
 
-Create.getLayout = function getLayout(page) {
+Create.getLayout = function getLayout(page: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined) {
   return <Layout>{page}</Layout>;
 };
 

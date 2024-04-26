@@ -45,7 +45,7 @@ const AllProposals: NextPageWithLayout = () => {
   );
 };
 
-AllProposals.getLayout = function getLayout(page) {
+AllProposals.getLayout = function getLayout(page:any) {
   return <Layout>{page}</Layout>;
 };
 
