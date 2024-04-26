@@ -1,5 +1,5 @@
 // import Moralis from "moralis/node"
-import { daoAbi, contractAddresses, daoAddress } from "../constants";
+import { daoAbi, contractAddresses, daoAddress, supportedChainId } from "../constants";
 import { IOriginalProposal, IOriginalOption, Proposal } from "../types";
 import { now, toMilliseconds } from "../utils/helper";
 import {
@@ -11,6 +11,7 @@ import {
 export const getProposalsData = async (id:number): Promise<Proposal> => {
 
   const proposal = await readContract({
+    chainId: supportedChainId,
     address: daoAddress,
     abi: daoAbi,
     functionName: "getProposals",

@@ -4,12 +4,7 @@ import ResultSection from "../../components/ResultSection";
 import { getProposalsData } from "../../lib/fetchProposals";
 import { formatTime, toWei } from "../../utils/helper";
 import { useEffect, useState } from "react";
-import {
-  daoAbi,
-  erc20Abi,
-  larAddress,
-  daoAddress,
-} from "../../constants";
+import { daoAbi, erc20Abi, larAddress, daoAddress } from "../../constants";
 import VotersTable from "../../components/VotersTable";
 import Link from "next/link";
 import QuadraticVote from "../../components/QuadraticVote";
@@ -37,7 +32,6 @@ const ID: NextPageWithLayout<IDProps> = ({
 }: {
   proposal: Proposal;
 }) => {
- 
   interface VotingSystem {
     [key: string]: string;
   }
@@ -48,7 +42,6 @@ const ID: NextPageWithLayout<IDProps> = ({
     "1": "Weighted Voting",
     "2": "Quadratic Voting",
   };
-
 
   const proposalsType: string = proposal?.proposalType;
   const proposalVotingSystem: string = votingSystem[proposalsType];
@@ -77,7 +70,7 @@ const ID: NextPageWithLayout<IDProps> = ({
   const updateProposalData = async () => {
     console.log("Updating proposal data: ");
     // Updating proposal Data
-    const latestProposal:Proposal = await getProposalsData(proposalData.id);
+    const latestProposal: Proposal = await getProposalsData(proposalData.id);
 
     console.log("proposal data updated ");
     console.log("Latest proposal: ", latestProposal);
@@ -107,6 +100,8 @@ const ID: NextPageWithLayout<IDProps> = ({
     try {
       setSVoteText("Approving LAR Token");
 
+      console.log("We are here");
+
       const approveRequest = await prepareWriteContract({
         address: larAddress,
         abi: erc20Abi,
@@ -116,10 +111,13 @@ const ID: NextPageWithLayout<IDProps> = ({
 
       const { hash } = await writeContract(approveRequest);
 
+      console.log("We are now here");
+
       const approveReceipt = await waitForTransaction({
         hash,
       });
 
+      console.log("Approve receipt: ", approveReceipt);
       // console.log('Deposit Receipt: ', depositReceipt);
       if (approveReceipt.status == "success") {
         displayToast("success", "LAR Token has successfully been approved");
@@ -132,10 +130,11 @@ const ID: NextPageWithLayout<IDProps> = ({
         return;
       }
     } catch (error) {
+      console.log("Error: ", error);
       setSVoteText("Vote");
       setIsVotingS(false);
 
-      displayToast("Failure", "Failed to approve LAR Token");
+      displayToast("Failure", "Transaction failed. Try again");
       return;
     }
 
@@ -201,7 +200,6 @@ const ID: NextPageWithLayout<IDProps> = ({
     });
     return totalVotes;
   };
-
 
   const handleSingleVote = async () => {
     console.log("Handling single vote");
@@ -470,7 +468,6 @@ const ID: NextPageWithLayout<IDProps> = ({
         </div>
         <ToastContainer />
       </div>
-
     </div>
   );
 };
@@ -485,7 +482,7 @@ export async function getServerSideProps({ params }: IParam) {
   // Fetch necessary data for the blog post using params.id
   const proposal = await getProposalsData(params.id);
 
-  console.log("INside serverside prpos:::", proposal)
+  console.log("INside serverside prpos:::", proposal);
 
   return {
     props:

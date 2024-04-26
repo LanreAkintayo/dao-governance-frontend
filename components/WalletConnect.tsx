@@ -38,7 +38,7 @@ export default function WalletConnect() {
     <>
       <div>{status == "connected"}</div>
       {status == "connected" && account.address ? (
-        chain?.id == 80001 ? (
+        chain?.id == supportedChainId ? (
           <div className="flex items-center gap-3 sm:gap-6 lg:gap-8">
             {isConnected ? (
               <div className="mr-5 px-3 bg-red-800 hover:bg-red-700  rounded-md  ">
@@ -84,7 +84,7 @@ export default function WalletConnect() {
                 }
               }}
             >
-              Switch to Mumbai
+              Switch to Sepolia
             </button>
           </div>
         )

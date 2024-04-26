@@ -4,7 +4,7 @@ import {
   readContract,
   getNetwork
 } from "@wagmi/core";
-import { daoAbi, daoAddress, erc20Abi, larAddress } from "../constants";
+import { daoAbi, daoAddress, erc20Abi, larAddress, supportedChainId } from "../constants";
 import { now, toMilliseconds } from "../utils/helper";
 import { IOriginalProposal } from "../types";
 
@@ -78,12 +78,13 @@ const ProposalsProvider = (props: any) => {
     // Let's fetch all proposals
 
     const allProposals = await readContract({
+      chainId: supportedChainId,
       address: daoAddress,
       abi: daoAbi,
       functionName: "getProposalsArray",
     }) as IOriginalProposal[]
 
-    // console.log("All Proposals: ", allProposals)
+    console.log("All Proposals: ", allProposals)
 
     const finalizedProposals = allProposals.map((proposal) => {
       let totalVotes: number = 0;
@@ -148,6 +149,7 @@ const ProposalsProvider = (props: any) => {
 
   const loadLarBalanceHandler = async (address: string | `0x${string}`) => {
     const larBalance: string = await readContract({
+      chainId: supportedChainId,
       address: larAddress,
       abi: erc20Abi,
       functionName: "balanceOf",

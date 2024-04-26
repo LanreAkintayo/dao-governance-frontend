@@ -3,7 +3,7 @@ import { fromWei, toDp, toWei } from "../utils/helper";
 import { usePromiseTracker } from "react-promise-tracker";
 import { ClipLoader } from "react-spinners";
 // import { useMoralis } from "react-moralis";
-import { erc20Abi, larAddress } from "../constants";
+import { erc20Abi, larAddress, supportedChainId } from "../constants";
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import {
@@ -84,6 +84,7 @@ export default function QuadraticVote({
 
   const checkValidity = async (votingPower: VotingPower) => {
     const votingPowerBalance = (await readContract({
+      chainId: supportedChainId,
       address: larAddress,
       abi: erc20Abi,
       functionName: "balanceOf",

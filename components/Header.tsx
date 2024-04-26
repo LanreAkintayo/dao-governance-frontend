@@ -119,7 +119,7 @@ export default function Header() {
           <div className="flex items-center self-center text-base w-full">
             {!isBreakpoint && (
               <>
-                <Link href="/  ">
+                <Link href="/">
                   <a
                     className={`w-full text-gray-800 font-semibold ${
                       currentUrl == "/" && "border-b-2 border-red-800"
