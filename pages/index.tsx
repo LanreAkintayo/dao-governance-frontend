@@ -48,13 +48,13 @@ const Home: NextPageWithLayout = () => {
               <div className="mt-2 flex flex-col ssm:flex-row justify-center ft:justify-start gap-4">
                 <div className="bg-red-700 rounded-full text-white  px-5 py-2 sm:py-3 hover:bg-red-600 ">
                   <Link href="/proposals">
-                    <a className="text-sm text-[15px]">Start Voting</a>
+                    <a className="text-sm text-[15px]" target="_parent">Start Voting</a>
                   </Link>
                 </div>
 
                 <div className="border border-red-800 rounded-full px-5 py-2 sm:py-3 hover:border-red-500 ">
                   <Link href="/create">
-                    <a className="text-red-800  hover:text-red-500 text-[15px]">Create Proposal</a>
+                    <a className="text-red-800  hover:text-red-500 text-[15px]" target="_parent">Create Proposal</a>
                   </Link>
                 </div>
               </div>
